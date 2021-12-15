@@ -3,6 +3,9 @@ import { EventEmitterExampleModule } from './example-slice/event-emitter-example
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RegisterModule } from './features/register/register.module';
 import { EventbusModule } from './eventbus/eventbus.module';
+import { AddRoomModule } from './features/add-room/add-room.module';
+
+const features = [RegisterModule, AddRoomModule];
 
 @Module({
   imports: [
@@ -10,8 +13,9 @@ import { EventbusModule } from './eventbus/eventbus.module';
     EventEmitterModule.forRoot({
       wildcard: true,
     }),
-    RegisterModule,
     EventbusModule,
+
+    ...features,
   ],
 })
 export class AppModule {}

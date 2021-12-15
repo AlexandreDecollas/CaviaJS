@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RegisterLine } from '../model/register-line';
-import { RegisteredEvent } from '../../../model/registered-event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
+import { RegisteredEvent } from '../../../model/registered.event';
 
 @Injectable()
 export class RegisterService {

@@ -6,6 +6,6 @@ import { Event } from '../../model/event';
 export class EventHandlerService {
   @OnEvent('hotel.registered', { async: true })
   handleOrderCreatedEvent(event: Event) {
-    console.log('event : ', event);
+    console.log('example slice handler : ', event);
   }
 }

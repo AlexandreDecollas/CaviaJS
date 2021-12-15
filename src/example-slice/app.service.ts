@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RegisteredEvent } from '../model/registered-event';
 import { IdGeneratorService } from '../utils/id-generator/id-generator.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AppService {
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly eventbusService: EventEmitter2,
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
@@ -16,10 +16,10 @@ export class AppService {
 
   public emitEvent(): void {
     const event: RegisteredEvent = {
-      arrivalDate: new Date().toISOString(),
       clientName: 'toto',
+      clientSurname: 'tutu',
       id: this.idGeneratorService.generateId(),
     };
-    this.eventEmitter.emit('hotel.registered', event);
+    this.eventbusService.emit('hotel.registered', event);
   }
 }

@@ -1,5 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConnectionInitializerService } from '../../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ProjectionUpserterService implements OnModuleInit {
@@ -9,24 +11,13 @@ export class ProjectionUpserterService implements OnModuleInit {
 
   public async onModuleInit(): Promise<any> {
     const client = this.connectionInitializerService.getConnectedClient();
-    const projection = `
-    fromStream('manager.room-added')
-  .when({
-    $init: function () {
-      return {
-        123: [],
-        209: [],
-      };
-    },
-    RoomAddedEvent: function (state, event) {
-      state[event.body.roomNumber].push([
-        event.body.freeFromDate,
-        event.body.freeToDate,
-      ]);
-    },
-  })
-  .outputState();
-    `;
+    const projectionPath = path.join(
+      __dirname,
+      '../../',
+      'projections',
+      'free-slot-state.projection.js',
+    );
+    const projection = fs.readFileSync(projectionPath, 'utf8');
 
     try {
       await client.updateProjection('freeSlotsState', projection);

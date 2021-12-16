@@ -1,6 +1,9 @@
-import { Event } from './event';
+import { EventstoreEvent } from './eventstoreEvent';
 
-export interface RegisteredEvent extends Event {
-  clientName: string;
-  clientSurname: string;
+export interface RegisteredEvent extends EventstoreEvent {
+  data: {
+    id: string;
+    clientName: string;
+    clientSurname: string;
+  };
 }

@@ -6,7 +6,7 @@ import { RegisteredEvent } from '../model/registered.event';
 @Injectable()
 export class AppService {
   constructor(
-    private readonly eventbusService: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2,
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
@@ -16,10 +16,14 @@ export class AppService {
 
   public emitEvent(): void {
     const event: RegisteredEvent = {
-      clientName: 'toto',
-      clientSurname: 'tutu',
-      id: this.idGeneratorService.generateId(),
+      type: 'RegisteredEvent',
+      data: {
+        id: this.idGeneratorService.generateId(),
+        clientName: 'toto',
+        clientSurname: 'tutu',
+      },
+      metadata: { streamName: 'hotel.registered' },
     };
-    this.eventbusService.emit('hotel.registered', event);
+    this.eventEmitter.emit(event.metadata.streamName, event);
   }
 }

@@ -13,9 +13,13 @@ export class RegisterService {
 
   public registerClient(registerLine: RegisterLine): void {
     const event: RegisteredEvent = {
-      id: this.idGeneratorService.generateId(),
-      clientName: registerLine.clientName,
-      clientSurname: registerLine.clientSurname,
+      type: 'RegisteredEvent',
+      data: {
+        id: this.idGeneratorService.generateId(),
+        clientName: registerLine.clientName,
+        clientSurname: registerLine.clientSurname,
+      },
+      metadata: { streamName: 'guest' },
     };
     this.eventEmitter2.emit('guest.registered', event);
   }

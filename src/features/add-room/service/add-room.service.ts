@@ -16,11 +16,15 @@ export class AddRoomService {
     freeToDate: string,
   ) {
     const event: RoomAddedEvent = {
-      id: this.idGeneratorService.generateId(),
-      freeFromDate,
-      freeToDate,
-      roomNumber,
+      type: 'RoomAddedEvent',
+      data: {
+        id: this.idGeneratorService.generateId(),
+        freeFromDate,
+        freeToDate,
+        roomNumber,
+      },
+      metadata: { streamName: 'manager.room-added' },
     };
-    this.eventEmitter.emit('manager.added-room', event);
+    this.eventEmitter.emit(event.metadata.streamName, event);
   }
 }

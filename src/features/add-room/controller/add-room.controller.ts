@@ -5,9 +5,9 @@ import { AddRoomService } from '../service/add-room.service';
 export class AddRoomController {
   constructor(private readonly addRoomService: AddRoomService) {}
 
-  @Get('/:roomNuber/:freeFromDate/:freeToDate')
+  @Get('/:roomNumber/:freeFromDate/:freeToDate')
   public register(
-    @Param('clientName') roomNumber: number,
+    @Param('roomNumber') roomNumber: number,
     @Param('freeFromDate') freeFromDate: string,
     @Param('freeToDate') freeToDate: string,
   ): void {

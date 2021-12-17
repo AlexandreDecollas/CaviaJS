@@ -1,8 +1,21 @@
 import { ProjectionBuilder } from './projection-builder';
-import { BuilderInterface } from './builder.interface';
+import {
+  FromAllSelector,
+  FromCategorySelector,
+  FromStreamSelector,
+  FromStreamsSelector,
+} from './Selector';
+import { ProjectionOptions } from './projection.options';
 
 describe('ProjectionBuilder', () => {
   let builder: ProjectionBuilder;
+
+  const options: ProjectionOptions = new ProjectionOptions({
+    resultStreamName: 'ijiji',
+    $includeLinks: true,
+    processingLag: 1000,
+    reorderEvents: true,
+  });
 
   const forInfo = `fromStream('manager.room-added')
   .when({
@@ -25,36 +38,54 @@ describe('ProjectionBuilder', () => {
     builder = new ProjectionBuilder();
   });
 
-  it('should be created', () => {
-    expect(builder).toBeTruthy();
-  });
-  [
-    { name: 'fromAll' },
-    { name: 'fromCategory', category: 'string' },
-    'fromStream',
-    'fromStreams',
-  ].forEach((selector: any) => {
-    it('should allow to select fromAll selector', () => {
-      const builderInterface: BuilderInterface = {
-        selector,
-      };
-      builder.build(builderInterface);
-
-      expect(builder.exportProjection().indexOf(`${selector}(`)).not.toEqual(
-        -1,
-      );
-    });
+  it('should add the given option before the projection when exporting', () => {
+    builder = builder.addOptions(options);
+    expect(builder.exportProjection()).toEqual(`options({
+      resultStreamName: 'ijiji',
+      $includeLinks: true,
+      processingLag: 1000,
+      reorderEvents: true,
+    })\n\n`);
   });
 
-  it('should take a category name argument for fromCategory selector', () => {
-    const category = 'test';
-    const builderInterface: BuilderInterface = {
-      selector: { name: 'fromCategory', category },
-    };
-    builder.build(builderInterface);
+  it('should show fromAll selector when exporting', () => {
+    const selector: FromAllSelector = new FromAllSelector();
+    builder = builder.addSelector(selector);
+    expect(builder.exportProjection()).toEqual(`fromAll()`);
+  });
 
-    expect(
-      builder.exportProjection().indexOf(`${'fromCategory'}(${category})`),
-    ).not.toEqual(-1);
+  it('should show fromCategory selector whith category argument when exporting', () => {
+    const selector: FromCategorySelector = new FromCategorySelector('test');
+    builder = builder.addSelector(selector);
+    expect(builder.exportProjection()).toEqual(`fromCategory(test)`);
+  });
+
+  it('should show fromStream selector with streamId when exporting', () => {
+    const selector: FromStreamSelector = new FromStreamSelector('test');
+    builder = builder.addSelector(selector);
+    expect(builder.exportProjection()).toEqual(`fromStream(test)`);
+  });
+
+  it('should show fromStreams selector with streams when exporting', () => {
+    const selector: FromStreamsSelector = new FromStreamsSelector([
+      'test1',
+      'test2',
+      'test3',
+    ]);
+    builder = builder.addSelector(selector);
+    expect(builder.exportProjection()).toEqual(
+      `fromStreams(test1, test2, test3)`,
+    );
+  });
+
+  it('should be able to chain the constructor tool for adding options and selector', () => {
+    builder = builder.addSelector(new FromAllSelector()).addOptions(options);
+
+    expect(builder.exportProjection()).toEqual(`options({
+      resultStreamName: 'ijiji',
+      $includeLinks: true,
+      processingLag: 1000,
+      reorderEvents: true,
+    })\n\n\nfromAll()`);
   });
 });

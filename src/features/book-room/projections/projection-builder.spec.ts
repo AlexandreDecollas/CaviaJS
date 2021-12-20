@@ -6,6 +6,14 @@ import {
   FromStreamsSelector,
 } from './Selector';
 import { ProjectionOptions } from './projection.options';
+import {
+  FilterByFilter,
+  OutputStateFilter,
+  PartitionByFilter,
+  TransformByFilter,
+  WhenFilter,
+} from './projection.filter';
+import { format } from 'prettier';
 
 describe('ProjectionBuilder', () => {
   let builder: ProjectionBuilder;
@@ -40,12 +48,11 @@ describe('ProjectionBuilder', () => {
 
   it('should add the given option before the projection when exporting', () => {
     builder = builder.addOptions(options);
-    expect(builder.exportProjection()).toEqual(`options({
-      resultStreamName: 'ijiji',
-      $includeLinks: true,
-      processingLag: 1000,
-      reorderEvents: true,
-    })\n\n`);
+    expect(builder.exportProjection()).toEqual(
+      tsFormat(
+        `options({resultStreamName: 'ijiji',$includeLinks: true,processingLag: 1000,reorderEvents: true,})`,
+      ),
+    );
   });
 
   it('should show fromAll selector when exporting', () => {
@@ -78,14 +85,61 @@ describe('ProjectionBuilder', () => {
     );
   });
 
-  it('should be able to chain the constructor tool for adding options and selector', () => {
+  it('should be able to chain outputState filter when building a projection', () => {
     builder = builder.addSelector(new FromAllSelector()).addOptions(options);
 
-    expect(builder.exportProjection()).toEqual(`options({
-      resultStreamName: 'ijiji',
-      $includeLinks: true,
-      processingLag: 1000,
-      reorderEvents: true,
-    })\n\n\nfromAll()`);
+    expect(builder.exportProjection()).toEqual(
+      `${format(
+        `options({resultStreamName: 'ijiji',$includeLinks: true,processingLag: 1000,reorderEvents: true,})`,
+        { parser: 'typescript' },
+      )}fromAll()`,
+    );
+  });
+
+  it('should be able to chain a when filter when building a projection', () => {
+    const projection: string = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new WhenFilter([]))
+      .exportProjection();
+
+    expect(projection).toEqual(`fromAll().when({})`);
+  });
+
+  it('should be able to chain a foreachStream filter when building a projection', () => {
+    const projection = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new OutputStateFilter())
+      .exportProjection();
+
+    expect(projection).toEqual(`fromAll().outputState()`);
+  });
+
+  it('should be able to chain a partitionBy filter when building a projection$', () => {
+    const projection = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new PartitionByFilter((event) => null))
+      .exportProjection();
+
+    expect(projection).toEqual(`fromAll().partitionBy((event) => null)`);
+  });
+
+  it('should be able to chain a transformBy filter when building a projection$', () => {
+    const projection = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new TransformByFilter((state) => null))
+      .exportProjection();
+
+    expect(projection).toEqual(`fromAll().transformBy((state) => null)`);
+  });
+
+  it('should be able to chain a filterBy filter when building a projection$', () => {
+    const projection = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new FilterByFilter((state) => null))
+      .exportProjection();
+
+    expect(projection).toEqual(`fromAll().filterBy((state) => null)`);
   });
 });
+
+const tsFormat = (rawStr) => format(rawStr, { parser: 'typescript' });

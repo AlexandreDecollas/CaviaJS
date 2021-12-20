@@ -5,6 +5,12 @@ import {
 } from './Selector';
 import { BuilderInterface } from './builder.interface';
 import { ProjectionOptions } from './projection.options';
+import {
+  ForEachStreamFilter,
+  OutputStateFilter,
+  PartitionByFilter,
+  WhenFilter,
+} from './projection.filter';
 
 export class ProjectionBuilder {
   private builderInterface: BuilderInterface;
@@ -26,6 +32,17 @@ export class ProjectionBuilder {
 
   public addOptions(options: ProjectionOptions): ProjectionBuilder {
     this.builderInterface.options = options;
+    return this;
+  }
+
+  public addFilter(
+    filter:
+      | WhenFilter
+      | ForEachStreamFilter
+      | OutputStateFilter
+      | PartitionByFilter,
+  ): ProjectionBuilder {
+    this.builderInterface.filter.push(filter);
     return this;
   }
 }

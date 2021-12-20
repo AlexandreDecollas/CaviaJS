@@ -1,8 +1,4 @@
-export interface Selector {
-  toString(): string;
-}
-
-export class FromCategorySelector implements Selector {
+export class FromCategorySelector {
   constructor(private readonly category: string) {}
 
   public toString(): string {
@@ -10,20 +6,20 @@ export class FromCategorySelector implements Selector {
   }
 }
 
-export class FromAllSelector implements Selector {
+export class FromAllSelector {
   public toString(): string {
     return `fromAll()`;
   }
 }
 
-export class FromStreamSelector implements Selector {
+export class FromStreamSelector {
   constructor(private readonly streamId: string) {}
   public toString(): string {
     return `fromStream(${this.streamId})`;
   }
 }
 
-export class FromStreamsSelector implements Selector {
+export class FromStreamsSelector {
   constructor(private readonly streams: string[]) {}
   public toString(): string {
     return `fromStreams(${this.streams.join(', ')})`;

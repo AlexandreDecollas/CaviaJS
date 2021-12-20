@@ -6,6 +6,12 @@ import {
 } from './Selector';
 import { ProjectionOptions } from './projection.options';
 import { isNil } from '@nestjs/common/utils/shared.utils';
+import {
+  ForEachStreamFilter,
+  OutputStateFilter,
+  PartitionByFilter,
+  WhenFilter,
+} from './projection.filter';
 
 export class BuilderInterface {
   selector?:
@@ -15,6 +21,10 @@ export class BuilderInterface {
     | FromStreamsSelector;
 
   options?: ProjectionOptions;
+
+  filter: Array<
+    WhenFilter | ForEachStreamFilter | OutputStateFilter | PartitionByFilter
+  > = [];
 
   public toString(): string {
     const stringBuilder: string[] = [];
@@ -27,6 +37,10 @@ export class BuilderInterface {
       stringBuilder.push(this.selector.toString());
     }
 
-    return stringBuilder.join('\n');
+    if (!isNil(this.selector)) {
+      stringBuilder.push(this.filter.toString());
+    }
+
+    return stringBuilder.join('');
   }
 }

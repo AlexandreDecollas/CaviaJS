@@ -1,3 +1,5 @@
+import { format } from 'prettier';
+
 export interface ProjectionOptionsModel {
   resultStreamName?: string;
   $includeLinks?: boolean;
@@ -13,27 +15,25 @@ export class ProjectionOptions {
   }
 
   public toString(): string {
-    return `options({
-    ${
-      this.options.resultStreamName
-        ? `  resultStreamName: '${this.options.resultStreamName}'`
-        : ''
-    },
-    ${
-      this.options.$includeLinks
-        ? `  $includeLinks: ${this.options.$includeLinks}`
-        : ''
-    },
-    ${
-      this.options.processingLag
-        ? `  processingLag: ${this.options.processingLag}`
-        : ''
-    },
-    ${
-      this.options.reorderEvents
-        ? `  reorderEvents: ${this.options.reorderEvents}`
-        : ''
-    },
-    })\n\n`;
+    return format(
+      `options({${
+        this.options.resultStreamName
+          ? `resultStreamName: '${this.options.resultStreamName}'`
+          : ''
+      },${
+        this.options.$includeLinks
+          ? `$includeLinks: ${this.options.$includeLinks}`
+          : ''
+      },${
+        this.options.processingLag
+          ? `processingLag: ${this.options.processingLag}`
+          : ''
+      },${
+        this.options.reorderEvents
+          ? `reorderEvents: ${this.options.reorderEvents}`
+          : ''
+      },})`,
+      { parser: 'typescript' },
+    );
   }
 }

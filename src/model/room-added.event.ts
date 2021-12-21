@@ -4,7 +4,7 @@ export interface RoomAddedEvent extends EventstoreEvent {
   data: {
     id: string;
     roomNumber: number;
-    freeFromDate: string;
-    freeToDate: string;
+    occupiedFromDate?: string;
+    occupiedUntilDate?: string;
   };
 }

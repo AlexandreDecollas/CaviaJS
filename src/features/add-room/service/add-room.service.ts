@@ -12,15 +12,15 @@ export class AddRoomService {
 
   public registerClient(
     roomNumber: number,
-    freeFromDate: string,
-    freeToDate: string,
+    occupiedFromDate: string,
+    occupiedUntilDate: string,
   ) {
     const event: RoomAddedEvent = {
       type: 'RoomAddedEvent',
       data: {
         id: this.idGeneratorService.generateId(),
-        freeFromDate,
-        freeToDate,
+        occupiedFromDate,
+        occupiedUntilDate,
         roomNumber,
       },
       metadata: { streamName: 'manager.room-added' },

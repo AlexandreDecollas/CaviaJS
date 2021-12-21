@@ -9,7 +9,7 @@ export class ConnectionInitializerService implements OnModuleInit {
   public async onModuleInit(): Promise<any> {
     console.log('Connecting to evenstore...');
     this.client = EventStoreDBClient.connectionString(
-      `esdb://127.0.0.1:21134?tls=false`,
+      `esdb://127.0.0.1:2113?tls=false`,
     );
     await this.client.getStreamMetadata('$all');
     console.log('Connected to eventstore');

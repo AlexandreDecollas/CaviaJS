@@ -33,11 +33,15 @@ describe('EventTypeHandler', () => {
     const expectedCompiledJsFunction =
       'EventType: ' + ts.transpileModule(String(callback), options).outputText;
     expect(handler.toString()).toEqual(
-      expectedCompiledJsFunction.replace(/;/g, ''),
+      expectedCompiledJsFunction.replace(/\);/g, ')').replace(/};/g, '}'),
     );
   });
 
-  it(`should not contains any ';'`, () => {
-    expect(handler.toString().indexOf(';')).toEqual(-1);
+  it(`should not contains any ');' sequence after toString`, () => {
+    expect(handler.toString().indexOf(');')).toEqual(-1);
+  });
+
+  it(`should not contains any '};' sequence after toString`, () => {
+    expect(handler.toString().indexOf('};')).toEqual(-1);
   });
 });

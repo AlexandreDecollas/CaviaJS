@@ -1,14 +1,14 @@
 import { format } from 'prettier';
 
-export class InitHandler<T> {
-  private readonly state: T;
+export class InitSharedHandler<S> {
+  private readonly state: S;
 
-  constructor(state: T) {
+  constructor(state: S) {
     this.state = state;
   }
 
   public toString(): string {
-    const strState = `{$init:function f(){return ${String(
+    const strState = `{$initShared:function f(){return ${String(
       this.state.toString(),
     )}}}`;
     return format(strState, { parser: 'typescript' });

@@ -13,12 +13,14 @@ class InitialiState extends ProjectionState {
 }
 
 describe('InitHandler', () => {
+  const initialState: InitialiState = new InitialiState();
   const handler: InitHandler<InitialiState> = new InitHandler<InitialiState>(
-    new InitialiState(),
+    initialState,
   );
   it('should be able to print the initial state given at startup', () => {
+    const callback = `function f() {return${JSON.stringify(initialState)}}`;
     expect(handler.toString()).toEqual(
-      format(`{$init:function f(){return {prop1: 'toto',cpt: 0,}}}`, {
+      format(`{$init: ${callback}}`, {
         parser: 'typescript',
       }),
     );

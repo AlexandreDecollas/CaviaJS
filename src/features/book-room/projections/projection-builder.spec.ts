@@ -14,6 +14,9 @@ import {
   WhenFilter,
 } from './projection.filter';
 import { format } from 'prettier';
+import { InitHandler } from './handlers/init/standard/init.handler';
+import { EventTypeHandler } from './handlers/event-type/event-type.handler';
+import { ProjectionState } from './projection.state';
 
 describe('ProjectionBuilder', () => {
   let builder: ProjectionBuilder;
@@ -24,23 +27,6 @@ describe('ProjectionBuilder', () => {
     processingLag: 1000,
     reorderEvents: true,
   });
-
-  const forInfo = `fromStream('manager.room-added')
-  .when({
-    $init: function () {
-      return {
-        123: [],
-        209: [],
-      };
-    },
-    RoomAddedEvent: function (state, event) {
-      state[event.body.roomNumber].push([
-        event.body.freeFromDate,
-        event.body.freeToDate,
-      ]);
-    },
-  })
-  .outputState();`;
 
   beforeEach(() => {
     builder = new ProjectionBuilder();
@@ -96,15 +82,6 @@ describe('ProjectionBuilder', () => {
     );
   });
 
-  it('should be able to chain a when filter when building a projection', () => {
-    const projection: string = builder
-      .addSelector(new FromAllSelector())
-      .addFilter(new WhenFilter([]))
-      .exportProjection();
-
-    expect(projection).toEqual(`fromAll().when({})`);
-  });
-
   it('should be able to chain a foreachStream filter when building a projection', () => {
     const projection = builder
       .addSelector(new FromAllSelector())
@@ -139,6 +116,34 @@ describe('ProjectionBuilder', () => {
       .exportProjection();
 
     expect(projection).toEqual(`fromAll().filterBy((state) => null)`);
+  });
+
+  it('should be able to chain a when filter when building a projection', () => {
+    class State extends ProjectionState {
+      prop1: string;
+      prop2 = 0;
+    }
+
+    class TotoEvent {
+      id: string;
+      date: Date;
+    }
+
+    const totoHandlerCallback = (state: State, event: TotoEvent): void => {
+      state.prop2++;
+      state.prop1 = 'blabla';
+    };
+
+    const init: InitHandler<State> = new InitHandler<State>(new State());
+    const totoEventHandler: EventTypeHandler<State, TotoEvent> =
+      new EventTypeHandler<State, TotoEvent>('TotoEvent', totoHandlerCallback);
+    const projection: string = builder
+      .addSelector(new FromAllSelector())
+      .addFilter(new WhenFilter([init, totoEventHandler]))
+      .exportProjection();
+
+    expect(projection.indexOf('$init')).not.toEqual(-1);
+    expect(projection.indexOf('TotoEvent')).not.toEqual(-1);
   });
 });
 

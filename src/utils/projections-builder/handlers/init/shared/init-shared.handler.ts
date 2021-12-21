@@ -1,5 +1,3 @@
-import { format } from 'prettier';
-
 export class InitSharedHandler<S> {
   private readonly state: S;
 
@@ -8,9 +6,8 @@ export class InitSharedHandler<S> {
   }
 
   public toString(): string {
-    const strState = `{$initShared:function f(){return ${String(
+    return `$initShared: function f() {return ${String(
       this.state.toString(),
-    )}}}`;
-    return format(strState, { parser: 'typescript' });
+    )}}`;
   }
 }

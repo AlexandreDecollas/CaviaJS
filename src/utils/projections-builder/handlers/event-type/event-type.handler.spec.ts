@@ -28,10 +28,16 @@ describe('EventTypeHandler', () => {
     expect(handler.toString().indexOf('EventType' + ':')).not.toEqual(-1);
   });
 
-  it('should show a function compiled in js', () => {
+  it(`should show a function compiled in js with no ';'`, () => {
     const options = { compilerOptions: { module: ts.ModuleKind.CommonJS } };
+    const expectedCompiledJsFunction =
+      'EventType: ' + ts.transpileModule(String(callback), options).outputText;
     expect(handler.toString()).toEqual(
-      'EventType: ' + ts.transpileModule(String(callback), options).outputText,
+      expectedCompiledJsFunction.replace(/;/g, ''),
     );
+  });
+
+  it(`should not contains any ';'`, () => {
+    expect(handler.toString().indexOf(';')).toEqual(-1);
   });
 });

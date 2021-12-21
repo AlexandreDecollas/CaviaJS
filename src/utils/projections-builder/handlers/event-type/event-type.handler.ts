@@ -11,6 +11,6 @@ export class EventTypeHandler<S, E> {
 
     return `${this.eventName}: ${
       ts.transpileModule(String(this.callback), options).outputText
-    }`;
+    }`.replace(/;/g, '');
   }
 }

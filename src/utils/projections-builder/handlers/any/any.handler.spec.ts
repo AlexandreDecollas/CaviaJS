@@ -12,7 +12,7 @@ describe('AnyHandler', () => {
     handler = new AnyHandler(callback);
   });
 
-  it(`should show '$any'at the begining`, () => {
+  it(`should show '$any' at the beginning`, () => {
     expect(handler.toString().indexOf('$any:')).not.toEqual(-1);
   });
 

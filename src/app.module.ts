@@ -7,6 +7,7 @@ import { BookRoomModule } from './features/book-room/book-room.module';
 import { EventStoreConnectorModule } from './eventstore-connector/event-store-connector.module';
 import { CheckInModule } from './features/check-in/check-in.module';
 import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
+import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
 
 const features = [
   RegisterModule,
@@ -14,6 +15,7 @@ const features = [
   BookRoomModule,
   CleaningRoomModule,
   CheckInModule,
+  HotelProximityModule,
 ];
 
 @Module({

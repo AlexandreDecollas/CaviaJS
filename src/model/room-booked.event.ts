@@ -1,10 +1,16 @@
 import { EventstoreEvent } from './eventstoreEvent';
 
+export interface SlotDate {
+  year: number;
+  month: number;
+  day: number;
+}
+
 export interface RoomBookedEvent extends EventstoreEvent {
   data: {
     id: string;
     roomNumber: number;
-    fromDate: string;
-    toDate: string;
+    occupiedFromDate?: SlotDate;
+    occupiedUntilDate?: SlotDate;
   };
 }

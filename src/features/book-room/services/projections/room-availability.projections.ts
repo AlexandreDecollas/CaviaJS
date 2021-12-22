@@ -1,66 +1,123 @@
 import { ProjectionBuilder } from '../../../../utils/projections-builder/builder/projection-builder';
-import { FromStreamSelector } from '../../../../utils/projections-builder/selectors/from-stream.selector';
 import { WhenFilter } from '../../../../utils/projections-builder/filters/when.filter';
 import { InitHandler } from '../../../../utils/projections-builder/handlers/init/standard/init.handler';
 import { ProjectionState } from '../../../../utils/projections-builder/builder/projection.state';
 import { EventTypeHandler } from '../../../../utils/projections-builder/handlers/event-type/event-type.handler';
 import { RoomAddedEvent } from '../../../../model/room-added.event';
 import { OutputStateFilter } from '../../../../utils/projections-builder/filters/output-state.filter';
-import { isNil } from '@nestjs/common/utils/shared.utils';
-import * as Moment from 'moment';
-import { DateRange, extendMoment } from 'moment-range';
+import { Slot } from '../../model/slot';
+import { FromStreamsSelector } from '../../../../utils/projections-builder/selectors/from-streams.selector';
+import { RoomBookedEvent } from '../../../../model/room-booked.event';
 
-const moment = extendMoment(Moment);
+export interface Room {
+  roomNumber: number;
+  slots: Slot[];
+}
 
 export class BookedRoomsState extends ProjectionState {
-  rooms = new Map<number, string[]>();
+  rooms: { [key: number]: Room } = {};
 }
 
 export const roomAddedEventHandlerCallBack = (
   state: BookedRoomsState,
   event: RoomAddedEvent,
 ): void => {
-  let room: string[] = state.rooms.get(event.data.roomNumber);
-  if (isNil(room)) {
-    state.rooms.set(event.data.roomNumber, []);
-    room = state.rooms.get(event.data.roomNumber);
-  }
-  const newRange: DateRange = moment.rangeFromISOString(
-    `${event.data.occupiedFromDate}/${event.data.occupiedUntilDate}`,
-  );
+  if (state.rooms[event.data.roomNumber] === undefined)
+    state.rooms[event.data.roomNumber] = {
+      slots: [],
+      roomNumber: event.data.roomNumber,
+    };
+};
 
-  function mergeRanges(range: DateRange, i: number) {
-    range = range.add(newRange);
-    range.start = range.start.startOf('day');
-    range.end = range.end.endOf('day');
-    room[i] = `${range.start.toISOString()}/${range.end.toISOString()}`;
-    return range;
-  }
+export const roomBookedEventHandlerCallBack = (
+  state: BookedRoomsState,
+  event: RoomBookedEvent,
+): void => {
+  const hasIntersect = (slotA: Slot, slotB: Slot): boolean => {
+    const dateFromSlotA = dateDigitsToNumber(
+      slotA.dateFrom.day,
+      slotA.dateFrom.month,
+      slotA.dateFrom.year,
+      'start',
+    );
+    const dateToSlotA = dateDigitsToNumber(
+      slotA.dateTo.day,
+      slotA.dateTo.month,
+      slotA.dateTo.year,
+      'end',
+    );
+    const dateFromSlotB = dateDigitsToNumber(
+      slotB.dateFrom.day,
+      slotB.dateFrom.month,
+      slotB.dateFrom.year,
+      'start',
+    );
+    const dateToSlotB = dateDigitsToNumber(
+      slotB.dateTo.day,
+      slotB.dateTo.month,
+      slotB.dateTo.year,
+      'end',
+    );
+    return (
+      (dateFromSlotA - dateToSlotB <= 1 && dateToSlotA - dateFromSlotB > 0) ||
+      (dateFromSlotB - dateToSlotA <= 0 && dateToSlotB - dateFromSlotA > 1)
+    );
+  };
 
-  for (let i = 0; i < room.length; i++) {
-    let range: DateRange = moment.rangeFromISOString(room[i]);
-    const intersect: DateRange = newRange.intersect(range);
+  const dateDigitsToNumber = (
+    day: number,
+    month: number,
+    year: number,
+    position: 'start' | 'end',
+  ): number => {
+    return position === 'start'
+      ? new Date(year, month, day, 0, 0, 0, 0).valueOf()
+      : new Date(year, month, day, 23, 59, 59, 999).valueOf();
+  };
 
-    if (intersect !== null) {
-      range = mergeRanges(range, i);
+  const mergeSlots = (slotIndex: number, slot) => {
+    state.rooms[event.data.roomNumber].slots[slotIndex] = {
+      dateFrom: {
+        year: Math.min(slot.dateFrom.year, newSlot.dateFrom.year),
+        month: Math.min(slot.dateFrom.month, newSlot.dateFrom.month),
+        day: Math.min(slot.dateFrom.day, newSlot.dateFrom.day),
+      },
+      dateTo: {
+        year: Math.max(slot.dateTo.year, newSlot.dateTo.year),
+        month: Math.max(slot.dateTo.month, newSlot.dateTo.month),
+        day: Math.max(slot.dateTo.day, newSlot.dateTo.day),
+      },
+    } as Slot;
+  };
+
+  const room = state.rooms[event.data.roomNumber];
+  const newSlot: Slot = {
+    dateFrom: event.data.occupiedFromDate,
+    dateTo: event.data.occupiedUntilDate,
+  };
+
+  for (let slotIndex = 0; slotIndex < room.slots.length; slotIndex++) {
+    const slot = room.slots[slotIndex];
+    if (hasIntersect(newSlot, slot)) {
+      mergeSlots(slotIndex, slot);
       return;
     }
   }
-  const startDate: string = newRange.start.startOf('day').toISOString();
-  const endDate: string = newRange.end.endOf('day').toISOString();
-  room.push(`${startDate}/${endDate}`);
+  state.rooms[event.data.roomNumber].slots.push(newSlot);
 };
-
-export const getRoomAvailabilityProjection = (): string => {
+export const buildRoomAvailabilityProjection = (): string => {
   const projectionBuilder: ProjectionBuilder = new ProjectionBuilder();
   const bookedRoomsState: BookedRoomsState = new BookedRoomsState();
 
   return projectionBuilder
-    .addSelector(new FromStreamSelector('manager.room-added'))
+    .addSelector(
+      new FromStreamsSelector(['manager.room-added', 'guest.room-booked']),
+    )
     .addFilter(
       new WhenFilter([
         new InitHandler(bookedRoomsState),
         new EventTypeHandler('RoomAddedEvent', roomAddedEventHandlerCallBack),
+        new EventTypeHandler('RoomBookedEvent', roomBookedEventHandlerCallBack),
       ]),
     )
     .addFilter(new OutputStateFilter())

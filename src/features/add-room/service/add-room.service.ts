@@ -10,17 +10,11 @@ export class AddRoomService {
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
-  public registerClient(
-    roomNumber: number,
-    occupiedFromDate: string,
-    occupiedUntilDate: string,
-  ) {
+  public addRoom(roomNumber: number): void {
     const event: RoomAddedEvent = {
       type: 'RoomAddedEvent',
       data: {
         id: this.idGeneratorService.generateId(),
-        occupiedFromDate,
-        occupiedUntilDate,
         roomNumber,
       },
       metadata: { streamName: 'manager.room-added' },

@@ -19,8 +19,8 @@ export class RegisterService {
         clientName: registerLine.clientName,
         clientSurname: registerLine.clientSurname,
       },
-      metadata: { streamName: 'guest' },
+      metadata: { streamName: 'guest.registered' },
     };
-    this.eventEmitter2.emit('guest.registered', event);
+    this.eventEmitter2.emit(event.metadata.streamName, event);
   }
 }

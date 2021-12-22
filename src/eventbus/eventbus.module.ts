@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { EventbusService } from './eventbus.service';
-import { ConnectionInitializerModule } from '../eventstore-connector/connection-initializer/connection-initializer.module';
+import { EventStoreConnectorModule } from '../eventstore-connector/event-store-connector.module';
 
 @Module({
   providers: [EventbusService],
-  imports: [ConnectionInitializerModule],
+  imports: [EventStoreConnectorModule],
   exports: [EventbusService],
 })
 export class EventbusModule {}

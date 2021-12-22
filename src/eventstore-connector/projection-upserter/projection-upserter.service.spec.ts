@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectionUpserterService } from './projection-upserter.service';
-import { ConnectionInitializerService } from '../../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ConnectionInitializerService } from '../connection-initializer/connection-initializer.service';
 
 describe('ProjectionUpserterService', () => {
   let service: ProjectionUpserterService;

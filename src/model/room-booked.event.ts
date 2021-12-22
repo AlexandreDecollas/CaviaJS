@@ -10,7 +10,7 @@ export interface RoomBookedEvent extends EventstoreEvent {
   data: {
     id: string;
     roomNumber: number;
-    occupiedFromDate?: SlotDate;
-    occupiedUntilDate?: SlotDate;
+    occupiedFromDate: SlotDate;
+    occupiedUntilDate: SlotDate;
   };
 }

@@ -1,18 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CheckInService } from './check-in.service';
+import { CleaningService } from './cleaning.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
 
-describe('CheckInService', () => {
-  let service: CheckInService;
+describe('CleaningService', () => {
+  let service: CleaningService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CheckInService,
+        CleaningService,
         EventEmitter2,
-        IdGeneratorService,
+        {
+          provide: IdGeneratorService,
+          useValue: { generateId: jest.fn() },
+        },
         {
           provide: ConnectionInitializerService,
           useValue: {},
@@ -20,7 +23,7 @@ describe('CheckInService', () => {
       ],
     }).compile();
 
-    service = module.get<CheckInService>(CheckInService);
+    service = module.get<CleaningService>(CleaningService);
   });
 
   it('should be defined', () => {

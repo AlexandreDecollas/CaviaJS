@@ -17,19 +17,6 @@ describe('RoomAvailabilityProjection', () => {
     });
   });
 
-  it('should add a room when room is added', () => {
-    const event: RoomBookedEvent = {
-      metadata: { streamName: 'manager.room-added' },
-      type: 'RoomBookedEvent',
-      data: {
-        id: 'AZE',
-        roomNumber: 123,
-      },
-    };
-    roomBookedEventHandlerCallBack(state, event);
-    expect(state.rooms[123].slots[0]).toBeTruthy();
-  });
-
   it('should add the booked slots when intersection is null', () => {
     const event1: RoomBookedEvent = getEvent(1, 12, 2021, 10, 12, 2021);
     const event2: RoomBookedEvent = getEvent(12, 12, 2021, 13, 12, 2021);

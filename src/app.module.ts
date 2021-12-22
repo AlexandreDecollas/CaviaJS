@@ -6,8 +6,15 @@ import { AddRoomModule } from './features/add-room/add-room.module';
 import { BookRoomModule } from './features/book-room/book-room.module';
 import { EventStoreConnectorModule } from './eventstore-connector/event-store-connector.module';
 import { CheckInModule } from './features/check-in/check-in.module';
+import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
 
-const features = [RegisterModule, AddRoomModule, BookRoomModule, CheckInModule];
+const features = [
+  RegisterModule,
+  AddRoomModule,
+  BookRoomModule,
+  CleaningRoomModule,
+  CheckInModule,
+];
 
 @Module({
   imports: [

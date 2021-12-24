@@ -153,7 +153,7 @@ describe('ProjectionBuilder', () => {
     expect(projection.indexOf('TotoEvent')).not.toEqual(-1);
   });
 
-  it('should toto', () => {
+  it('should export the projection properly', () => {
     class State extends ProjectionState {
       prop1 = '';
       count = 0;

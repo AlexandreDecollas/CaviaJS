@@ -15,6 +15,8 @@ fromStream("account-1")
     },
   })
   .transformBy((state) => {
-    return { Total: state.count };
+    return {
+      Total: state.count,
+    };
   })
   .outputState();

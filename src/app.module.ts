@@ -8,6 +8,7 @@ import { EventStoreConnectorModule } from './eventstore-connector/event-store-co
 import { CheckInModule } from './features/check-in/check-in.module';
 import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
 import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
+import { CheckOutModule } from './features/check-out/check-out.module';
 
 const features = [
   RegisterModule,
@@ -16,6 +17,7 @@ const features = [
   CleaningRoomModule,
   CheckInModule,
   HotelProximityModule,
+  CheckOutModule,
 ];
 
 @Module({

@@ -1,13 +1,15 @@
-import { ProjectionBuilder } from '../../../../utils/projections-builder/builder/projection-builder';
-import { WhenFilter } from '../../../../utils/projections-builder/filters/when.filter';
-import { InitHandler } from '../../../../utils/projections-builder/handlers/init/standard/init.handler';
-import { ProjectionState } from '../../../../utils/projections-builder/builder/projection.state';
-import { EventTypeHandler } from '../../../../utils/projections-builder/handlers/event-type/event-type.handler';
 import { RoomAddedEvent } from '../../../../model/room-added.event';
-import { OutputStateFilter } from '../../../../utils/projections-builder/filters/output-state.filter';
 import { Slot } from '../../model/slot';
-import { FromStreamsSelector } from '../../../../utils/projections-builder/selectors/from-streams.selector';
 import { RoomBookedEvent } from '../../../../model/room-booked.event';
+import {
+  EventTypeHandler,
+  FromStreamsSelector,
+  InitHandler,
+  OutputStateFilter,
+  ProjectionBuilder,
+  ProjectionState,
+  WhenFilter,
+} from 'eventstore-ts-projection-builder';
 
 export interface Room {
   roomNumber: number;

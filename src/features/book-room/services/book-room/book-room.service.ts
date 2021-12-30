@@ -22,7 +22,7 @@ export class BookRoomService {
     const client = this.connectionInitializerService.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
-      'freeSlotsState',
+      'roomAvailability',
     );
 
     return projectionState.rooms[roomNumber].slots;

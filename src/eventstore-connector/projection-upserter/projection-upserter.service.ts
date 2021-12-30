@@ -11,13 +11,16 @@ export class ProjectionUpserterService {
   public async upsertProjection(
     name: string,
     projection: string,
-  ): Promise<any> {
+  ): Promise<void> {
     const client: Client =
       this.connectionInitializerService.getConnectedClient();
+    const trackEmittedStreams = projection.indexOf('emit(') !== -1;
     try {
-      await client.updateProjection(name, projection);
+      await client.updateProjection(name, projection, { trackEmittedStreams });
     } catch (e) {
-      await client.createContinuousProjection(name, projection);
+      await client.createContinuousProjection(name, projection, {
+        trackEmittedStreams,
+      });
     }
   }
 }

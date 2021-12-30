@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CheckedInEvent } from '../../../model/checked-in.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
@@ -19,10 +19,14 @@ export class CheckInService {
         .getConnectedClient()
         .getProjectionState('registered-guests');
 
+    let isClientRegistered = false;
     for (const guest of projectionState.guests) {
       if (guest === clientName) {
-        throw Error('Client already exists');
+        isClientRegistered = true;
       }
+    }
+    if (!isClientRegistered) {
+      throw new HttpException('Unregistered client tries to check-in', 401);
     }
 
     const event: CheckedInEvent = {

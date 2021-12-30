@@ -10,7 +10,7 @@ export class PayementRequestedService {
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
-  public requestPayement(clientName: string) {
+  public async requestPayement(clientName: string) {
     const event: PayementRequestedEvent = {
       data: {
         id: this.idGeneratorService.generateId(),

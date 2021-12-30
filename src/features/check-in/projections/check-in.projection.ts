@@ -1,10 +1,12 @@
+import {
+  WhenFilter,
+  FromStreamsSelector,
+  InitHandler,
+  ProjectionBuilder,
+  EventTypeHandler,
+  OutputStateFilter,
+} from 'eventstore-ts-projection-builder';
 import { RegisteredEvent } from '../../../model/registered.event';
-import { ProjectionBuilder } from '../../../utils/projections-builder/builder/projection-builder';
-import { FromStreamsSelector } from '../../../utils/projections-builder/selectors/from-streams.selector';
-import { WhenFilter } from '../../../utils/projections-builder/filters/when.filter';
-import { InitHandler } from '../../../utils/projections-builder/handlers/init/standard/init.handler';
-import { EventTypeHandler } from '../../../utils/projections-builder/handlers/event-type/event-type.handler';
-import { OutputStateFilter } from '../../../utils/projections-builder/filters/output-state.filter';
 
 export class CheckInState {
   guests: string[] = [];

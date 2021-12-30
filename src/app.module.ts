@@ -10,6 +10,7 @@ import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.modul
 import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
 import { CheckOutModule } from './features/check-out/check-out.module';
 import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
+import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
 
 const features = [
   RegisterModule,
@@ -20,6 +21,7 @@ const features = [
   HotelProximityModule,
   CheckOutModule,
   PayementRequestedModule,
+  PayementProcessorModule,
 ];
 
 @Module({

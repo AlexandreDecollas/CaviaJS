@@ -5,15 +5,17 @@ import { CheckOutService } from '../services/check-out.service';
 export class CheckOutController {
   constructor(private readonly checkOutService: CheckOutService) {}
 
-  @Get('check-out/:clientName')
+  @Get('/:clientName')
   public async checkOut(
     @Param('clientName') clientName: string,
   ): Promise<void> {
     return this.checkOutService.checkout(clientName);
   }
 
-  @Get('check-client-roster')
-  public async checkGuestRoster(): Promise<void> {
-    return this.checkOutService.checkGuestRoster();
+  @Get('check-client-in-roster/:clientName')
+  public async checkGuestRoster(
+    @Param('clientName') clientName: string,
+  ): Promise<boolean> {
+    return this.checkOutService.checkClientInRoster(clientName);
   }
 }

@@ -7,10 +7,11 @@ export class ESDBConnectionService {
   private client: Client;
 
   public async connectToEventstore(): Promise<Client> {
-    console.log('Connecting to evenstore...');
-    this.client = EventStoreDBClient.connectionString(
-      `esdb://127.0.0.1:2113?tls=false`,
+    const connectionString: string = process.env.CONNECTION_STRING;
+    console.log(
+      `Connecting to evenstore (connectionString : ${connectionString})...`,
     );
+    this.client = EventStoreDBClient.connectionString(connectionString);
     await this.client.getStreamMetadata('$all');
     console.log('Connected to eventstore');
     return this.client;

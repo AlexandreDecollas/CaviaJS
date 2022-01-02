@@ -13,7 +13,7 @@ export class ProjectionUpserterService implements OnModuleInit {
   public async onModuleInit(): Promise<void> {
     const projections: ProvidedProjections = fetchProjections();
     for (const projectionName of Object.keys(projections)) {
-      console.log('Upserting projection : ', projectionName);
+      console.log('Upserting projection: ', projectionName);
       await this.upsertProjection(
         projectionName,
         projections[projectionName].content,

@@ -1,5 +1,4 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PersistentSubscriptionService } from '../../../../eventstore-connector/persistent-subscription-upserter/persistent-subscription.service';
 import {
   PARK,
   PersistentSubscription,
@@ -9,6 +8,11 @@ import { PayementRequestedEvent } from '../../../../model/payement-requested.eve
 import { PayementSuccededEvent } from '../../../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PersistentSubscriptionService } from '../../../../eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
+import {
+  fetchConnectedPersistentSubscriptions,
+  ProvidedPersistentSubscriptions,
+} from '../../../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 
 @Injectable()
 export class PersistentSubscriptionInitializerService implements OnModuleInit {
@@ -19,11 +23,10 @@ export class PersistentSubscriptionInitializerService implements OnModuleInit {
   ) {}
 
   public async onModuleInit(): Promise<void> {
+    const persistentSubscriptions: ProvidedPersistentSubscriptions =
+      fetchConnectedPersistentSubscriptions();
     const paymentProcessorPersub: PersistentSubscription =
-      await this.persistentSubscriptionService.connectToPersistentSubscription({
-        streamName: 'processor.payements-to-process',
-        groupName: 'payement-processor',
-      });
+      persistentSubscriptions['paymentProcessor'];
     paymentProcessorPersub.on('data', async (payloadEvent: ResolvedEvent) => {
       try {
         this.processToPayment(payloadEvent.event as any);

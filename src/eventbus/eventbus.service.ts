@@ -18,7 +18,7 @@ export class EventbusService {
       data: event.data,
       metadata: event.metadata,
     });
-    console.log('Event hooked : ', formattedEvent);
+    console.log('Event hooked: ', formattedEvent);
 
     await client.appendToStream(event.metadata.streamName, formattedEvent);
   }

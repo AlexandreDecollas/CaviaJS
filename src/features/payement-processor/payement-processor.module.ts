@@ -11,6 +11,9 @@ providePersistentSubscription({
   name: 'paymentProcessor',
   streamName: 'processor.payements-to-process',
   groupName: 'payement-processor',
+  settings: {
+    minCheckpointCount: 1,
+  },
 });
 
 provideProjection({

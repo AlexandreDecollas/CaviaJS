@@ -4,5 +4,5 @@ export interface PersistentSubscriptionConfiguration {
   name: string;
   streamName: string;
   groupName: string;
-  settings?: PersistentSubscriptionSettings;
+  settings?: Partial<PersistentSubscriptionSettings>;
 }

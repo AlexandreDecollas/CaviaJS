@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GuestLeftEvent } from '../../../model/guest-left.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { GuestEnteredEvent } from '../../../model/guest-entered.event';
+import { Eventbus } from '../../../eventbus/eventbus.service';
 
 @Injectable()
 export class HotelProximityService {
   constructor(
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: Eventbus,
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 

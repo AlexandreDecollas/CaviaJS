@@ -5,6 +5,7 @@ import { PersistentSubscriptionInitializerService } from './persistent-subscript
 import { provideProjection } from '../../eventstore-connector/projections/provider/projection.provider';
 import { buildPayementToProcessProjection } from './projections/payement-to-process.projection';
 import { providePersistentSubscription } from '../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
+import { EventbusModule } from '../../eventbus/eventbus.module';
 
 providePersistentSubscription({
   name: 'paymentProcessor',
@@ -18,7 +19,7 @@ provideProjection({
 });
 
 @Module({
-  imports: [EventStoreConnectorModule],
+  imports: [EventStoreConnectorModule, EventbusModule],
   providers: [IdGeneratorService, PersistentSubscriptionInitializerService],
 })
 export class PayementProcessorModule {}

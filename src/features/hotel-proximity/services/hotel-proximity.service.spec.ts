@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HotelProximityService } from './hotel-proximity.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
+import { Eventbus } from '../../../eventbus/eventbus.service';
 
 describe('HotelProximityService', () => {
   let service: HotelProximityService;
@@ -11,7 +11,7 @@ describe('HotelProximityService', () => {
       providers: [
         HotelProximityService,
         {
-          provide: EventEmitter2,
+          provide: Eventbus,
           useValue: {},
         },
         {

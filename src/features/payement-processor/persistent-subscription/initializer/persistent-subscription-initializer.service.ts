@@ -7,19 +7,19 @@ import {
 import { PayementRequestedEvent } from '../../../../model/payement-requested.event';
 import { PayementSuccededEvent } from '../../../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PersistentSubscriptionService } from '../../../../eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
 import {
   fetchConnectedPersistentSubscriptions,
   ProvidedPersistentSubscriptions,
 } from '../../../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
+import { Eventbus } from '../../../../eventbus/eventbus.service';
 
 @Injectable()
 export class PersistentSubscriptionInitializerService implements OnModuleInit {
   constructor(
     private readonly persistentSubscriptionService: PersistentSubscriptionService,
     private readonly idGeneratorService: IdGeneratorService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: Eventbus,
   ) {}
 
   public async onModuleInit(): Promise<void> {

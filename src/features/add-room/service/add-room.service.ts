@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoomAddedEvent } from '../../../model/room-added.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
+import { Eventbus } from '../../../eventbus/eventbus.service';
 
 @Injectable()
 export class AddRoomService {
   constructor(
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: Eventbus,
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 

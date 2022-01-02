@@ -7,7 +7,13 @@ describe('EventbusService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [Eventbus, ESDBConnectionService],
+      providers: [
+        {
+          provide: Eventbus,
+          useValue: {},
+        },
+        ESDBConnectionService,
+      ],
     }).compile();
 
     service = module.get<Eventbus>(Eventbus);

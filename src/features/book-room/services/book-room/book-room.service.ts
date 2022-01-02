@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoomBookedEvent } from '../../../../model/room-booked.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
 import { BookedRoomsState } from '../projections/room-availability.projections';
@@ -8,6 +7,7 @@ import { Slot } from '../../model/slot';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Client } from '@eventstore/db-client/dist/Client';
+import { Eventbus } from '../../../../eventbus/eventbus.service';
 
 const moment = extendMoment(Moment);
 
@@ -16,7 +16,7 @@ export class BookRoomService {
   constructor(
     private readonly connection: ESDBConnectionService,
     private readonly idGeneratorService: IdGeneratorService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: Eventbus,
   ) {}
 
   public async checkRoomAvailability(roomNumber: number): Promise<Slot[]> {

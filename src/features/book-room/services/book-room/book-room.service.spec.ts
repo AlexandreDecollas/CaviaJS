@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BookRoomService } from './book-room.service';
 import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Eventbus } from '../../../../eventbus/eventbus.service';
 
 describe('BookRoomService', () => {
   let service: BookRoomService;
@@ -13,7 +13,10 @@ describe('BookRoomService', () => {
         BookRoomService,
         ESDBConnectionService,
         IdGeneratorService,
-        EventEmitter2,
+        {
+          provide: Eventbus,
+          useValue: {},
+        },
       ],
     }).compile();
 

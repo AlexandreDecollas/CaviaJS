@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CheckOutService } from './check-out.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
+import { Eventbus } from '../../../eventbus/eventbus.service';
 
 describe('CheckOutService', () => {
   let service: CheckOutService;
@@ -12,7 +12,7 @@ describe('CheckOutService', () => {
       providers: [
         CheckOutService,
         {
-          provide: EventEmitter2,
+          provide: Eventbus,
           useValue: {},
         },
         {

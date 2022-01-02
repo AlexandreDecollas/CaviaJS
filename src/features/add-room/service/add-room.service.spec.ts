@@ -1,14 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AddRoomService } from './add-room.service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
+import { Eventbus } from '../../../eventbus/eventbus.service';
 
 describe('AddRoomService', () => {
   let service: AddRoomService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AddRoomService, EventEmitter2, IdGeneratorService],
+      providers: [
+        AddRoomService,
+        {
+          provide: Eventbus,
+          useValue: {},
+        },
+        IdGeneratorService,
+      ],
     }).compile();
 
     service = module.get<AddRoomService>(AddRoomService);

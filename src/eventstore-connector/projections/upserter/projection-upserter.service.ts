@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConnectionInitializerService } from '../../connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../connection-initializer/esdb-connection.service';
 import { Client } from '@eventstore/db-client/dist/Client';
 import {
   fetchProjections,
@@ -8,9 +8,7 @@ import {
 
 @Injectable()
 export class ProjectionUpserterService implements OnModuleInit {
-  constructor(
-    private readonly connectionInitializerService: ConnectionInitializerService,
-  ) {}
+  constructor(private readonly connection: ESDBConnectionService) {}
 
   public async onModuleInit(): Promise<void> {
     const projections: ProvidedProjections = fetchProjections();
@@ -27,8 +25,7 @@ export class ProjectionUpserterService implements OnModuleInit {
     name: string,
     projection: string,
   ): Promise<void> {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
     const trackEmittedStreams = projection.indexOf('emit(') !== -1;
     try {
       await client.updateProjection(name, projection, { trackEmittedStreams });

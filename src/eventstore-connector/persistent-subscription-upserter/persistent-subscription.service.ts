@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConnectionInitializerService } from '../connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../connection-initializer/esdb-connection.service';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { PersistentSubscriptionConfiguration } from './persistent-subscription-configuration';
 import {
@@ -9,15 +9,12 @@ import {
 
 @Injectable()
 export class PersistentSubscriptionService {
-  constructor(
-    private readonly connectionInitializerService: ConnectionInitializerService,
-  ) {}
+  constructor(private readonly connection: ESDBConnectionService) {}
 
   public async connectToPersistentSubscription(
     persubConf: PersistentSubscriptionConfiguration,
   ): Promise<PersistentSubscription> {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
     await PersistentSubscriptionService.upsertPersistentSubscription(
       client,
       persubConf,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { CheckInState } from '../../check-in/projections/check-in.projection';
 import { RoomReadiedEvent } from '../../../model/room-readied.event';
 import { Client } from '@eventstore/db-client/dist/Client';
@@ -11,12 +11,11 @@ export class CleaningService {
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly idGeneratorService: IdGeneratorService,
-    private readonly connectionInitializerService: ConnectionInitializerService,
+    private readonly connection: ESDBConnectionService,
   ) {}
 
   public async getSchedule(): Promise<CheckInState> {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
     return client.getProjectionState('cleaning-schedule');
   }
 

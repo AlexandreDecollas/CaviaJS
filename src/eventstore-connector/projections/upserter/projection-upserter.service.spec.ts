@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectionUpserterService } from './projection-upserter.service';
-import { ConnectionInitializerService } from '../../connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../connection-initializer/esdb-connection.service';
 
 describe('ProjectionUpserterService', () => {
   let service: ProjectionUpserterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProjectionUpserterService, ConnectionInitializerService],
+      providers: [ProjectionUpserterService, ESDBConnectionService],
     }).compile();
 
     service = module.get<ProjectionUpserterService>(ProjectionUpserterService);

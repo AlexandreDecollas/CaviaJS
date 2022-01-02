@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CheckedInEvent } from '../../../model/checked-in.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { CheckInState } from '../projections/check-in.projection';
 import { Client } from '@eventstore/db-client/dist/Client';
 
@@ -11,12 +11,11 @@ export class CheckInService {
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly idGeneratorService: IdGeneratorService,
-    private readonly connectionInitializerService: ConnectionInitializerService,
+    private readonly connection: ESDBConnectionService,
   ) {}
 
   public async checkIn(clientName: string) {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
     const projectionState: CheckInState =
       await client.getProjectionState<CheckInState>('registered-guests');
 

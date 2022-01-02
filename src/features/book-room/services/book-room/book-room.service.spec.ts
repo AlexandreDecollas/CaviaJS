@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookRoomService } from './book-room.service';
-import { ConnectionInitializerService } from '../../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -11,7 +11,7 @@ describe('BookRoomService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BookRoomService,
-        ConnectionInitializerService,
+        ESDBConnectionService,
         IdGeneratorService,
         EventEmitter2,
       ],

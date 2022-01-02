@@ -3,7 +3,7 @@ import { EventStoreDBClient } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
 
 @Injectable()
-export class ConnectionInitializerService {
+export class ESDBConnectionService {
   private client: Client;
 
   public async connectToEventstore(): Promise<Client> {

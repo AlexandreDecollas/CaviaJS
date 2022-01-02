@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConnectionInitializerService } from '../../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RoomBookedEvent } from '../../../../model/room-booked.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
@@ -14,14 +14,13 @@ const moment = extendMoment(Moment);
 @Injectable()
 export class BookRoomService {
   constructor(
-    private readonly connectionInitializerService: ConnectionInitializerService,
+    private readonly connection: ESDBConnectionService,
     private readonly idGeneratorService: IdGeneratorService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
   public async checkRoomAvailability(roomNumber: number): Promise<Slot[]> {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
       'roomAvailability',
@@ -31,8 +30,7 @@ export class BookRoomService {
   }
 
   public async bookRoom(roomNumber: number, from: string, to: string) {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
       'freeSlotsState',

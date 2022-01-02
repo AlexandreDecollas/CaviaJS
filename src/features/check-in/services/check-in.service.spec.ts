@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CheckInService } from './check-in.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
 
 describe('CheckInService', () => {
   let service: CheckInService;
@@ -14,7 +14,7 @@ describe('CheckInService', () => {
         EventEmitter2,
         IdGeneratorService,
         {
-          provide: ConnectionInitializerService,
+          provide: ESDBConnectionService,
           useValue: {},
         },
       ],

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CleaningService } from './cleaning.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
 
 describe('CleaningService', () => {
   let service: CleaningService;
@@ -17,7 +17,7 @@ describe('CleaningService', () => {
           useValue: { generateId: jest.fn() },
         },
         {
-          provide: ConnectionInitializerService,
+          provide: ESDBConnectionService,
           useValue: {},
         },
       ],

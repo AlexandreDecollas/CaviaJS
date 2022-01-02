@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
+import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
 import { CheckedOutEvent } from '../../../model/checked-out.event';
 import { GuestRosterState } from '../projections/guest-roster.projection';
 import { Client } from '@eventstore/db-client/dist/Client';
@@ -11,7 +11,7 @@ export class CheckOutService {
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly idGeneratorService: IdGeneratorService,
-    private readonly connectionInitializerService: ConnectionInitializerService,
+    private readonly connection: ESDBConnectionService,
   ) {}
 
   public checkout(clientName: string) {
@@ -25,8 +25,7 @@ export class CheckOutService {
   }
 
   public async checkClientInRoster(clientName: string): Promise<boolean> {
-    const client: Client =
-      await this.connectionInitializerService.getConnectedClient();
+    const client: Client = await this.connection.getConnectedClient();
 
     const state: GuestRosterState = await client.getProjectionState(
       'guestRoster',

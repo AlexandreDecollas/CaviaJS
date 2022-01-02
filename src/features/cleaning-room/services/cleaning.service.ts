@@ -4,6 +4,7 @@ import { IdGeneratorService } from '../../../utils/id-generator/id-generator.ser
 import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
 import { CheckInState } from '../../check-in/projections/check-in.projection';
 import { RoomReadiedEvent } from '../../../model/room-readied.event';
+import { Client } from '@eventstore/db-client/dist/Client';
 
 @Injectable()
 export class CleaningService {
@@ -14,9 +15,9 @@ export class CleaningService {
   ) {}
 
   public async getSchedule(): Promise<CheckInState> {
-    return await this.connectionInitializerService
-      .getConnectedClient()
-      .getProjectionState('cleaning-schedule');
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
+    return client.getProjectionState('cleaning-schedule');
   }
 
   public readyRoom(roomNumber: number) {

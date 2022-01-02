@@ -3,6 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { EventstoreEvent } from '../model/eventstoreEvent';
 import { ConnectionInitializerService } from '../eventstore-connector/connection-initializer/connection-initializer.service';
 import { jsonEvent } from '@eventstore/db-client';
+import { Client } from '@eventstore/db-client/dist/Client';
 
 @Injectable()
 export class EventbusService {
@@ -12,7 +13,8 @@ export class EventbusService {
 
   @OnEvent('**')
   public async hookEvent(event: EventstoreEvent) {
-    const client = this.connectionInitializerService.getConnectedClient();
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
 
     const formattedEvent = jsonEvent({
       type: event.type,

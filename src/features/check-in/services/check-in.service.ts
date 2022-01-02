@@ -4,6 +4,7 @@ import { CheckedInEvent } from '../../../model/checked-in.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
 import { CheckInState } from '../projections/check-in.projection';
+import { Client } from '@eventstore/db-client/dist/Client';
 
 @Injectable()
 export class CheckInService {
@@ -14,10 +15,10 @@ export class CheckInService {
   ) {}
 
   public async checkIn(clientName: string) {
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
     const projectionState: CheckInState =
-      await this.connectionInitializerService
-        .getConnectedClient()
-        .getProjectionState('registered-guests');
+      await client.getProjectionState<CheckInState>('registered-guests');
 
     let isClientRegistered = false;
     for (const guest of projectionState.guests) {

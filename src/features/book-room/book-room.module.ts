@@ -3,15 +3,17 @@ import { BookRoomController } from './controller/book-room.controller';
 import { BookRoomService } from './services/book-room/book-room.service';
 import { EventStoreConnectorModule } from '../../eventstore-connector/event-store-connector.module';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
-import { ProjectionInitializerService } from './services/projections/initializer/projection-initializer.service';
+import { provideProjection } from '../../eventstore-connector/projections/provider/projection.provider';
+import { buildRoomAvailabilityProjection } from './services/projections/room-availability.projections';
+
+provideProjection({
+  name: 'roomAvailability',
+  content: buildRoomAvailabilityProjection(),
+});
 
 @Module({
   controllers: [BookRoomController],
   imports: [EventStoreConnectorModule],
-  providers: [
-    BookRoomService,
-    IdGeneratorService,
-    ProjectionInitializerService,
-  ],
+  providers: [BookRoomService, IdGeneratorService],
 })
 export class BookRoomModule {}

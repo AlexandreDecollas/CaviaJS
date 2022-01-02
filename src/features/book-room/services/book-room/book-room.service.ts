@@ -7,6 +7,7 @@ import { BookedRoomsState } from '../projections/room-availability.projections';
 import { Slot } from '../../model/slot';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
+import { Client } from '@eventstore/db-client/dist/Client';
 
 const moment = extendMoment(Moment);
 
@@ -19,7 +20,8 @@ export class BookRoomService {
   ) {}
 
   public async checkRoomAvailability(roomNumber: number): Promise<Slot[]> {
-    const client = this.connectionInitializerService.getConnectedClient();
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
       'roomAvailability',
@@ -29,7 +31,8 @@ export class BookRoomService {
   }
 
   public async bookRoom(roomNumber: number, from: string, to: string) {
-    const client = this.connectionInitializerService.getConnectedClient();
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
       'freeSlotsState',

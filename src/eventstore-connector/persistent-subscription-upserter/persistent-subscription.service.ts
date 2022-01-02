@@ -17,7 +17,7 @@ export class PersistentSubscriptionService {
     persubConf: PersistentSubscriptionConfiguration,
   ): Promise<PersistentSubscription> {
     const client: Client =
-      this.connectionInitializerService.getConnectedClient();
+      await this.connectionInitializerService.getConnectedClient();
     await PersistentSubscriptionService.upsertPersistentSubscription(
       client,
       persubConf,

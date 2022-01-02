@@ -4,6 +4,7 @@ import { IdGeneratorService } from '../../../utils/id-generator/id-generator.ser
 import { ConnectionInitializerService } from '../../../eventstore-connector/connection-initializer/connection-initializer.service';
 import { CheckedOutEvent } from '../../../model/checked-out.event';
 import { GuestRosterState } from '../projections/guest-roster.projection';
+import { Client } from '@eventstore/db-client/dist/Client';
 
 @Injectable()
 export class CheckOutService {
@@ -24,9 +25,12 @@ export class CheckOutService {
   }
 
   public async checkClientInRoster(clientName: string): Promise<boolean> {
-    const state: GuestRosterState = await this.connectionInitializerService
-      .getConnectedClient()
-      .getProjectionState('guestRoster');
+    const client: Client =
+      await this.connectionInitializerService.getConnectedClient();
+
+    const state: GuestRosterState = await client.getProjectionState(
+      'guestRoster',
+    );
     return state.roster[clientName] !== undefined;
   }
 }

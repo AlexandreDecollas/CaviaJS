@@ -5,7 +5,6 @@ import { IdGeneratorService } from '../../utils/id-generator/id-generator.servic
 import { EventStoreConnectorModule } from '../../eventstore-connector/event-store-connector.module';
 import { provideProjection } from '../../eventstore-connector/projections/provider/projection.provider';
 import { buildGuestRosterProjection } from './projections/guest-roster.projection';
-import { EventbusModule } from '../../eventbus/eventbus.module';
 
 provideProjection({
   name: 'guestRoster',
@@ -14,7 +13,7 @@ provideProjection({
 
 @Module({
   controllers: [CheckOutController],
-  imports: [EventStoreConnectorModule, EventbusModule],
+  imports: [EventStoreConnectorModule],
   providers: [CheckOutService, IdGeneratorService],
 })
 export class CheckOutModule {}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RegisterModule } from './features/register/register.module';
-import { EventbusModule } from './eventbus/eventbus.module';
+
 import { AddRoomModule } from './features/add-room/add-room.module';
 import { BookRoomModule } from './features/book-room/book-room.module';
 import { EventStoreConnectorModule } from './eventstore-connector/event-store-connector.module';
@@ -11,6 +11,7 @@ import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity
 import { CheckOutModule } from './features/check-out/check-out.module';
 import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
 import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
+import { EventbusModule } from './eventbus/eventbus.module';
 
 const features = [
   RegisterModule,
@@ -29,7 +30,7 @@ const features = [
     EventEmitterModule.forRoot({
       wildcard: true,
     }),
-    EventbusModule,
+    EventbusModule.getDefault(),
     EventStoreConnectorModule,
 
     ...features,

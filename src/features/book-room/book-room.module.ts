@@ -5,7 +5,6 @@ import { EventStoreConnectorModule } from '../../eventstore-connector/event-stor
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { provideProjection } from '../../eventstore-connector/projections/provider/projection.provider';
 import { buildRoomAvailabilityProjection } from './services/projections/room-availability.projections';
-import { EventbusModule } from '../../eventbus/eventbus.module';
 
 provideProjection({
   name: 'roomAvailability',
@@ -14,7 +13,7 @@ provideProjection({
 
 @Module({
   controllers: [BookRoomController],
-  imports: [EventStoreConnectorModule, EventbusModule],
+  imports: [EventStoreConnectorModule],
   providers: [BookRoomService, IdGeneratorService],
 })
 export class BookRoomModule {}

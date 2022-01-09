@@ -17,7 +17,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: 'check-out',
+  entryPoint: { restPath: 'check-out' },
 })
 export class CheckOutCommand {
   constructor(

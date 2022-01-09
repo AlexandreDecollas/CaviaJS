@@ -14,7 +14,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: 'cleaning',
+  entryPoint: { restPath: 'cleaning' },
 })
 export class CleaningRoomCommand {
   constructor(

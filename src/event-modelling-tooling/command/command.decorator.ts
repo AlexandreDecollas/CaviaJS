@@ -4,14 +4,14 @@ import { PERSUB_HOOK_METADATA } from '../constants';
 
 export function Command(metadata: CommandMetadata): ClassDecorator {
   return (target: object) => {
-    if (metadata.onPersubEvent) {
+    if (metadata.entryPoint.persubName) {
       Reflect.defineMetadata(
         PERSUB_HOOK_METADATA,
-        metadata.onPersubEvent.name,
+        metadata.entryPoint.persubName,
         target,
       );
     }
-    Controller({ path: metadata.entryPoint })(target as any);
+    Controller({ path: metadata.entryPoint.restPath })(target as any);
 
     Module({
       providers: metadata.providers,

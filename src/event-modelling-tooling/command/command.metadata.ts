@@ -1,10 +1,10 @@
 import { ModuleMetadata } from '@nestjs/common';
 
-export interface SubscribedPersub {
-  name: string;
+export interface CommandEntryPoint {
+  restPath?: string;
+  persubName?: string;
 }
 
 export interface CommandMetadata extends ModuleMetadata {
-  entryPoint?: string;
-  onPersubEvent?: SubscribedPersub;
+  entryPoint?: CommandEntryPoint;
 }

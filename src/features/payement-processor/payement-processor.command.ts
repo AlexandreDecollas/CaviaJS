@@ -22,7 +22,7 @@ provideProjection({
 });
 
 @Command({
-  onPersubEvent: { name: 'paymentProcessor' },
+  entryPoint: { persubName: 'paymentProcessor' },
 })
 export class PayementProcessorCommand {
   constructor(

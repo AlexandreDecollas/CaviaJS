@@ -6,7 +6,7 @@ import { IdGeneratorService } from '../../utils/id-generator/id-generator.servic
 import { GuestEnteredEvent } from '../../model/guest-entered.event';
 
 @Command({
-  entryPoint: 'hotel-proximity',
+  entryPoint: { restPath: 'hotel-proximity' },
 })
 export class HotelProximityCommand {
   constructor(

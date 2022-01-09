@@ -11,7 +11,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: 'book-room',
+  entryPoint: { restPath: 'book-room' },
   providers: [BookRoomService],
 })
 export class BookRoomCommand {

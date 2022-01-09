@@ -6,7 +6,7 @@ import { IdGeneratorService } from '../../utils/id-generator/id-generator.servic
 import { RegisteredEvent } from '../../model/registered.event';
 
 @Command({
-  entryPoint: 'register',
+  entryPoint: { restPath: 'register' },
 })
 export class RegisterCommand {
   constructor(

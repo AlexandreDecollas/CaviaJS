@@ -10,7 +10,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: 'check-in',
+  entryPoint: { restPath: 'check-in' },
   providers: [CheckInService],
 })
 export class CheckInCommand {

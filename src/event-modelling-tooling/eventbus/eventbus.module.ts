@@ -6,7 +6,7 @@ import { EventStoreConnectorModule } from '../eventstore-connector/event-store-c
   imports: [EventStoreConnectorModule],
 })
 export class EventbusModule {
-  public static getDefault(): DynamicModule {
+  public static forRoot(): DynamicModule {
     return {
       module: EventbusModule,
       global: true,

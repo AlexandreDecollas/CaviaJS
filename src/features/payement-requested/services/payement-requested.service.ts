@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { PayementRequestedEvent } from '../../../model/payement-requested.event';
-import { Eventbus } from '../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
 
 @Injectable()
 export class PayementRequestedService {

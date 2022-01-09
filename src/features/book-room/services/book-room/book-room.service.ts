@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
+import { ESDBConnectionService } from '../../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { RoomBookedEvent } from '../../../../model/room-booked.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
 import { BookedRoomsState } from '../projections/room-availability.projections';
@@ -7,7 +7,7 @@ import { Slot } from '../../model/slot';
 import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { Eventbus } from '../../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
 
 const moment = extendMoment(Moment);
 

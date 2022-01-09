@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PersistentSubscriptionInitializerService } from './persistent-subscription-initializer.service';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { PersistentSubscriptionService } from '../../../../eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
-import { Eventbus } from '../../../../eventbus/eventbus.service';
+import { PersistentSubscriptionService } from '../../../../event-modelling-tooling/eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
+import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
 
 describe('PersistentSubscriptionInitializerService', () => {
   let service: PersistentSubscriptionInitializerService;

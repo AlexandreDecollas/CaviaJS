@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { EventstoreEvent } from '../model/eventstoreEvent';
+import { EventstoreEvent } from '../../model/eventstoreEvent';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
 import { jsonEvent } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';

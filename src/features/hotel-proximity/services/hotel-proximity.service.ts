@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GuestLeftEvent } from '../../../model/guest-left.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
 import { GuestEnteredEvent } from '../../../model/guest-entered.event';
-import { Eventbus } from '../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
 
 @Injectable()
 export class HotelProximityService {

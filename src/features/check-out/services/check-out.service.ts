@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ESDBConnectionService } from '../../../eventstore-connector/connection-initializer/esdb-connection.service';
+import { ESDBConnectionService } from '../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { CheckedOutEvent } from '../../../model/checked-out.event';
 import { GuestRosterState } from '../projections/guest-roster.projection';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { Eventbus } from '../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
 
 @Injectable()
 export class CheckOutService {

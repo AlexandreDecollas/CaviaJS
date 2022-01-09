@@ -7,12 +7,12 @@ import {
 import { PayementRequestedEvent } from '../../../../model/payement-requested.event';
 import { PayementSuccededEvent } from '../../../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { PersistentSubscriptionService } from '../../../../eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
+import { PersistentSubscriptionService } from '../../../../event-modelling-tooling/eventstore-connector/persistent-subscription/upserter/persistent-subscription.service';
 import {
   fetchConnectedPersistentSubscriptions,
   ProvidedPersistentSubscriptions,
-} from '../../../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { Eventbus } from '../../../../eventbus/eventbus.service';
+} from '../../../../event-modelling-tooling/eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
+import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
 
 @Injectable()
 export class PersistentSubscriptionInitializerService implements OnModuleInit {

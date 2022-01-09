@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HotelProximityService } from './hotel-proximity.service';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
 
 describe('HotelProximityService', () => {
   let service: HotelProximityService;

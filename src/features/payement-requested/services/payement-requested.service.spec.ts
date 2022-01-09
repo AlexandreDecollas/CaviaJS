@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PayementRequestedService } from './payement-requested.service';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
 
 describe('PayementRequestedService', () => {
   let service: PayementRequestedService;

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookRoomService } from './book-room.service';
-import { ESDBConnectionService } from '../../../../eventstore-connector/connection-initializer/esdb-connection.service';
+import { ESDBConnectionService } from '../../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../../../eventbus/eventbus.service';
+import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
 
 describe('BookRoomService', () => {
   let service: BookRoomService;

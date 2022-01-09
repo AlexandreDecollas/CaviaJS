@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BookRoomController } from './controller/book-room.controller';
 import { BookRoomService } from './services/book-room/book-room.service';
-import { EventStoreConnectorModule } from '../../eventstore-connector/event-store-connector.module';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
-import { provideProjection } from '../../eventstore-connector/projections/provider/projection.provider';
+import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildRoomAvailabilityProjection } from './services/projections/room-availability.projections';
 
 provideProjection({
@@ -13,7 +12,6 @@ provideProjection({
 
 @Module({
   controllers: [BookRoomController],
-  imports: [EventStoreConnectorModule],
   providers: [BookRoomService, IdGeneratorService],
 })
 export class BookRoomModule {}

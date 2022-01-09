@@ -5,7 +5,7 @@ import { AddRoomCommand } from './features/add-room/add-room.command';
 import { BookRoomCommand } from './features/book-room/book-room.command';
 import { CheckInCommand } from './features/check-in/check-in.command';
 import { CleaningRoomCommand } from './features/cleaning-room/cleaning-room.command';
-import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
+import { HotelProximityCommand } from './features/hotel-proximity/hotel-proximity.command';
 import { CheckOutCommand } from './features/check-out/check-out.command';
 import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
 import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
@@ -19,7 +19,7 @@ const commands = [
   BookRoomCommand,
   CleaningRoomCommand,
   CheckInCommand,
-  HotelProximityModule,
+  HotelProximityCommand,
   CheckOutCommand,
   PayementRequestedModule,
   PayementProcessorModule,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { RegisterModule } from './features/register/register.module';
 
 import { AddRoomModule } from './features/add-room/add-room.module';
@@ -11,6 +11,7 @@ import { PayementRequestedModule } from './features/payement-requested/payement-
 import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
 import { EventModellingModule } from './event-modelling-tooling/event-modelling.module';
 import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
+import { LoggerModule } from './utils/logger/logger.module';
 
 const features = [
   RegisterModule,
@@ -30,6 +31,8 @@ const features = [
       process.env.CONNECTION_STRING || 'esdb://127.0.0.1:2113?tls=false',
     ),
     IdGeneratorModule,
+    LoggerModule,
+
     ...features,
   ],
 })

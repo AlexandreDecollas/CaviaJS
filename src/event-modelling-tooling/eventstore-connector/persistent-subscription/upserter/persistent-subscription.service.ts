@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ESDBConnectionService } from '../../connection-initializer/esdb-connection.service';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { PersistentSubscriptionConfiguration } from '../persistent-subscription-configuration';
@@ -14,7 +14,10 @@ import {
 
 @Injectable()
 export class PersistentSubscriptionService implements OnModuleInit {
-  constructor(private readonly connection: ESDBConnectionService) {}
+  constructor(
+    private readonly connection: ESDBConnectionService,
+    private readonly logger: Logger,
+  ) {}
 
   public async onModuleInit(): Promise<void> {
     await this.connectToPersistentSubscriptions();
@@ -48,7 +51,7 @@ export class PersistentSubscriptionService implements OnModuleInit {
 
     await this.upsertPersistentSubscription(persubConf);
 
-    console.log(
+    this.logger.log(
       `Connecting to persistent subscription \n\tstreamName: ${persubConf.streamName}\n\tgroup: ${persubConf.groupName} `,
     );
     const persub: PersistentSubscription =
@@ -56,7 +59,7 @@ export class PersistentSubscriptionService implements OnModuleInit {
         persubConf.streamName,
         persubConf.groupName,
       );
-    console.log(
+    this.logger.log(
       `Persistent subscription \n\tstreamName: ${persubConf.streamName}\n\tgroup: ${persubConf.groupName} \n\t-> connected. `,
     );
     return persub;

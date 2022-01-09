@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { EventstoreEvent } from '../../model/eventstoreEvent';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
@@ -10,6 +10,7 @@ export class Eventbus {
   constructor(
     private readonly connection: ESDBConnectionService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly logger: Logger,
   ) {}
 
   public emit(streamName: string, event: EventstoreEvent): void {
@@ -28,7 +29,7 @@ export class Eventbus {
         version: event.version ?? 1,
       },
     });
-    console.log('Event hooked: ', formattedEvent);
+    this.logger.log('Event hooked: ', formattedEvent);
 
     await client.appendToStream(event.metadata.streamName, formattedEvent);
   }

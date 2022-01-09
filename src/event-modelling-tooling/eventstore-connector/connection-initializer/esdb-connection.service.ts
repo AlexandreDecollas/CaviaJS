@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventStoreDBClient } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { CONNECTION_STRING } from '../../constants';
@@ -9,15 +9,16 @@ export class ESDBConnectionService {
 
   constructor(
     @Inject(CONNECTION_STRING) private readonly connectionString: string,
+    private readonly logger: Logger,
   ) {}
 
   public async connectToEventstore(): Promise<Client> {
-    console.log(
+    this.logger.log(
       `Connecting to evenstore (connectionString : ${this.connectionString})...`,
     );
     this.client = EventStoreDBClient.connectionString(this.connectionString);
     await this.client.getStreamMetadata('$all');
-    console.log('Connected to eventstore');
+    this.logger.log('Connected to eventstore');
     return this.client;
   }
 

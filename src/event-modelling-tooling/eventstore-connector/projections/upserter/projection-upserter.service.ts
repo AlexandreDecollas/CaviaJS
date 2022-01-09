@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ESDBConnectionService } from '../../connection-initializer/esdb-connection.service';
 import { Client } from '@eventstore/db-client/dist/Client';
 import {
@@ -8,12 +8,15 @@ import {
 
 @Injectable()
 export class ProjectionUpserterService implements OnModuleInit {
-  constructor(private readonly connection: ESDBConnectionService) {}
+  constructor(
+    private readonly connection: ESDBConnectionService,
+    private readonly logger: Logger,
+  ) {}
 
   public async onModuleInit(): Promise<void> {
     const projections: ProvidedProjections = fetchProjections();
     for (const projectionName of Object.keys(projections)) {
-      console.log('Upserting projection: ', projectionName);
+      this.logger.log('Upserting projection: ', projectionName);
       await this.upsertProjection(
         projectionName,
         projections[projectionName].content,

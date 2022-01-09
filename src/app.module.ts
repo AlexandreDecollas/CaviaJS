@@ -1,7 +1,7 @@
-import { Logger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { RegisterModule } from './features/register/register.module';
 
-import { AddRoomModule } from './features/add-room/add-room.module';
+import { AddRoomCommand } from './features/add-room/add-room.command';
 import { BookRoomModule } from './features/book-room/book-room.module';
 import { CheckInModule } from './features/check-in/check-in.module';
 import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
@@ -13,9 +13,9 @@ import { EventModellingModule } from './event-modelling-tooling/event-modelling.
 import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
 import { LoggerModule } from './utils/logger/logger.module';
 
-const features = [
+const commands = [
   RegisterModule,
-  AddRoomModule,
+  AddRoomCommand,
   BookRoomModule,
   CleaningRoomModule,
   CheckInModule,
@@ -33,7 +33,7 @@ const features = [
     IdGeneratorModule,
     LoggerModule,
 
-    ...features,
+    ...commands,
   ],
 })
 export class AppModule {}

@@ -8,7 +8,7 @@ import { EventStoreConnectorModule } from './eventstore-connector/event-store-co
     EventEmitterModule.forRoot({
       wildcard: true,
     }),
-    EventbusModule.forRoot(),
+    EventbusModule,
   ],
 })
 export class EventModellingModule {

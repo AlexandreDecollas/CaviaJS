@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { RoomAddedEvent } from '../../../model/room-added.event';
-import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
+import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
+import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
+import { RoomAddedEvent } from '../../model/room-added.event';
+import { Get } from '@nestjs/common';
 
-@Injectable()
-export class AddRoomService {
+@Command({
+  entryPoint: 'add-room',
+})
+export class AddRoomCommand {
   constructor(
     private readonly eventEmitter: Eventbus,
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
+  @Get('/:roomNumber')
   public addRoom(roomNumber: number): void {
     const event: RoomAddedEvent = {
       type: 'RoomAddedEvent',

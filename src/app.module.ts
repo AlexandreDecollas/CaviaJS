@@ -3,7 +3,7 @@ import { RegisterModule } from './features/register/register.module';
 
 import { AddRoomCommand } from './features/add-room/add-room.command';
 import { BookRoomCommand } from './features/book-room/book-room.command';
-import { CheckInModule } from './features/check-in/check-in.module';
+import { CheckInCommand } from './features/check-in/check-in.command';
 import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
 import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
 import { CheckOutModule } from './features/check-out/check-out.module';
@@ -18,7 +18,7 @@ const commands = [
   AddRoomCommand,
   BookRoomCommand,
   CleaningRoomModule,
-  CheckInModule,
+  CheckInCommand,
   HotelProximityModule,
   CheckOutModule,
   PayementRequestedModule,

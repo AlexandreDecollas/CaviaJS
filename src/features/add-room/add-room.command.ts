@@ -2,7 +2,7 @@ import { Command } from '../../event-modelling-tooling/command/command.decorator
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RoomAddedEvent } from '../../model/room-added.event';
-import { Get } from '@nestjs/common';
+import { Get, Param } from '@nestjs/common';
 
 @Command({
   entryPoint: 'add-room',
@@ -14,7 +14,7 @@ export class AddRoomCommand {
   ) {}
 
   @Get('/:roomNumber')
-  public addRoom(roomNumber: number): void {
+  public addRoom(@Param('roomNumber') roomNumber: number): void {
     const event: RoomAddedEvent = {
       type: 'RoomAddedEvent',
       data: {

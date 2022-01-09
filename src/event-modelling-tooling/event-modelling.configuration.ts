@@ -8,4 +8,5 @@ export interface RedisQueueConfiguration {
 export interface EventModellingConfiguration {
   eventstoreConnectionString: string;
   redisQueueConfiguration?: RedisQueueConfiguration;
+  checkHeartBeatOnInterval?: number;
 }

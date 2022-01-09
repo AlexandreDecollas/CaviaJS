@@ -45,7 +45,7 @@ export class Eventbus implements OnApplicationBootstrap {
       new Worker(
         this.redisQueueConf.queueName,
         async (event) => {
-          this.logger.log(
+          this.logger.debug(
             'Event hooked on Redis : ' + JSON.stringify(event.data),
           );
           await this.appendToEventstore(event.data);
@@ -117,7 +117,9 @@ export class Eventbus implements OnApplicationBootstrap {
       removeOnFail: 1000,
     });
 
-    this.logger.log('Event queued on redis: ' + JSON.stringify(formattedEvent));
+    this.logger.debug(
+      'Event queued on redis: ' + JSON.stringify(formattedEvent),
+    );
   }
 
   private async appendToEventstore(formattedEvent: any): Promise<void> {
@@ -126,7 +128,7 @@ export class Eventbus implements OnApplicationBootstrap {
       formattedEvent.metadata.streamName,
       formattedEvent,
     );
-    this.logger.log(
+    this.logger.debug(
       'Event appended on eventstore: ' + JSON.stringify(formattedEvent),
     );
   }

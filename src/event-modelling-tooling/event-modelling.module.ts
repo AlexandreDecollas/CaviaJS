@@ -25,6 +25,7 @@ export class EventModellingModule {
           : EventbusModule,
         EventStoreConnectorModule.forRoot(
           configuration.eventstoreConnectionString,
+          configuration.checkHeartBeatOnInterval,
         ),
       ],
     };

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { RegisterModule } from './features/register/register.module';
 
 import { AddRoomCommand } from './features/add-room/add-room.command';
-import { BookRoomModule } from './features/book-room/book-room.module';
+import { BookRoomCommand } from './features/book-room/book-room.command';
 import { CheckInModule } from './features/check-in/check-in.module';
 import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
 import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
@@ -16,7 +16,7 @@ import { LoggerModule } from './utils/logger/logger.module';
 const commands = [
   RegisterModule,
   AddRoomCommand,
-  BookRoomModule,
+  BookRoomCommand,
   CleaningRoomModule,
   CheckInModule,
   HotelProximityModule,

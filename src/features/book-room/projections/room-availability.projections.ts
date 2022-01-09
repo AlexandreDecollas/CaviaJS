@@ -1,6 +1,6 @@
-import { RoomAddedEvent } from '../../../../model/room-added.event';
-import { Slot } from '../../model/slot';
-import { RoomBookedEvent } from '../../../../model/room-booked.event';
+import { RoomAddedEvent } from '../../../model/room-added.event';
+import { Slot } from '../model/slot';
+import { RoomBookedEvent } from '../../../model/room-booked.event';
 import {
   EventTypeHandler,
   FromStreamsSelector,

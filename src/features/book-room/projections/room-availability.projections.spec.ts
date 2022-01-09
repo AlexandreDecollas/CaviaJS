@@ -3,7 +3,7 @@ import {
   roomAddedEventHandlerCallBack,
   roomBookedEventHandlerCallBack,
 } from './room-availability.projections';
-import { RoomBookedEvent } from '../../../../model/room-booked.event';
+import { RoomBookedEvent } from '../../../model/room-booked.event';
 
 describe('RoomAvailabilityProjection', () => {
   let state: BookedRoomsState;

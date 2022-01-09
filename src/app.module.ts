@@ -7,7 +7,7 @@ import { CleaningRoomCommand } from './features/cleaning-room/cleaning-room.comm
 import { HotelProximityCommand } from './features/hotel-proximity/hotel-proximity.command';
 import { CheckOutCommand } from './features/check-out/check-out.command';
 import { PayementRequestedCommand } from './features/payement-requested/payement-requested.command';
-import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
+import { PayementProcessorCommand } from './features/payement-processor/payement-processor.command';
 import { EventModellingModule } from './event-modelling-tooling/event-modelling.module';
 import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
 import { LoggerModule } from './utils/logger/logger.module';
@@ -22,7 +22,7 @@ const commands = [
   HotelProximityCommand,
   CheckOutCommand,
   PayementRequestedCommand,
-  PayementProcessorModule,
+  PayementProcessorCommand,
 ];
 
 @Module({

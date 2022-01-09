@@ -49,7 +49,7 @@ export class Eventbus implements OnApplicationBootstrap {
           persubHook.persubCallback(payloadEvent.event as any);
           await paymentProcessorPersub.ack(payloadEvent);
         } catch (e) {
-          await paymentProcessorPersub.nack(PARK, e);
+          await paymentProcessorPersub.nack(PARK, e.message, payloadEvent);
         }
       });
     });

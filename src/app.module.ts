@@ -27,9 +27,14 @@ const commands = [
 
 @Module({
   imports: [
-    EventModellingModule.forRoot(
-      process.env.CONNECTION_STRING || 'esdb://127.0.0.1:2113?tls=false',
-    ),
+    EventModellingModule.forRoot({
+      eventstoreConnectionString:
+        process.env.CONNECTION_STRING || 'esdb://127.0.0.1:2113?tls=false',
+      redisQueueConfiguration: {
+        queueName: 'tutu',
+        options: { connection: { host: 'localhost', port: 6379 } },
+      },
+    }),
     IdGeneratorModule,
     LoggerModule,
 

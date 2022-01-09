@@ -7,7 +7,7 @@ import { PayementRequestedEvent } from '../../model/payement-requested.event';
 @Command({
   entryPoint: 'payement-requested',
 })
-export class PayementRequestedModule {
+export class PayementRequestedCommand {
   constructor(
     private readonly eventEmitter: Eventbus,
     private readonly idGeneratorService: IdGeneratorService,

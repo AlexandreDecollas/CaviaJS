@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CheckOutController } from './controllers/check-out.controller';
 import { CheckOutService } from './services/check-out.service';
-import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildGuestRosterProjection } from './projections/guest-roster.projection';
 
@@ -12,6 +11,6 @@ provideProjection({
 
 @Module({
   controllers: [CheckOutController],
-  providers: [CheckOutService, IdGeneratorService],
+  providers: [CheckOutService],
 })
 export class CheckOutModule {}

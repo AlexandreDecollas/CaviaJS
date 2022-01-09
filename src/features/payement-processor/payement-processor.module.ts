@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { PersistentSubscriptionInitializerService } from './persistent-subscription/initializer/persistent-subscription-initializer.service';
 import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildPayementToProcessProjection } from './projections/payement-to-process.projection';
@@ -20,6 +19,6 @@ provideProjection({
 });
 
 @Module({
-  providers: [IdGeneratorService, PersistentSubscriptionInitializerService],
+  providers: [PersistentSubscriptionInitializerService],
 })
 export class PayementProcessorModule {}

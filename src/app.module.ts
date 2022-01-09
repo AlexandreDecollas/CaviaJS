@@ -10,6 +10,7 @@ import { CheckOutModule } from './features/check-out/check-out.module';
 import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
 import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
 import { EventModellingModule } from './event-modelling-tooling/event-modelling.module';
+import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
 
 const features = [
   RegisterModule,
@@ -28,6 +29,7 @@ const features = [
     EventModellingModule.forRoot(
       process.env.CONNECTION_STRING || 'esdb://127.0.0.1:2113?tls=false',
     ),
+    IdGeneratorModule,
     ...features,
   ],
 })

@@ -19,10 +19,11 @@ import {
   fetchConnectedPersistentSubscriptions,
   ProvidedPersistentSubscriptions,
 } from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { PERSUB_HOOK_METADATA } from '../constants';
+import { PERSUB_HOOK_METADATA, REDIS_HOOK_METADATA } from '../constants';
 import { REDIS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
 import { Queue, Worker } from 'bullmq';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 @Injectable()
 export class Eventbus implements OnApplicationBootstrap {
@@ -37,10 +38,11 @@ export class Eventbus implements OnApplicationBootstrap {
 
   public async onApplicationBootstrap(): Promise<void> {
     this.plugPersistentSubscriptionHooks();
+    this.plugExternalEventsHooks();
     this.plugRedisQueue();
   }
 
-  private plugRedisQueue() {
+  private plugRedisQueue(): void {
     if (this.redisQueueConf) {
       new Worker(
         this.redisQueueConf.queueName,
@@ -55,7 +57,7 @@ export class Eventbus implements OnApplicationBootstrap {
     }
   }
 
-  private plugPersistentSubscriptionHooks() {
+  private plugPersistentSubscriptionHooks(): void {
     const persubHooks = [];
     const controllers = this.discoveryService.getControllers();
     controllers.forEach((controller) => {
@@ -64,7 +66,7 @@ export class Eventbus implements OnApplicationBootstrap {
       }
     });
 
-    persubHooks.forEach((persubHook) => {
+    persubHooks.forEach((persubHook): void => {
       const persubName = Reflect.getMetadata(
         PERSUB_HOOK_METADATA,
         persubHook.metatype,
@@ -76,12 +78,42 @@ export class Eventbus implements OnApplicationBootstrap {
         persistentSubscriptions[persubName];
       paymentProcessorPersub.on('data', async (payloadEvent: ResolvedEvent) => {
         try {
-          persubHook.persubCallback(payloadEvent.event as any);
+          persubHook.instance.persubCallback(payloadEvent.event as any);
           await paymentProcessorPersub.ack(payloadEvent);
         } catch (e) {
           await paymentProcessorPersub.nack(PARK, e.message, payloadEvent);
         }
       });
+    });
+  }
+
+  private plugExternalEventsHooks(): void {
+    const externalEventsHooks = [];
+    const controllers: InstanceWrapper[] =
+      this.discoveryService.getControllers();
+    controllers.forEach((controller) => {
+      if (Reflect.hasMetadata(REDIS_HOOK_METADATA, controller.metatype)) {
+        externalEventsHooks.push(controller);
+      }
+    });
+
+    externalEventsHooks.forEach((externalEventsHook: InstanceWrapper) => {
+      const externalEventQueueConf = Reflect.getMetadata(
+        REDIS_HOOK_METADATA,
+        externalEventsHook.metatype,
+      );
+      new Worker(
+        externalEventQueueConf.queueName,
+        async (event) => {
+          this.logger.debug(
+            `Event hooked on Redis (queueName : ${
+              externalEventQueueConf.queueName
+            }): ${JSON.stringify(event.data)}`,
+          );
+          externalEventsHook.instance.externalEventCallback(event.data);
+        },
+        { connection: externalEventQueueConf.options },
+      );
     });
   }
 
@@ -107,7 +139,7 @@ export class Eventbus implements OnApplicationBootstrap {
     }
   }
 
-  private async pushEventOnRedisQueue(formattedEvent: any) {
+  private async pushEventOnRedisQueue(formattedEvent: any): Promise<void> {
     const messagesQueue = new Queue(
       this.redisQueueConf.queueName,
       this.redisQueueConf.options,

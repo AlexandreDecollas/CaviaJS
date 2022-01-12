@@ -6,6 +6,7 @@ import { PayementRequestedEvent } from '../../model/payement-requested.event';
 import { PayementSuccededEvent } from '../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
+import { PersubEventHook } from '../../event-modelling-tooling/command/method-decorator/persub-event-hook.decorator';
 
 providePersistentSubscription({
   name: 'paymentProcessor',
@@ -30,6 +31,7 @@ export class PayementProcessorCommand {
     private readonly eventEmitter: Eventbus,
   ) {}
 
+  @PersubEventHook
   public persubCallback(event: PayementRequestedEvent): void {
     const payementSuccededEvent: PayementSuccededEvent = {
       metadata: { streamName: 'guest.payement-succedded' },

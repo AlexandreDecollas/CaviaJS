@@ -83,7 +83,12 @@ export class Eventbus implements OnApplicationBootstrap {
         persistentSubscriptions[persubName];
       paymentProcessorPersub.on('data', async (payloadEvent: ResolvedEvent) => {
         try {
-          persubHook.instance.persubCallback(payloadEvent.event as any);
+          const hookMethod = Reflect.getMetadata(
+            EXTERNAL_EVENT_HOOK,
+            persubHook.instance,
+          );
+
+          persubHook.instance[hookMethod](payloadEvent.event);
           await paymentProcessorPersub.ack(payloadEvent);
         } catch (e) {
           await paymentProcessorPersub.nack(PARK, e.message, payloadEvent);

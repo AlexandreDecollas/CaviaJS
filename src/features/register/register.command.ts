@@ -1,12 +1,12 @@
 import { Get, Logger, Param } from '@nestjs/common';
-import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
+import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { RegisterLine } from './model/register-line';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RegisteredEvent } from '../../model/registered.event';
 import { Queue } from 'bullmq';
 import { RegistrationRequestedEvent } from '../../model/registration-requested.event';
-import { ExternalEventHook } from '../../event-modelling-tooling/command/method-decorator/external-event-hook.decorator';
+import { ExternalEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/external-event-hook.decorator';
 
 @Command({
   entryPoints: {

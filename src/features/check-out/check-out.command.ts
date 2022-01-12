@@ -4,7 +4,7 @@ import {
   buildGuestRosterProjection,
   GuestRosterState,
 } from './projections/guest-roster.projection';
-import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
+import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { CheckedOutEvent } from '../../model/checked-out.event';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';

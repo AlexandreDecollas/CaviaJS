@@ -1,4 +1,4 @@
-import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
+import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RoomAddedEvent } from '../../model/room-added.event';

@@ -2,7 +2,7 @@ import { Get, Param } from '@nestjs/common';
 import { CheckInService } from './services/check-in.service';
 import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildRegisteredGuestsProjection } from './projections/check-in.projection';
-import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
 
 provideProjection({
   name: 'registered-guests',
@@ -10,7 +10,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: { restPath: 'check-in' },
+  entryPoints: { restPath: 'check-in' },
   providers: [CheckInService],
 })
 export class CheckInCommand {

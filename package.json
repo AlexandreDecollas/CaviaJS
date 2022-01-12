@@ -29,7 +29,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "bullmq": "^1.64.0",
     "env-cmd": "^10.1.0",
-    "eventstore-ts-projection-builder": "^1.0.4",
+    "eventstore-ts-projection-builder": "^1.0.6",
     "moment": "^2.29.1",
     "moment-range": "^4.0.2",
     "nanoid": "^3.1.30",

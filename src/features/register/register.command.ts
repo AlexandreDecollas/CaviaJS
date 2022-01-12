@@ -1,14 +1,15 @@
 import { Get, Logger, Param } from '@nestjs/common';
-import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
 import { RegisterLine } from './model/register-line';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RegisteredEvent } from '../../model/registered.event';
 import { Queue } from 'bullmq';
 import { RegistrationRequestedEvent } from '../../model/registration-requested.event';
+import { ExternalEventHook } from '../../event-modelling-tooling/command/method-decorator/external-event-hook.decorator';
 
 @Command({
-  entryPoint: {
+  entryPoints: {
     restPath: 'register',
     externalEventQueue: {
       queueName: 'register-queue',
@@ -23,6 +24,7 @@ export class RegisterCommand {
     private readonly logger: Logger,
   ) {}
 
+  @ExternalEventHook
   public externalEventCallback(event: RegistrationRequestedEvent): void {
     this.logger.debug(`External event hooked : ${event}`);
     if (event.type !== 'RegistrationRequestedEvent') {

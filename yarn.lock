@@ -2562,10 +2562,10 @@ events@^3.2.0:
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-eventstore-ts-projection-builder@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/eventstore-ts-projection-builder/-/eventstore-ts-projection-builder-1.0.4.tgz#d79137d876c8e1a744e14183cd607a67ab8d9967"
-  integrity sha512-uf6koXECrWL3jyX4+ZpxpIu+lP5o3gGYhme69+gbggktoVkAqvhRepOOccIzywAYa70Gzsy4kbCzWpe41rL5YQ==
+eventstore-ts-projection-builder@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/eventstore-ts-projection-builder/-/eventstore-ts-projection-builder-1.0.6.tgz#daf23ee208e2c740f1588519537ec18b429b32a9"
+  integrity sha512-wGA/RfU9pT/FuJM2ndPwhumoW8SI6v/lRJWZvOZWqaiE4V+eoC0imV4/tgBeQ8tCOTe5xm4dnLqoaunib0uDzg==
   dependencies:
     prettier "^2.5.1"
     typescript "^4.5.4"

@@ -1,11 +1,11 @@
-import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RoomAddedEvent } from '../../model/room-added.event';
 import { Get, Param } from '@nestjs/common';
 
 @Command({
-  entryPoint: { restPath: 'add-room' },
+  entryPoints: { restPath: 'add-room' },
 })
 export class AddRoomCommand {
   constructor(

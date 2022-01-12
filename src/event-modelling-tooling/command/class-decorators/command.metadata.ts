@@ -1,5 +1,5 @@
 import { ModuleMetadata } from '@nestjs/common';
-import { RedisQueueConfiguration } from '../event-modelling.configuration';
+import { RedisQueueConfiguration } from '../../event-modelling.configuration';
 
 export interface CommandEntryPoint {
   restPath?: string;
@@ -8,5 +8,5 @@ export interface CommandEntryPoint {
 }
 
 export interface CommandMetadata extends ModuleMetadata {
-  entryPoint?: CommandEntryPoint;
+  entryPoints?: CommandEntryPoint;
 }

@@ -2,7 +2,7 @@ import { Get, Param } from '@nestjs/common';
 import { BookRoomService } from './services/book-room/book-room.service';
 import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildRoomAvailabilityProjection } from './projections/room-availability.projections';
-import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
 import { Slot } from './model/slot';
 
 provideProjection({
@@ -11,7 +11,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoint: { restPath: 'book-room' },
+  entryPoints: { restPath: 'book-room' },
   providers: [BookRoomService],
 })
 export class BookRoomCommand {

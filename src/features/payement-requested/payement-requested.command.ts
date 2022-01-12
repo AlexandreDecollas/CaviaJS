@@ -1,11 +1,11 @@
-import { Command } from '../../event-modelling-tooling/command/command.decorator';
+import { Command } from '../../event-modelling-tooling/command/class-decorators/command.decorator';
 import { Get, Param } from '@nestjs/common';
 import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { PayementRequestedEvent } from '../../model/payement-requested.event';
 
 @Command({
-  entryPoint: { restPath: 'payement-requested' },
+  entryPoints: { restPath: 'payement-requested' },
 })
 export class PayementRequestedCommand {
   constructor(

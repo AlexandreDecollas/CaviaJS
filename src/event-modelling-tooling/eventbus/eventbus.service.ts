@@ -19,7 +19,11 @@ import {
   fetchConnectedPersistentSubscriptions,
   ProvidedPersistentSubscriptions,
 } from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { PERSUB_HOOK_METADATA, REDIS_HOOK_METADATA } from '../constants';
+import {
+  EXTERNAL_EVENT_HOOK,
+  PERSUB_HOOK_METADATA,
+  REDIS_HOOK_METADATA,
+} from '../constants';
 import { REDIS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
 import { Queue, Worker } from 'bullmq';
@@ -48,7 +52,8 @@ export class Eventbus implements OnApplicationBootstrap {
         this.redisQueueConf.queueName,
         async (event) => {
           this.logger.debug(
-            'Event hooked on Redis : ' + JSON.stringify(event.data),
+            'Event hooked on internal event queue : ' +
+              JSON.stringify(event.data),
           );
           await this.appendToEventstore(event.data);
         },
@@ -110,7 +115,12 @@ export class Eventbus implements OnApplicationBootstrap {
               externalEventQueueConf.queueName
             }): ${JSON.stringify(event.data)}`,
           );
-          externalEventsHook.instance.externalEventCallback(event.data);
+          const hookMethod = Reflect.getMetadata(
+            EXTERNAL_EVENT_HOOK,
+            externalEventsHook.instance,
+          );
+
+          externalEventsHook.instance[hookMethod](event.data);
         },
         { connection: externalEventQueueConf.options },
       );
@@ -150,7 +160,7 @@ export class Eventbus implements OnApplicationBootstrap {
     });
 
     this.logger.debug(
-      'Event queued on redis: ' + JSON.stringify(formattedEvent),
+      'Event queued on internal event queue: ' + JSON.stringify(formattedEvent),
     );
   }
 

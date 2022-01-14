@@ -4,17 +4,33 @@ import { provideProjection } from '../../event-modelling-tooling/eventstore-conn
 import { buildRoomAvailabilityProjection } from './projections/room-availability.projections';
 import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { Slot } from './model/slot';
+import { providePersistentSubscription } from '../../event-modelling-tooling/eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
+import { PersubEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/persub-event-hook.decorator';
 
 provideProjection({
   name: 'roomAvailability',
   content: buildRoomAvailabilityProjection(),
 });
 
+providePersistentSubscription({
+  name: 'roomAvailabilityStateVersion',
+  streamName: '$projections-roomAvailability',
+  groupName: 'roomAvailability',
+  settings: {
+    minCheckpointCount: 1,
+  },
+});
+
 @Command({
-  entryPoints: { restPath: 'book-room' },
+  entryPoints: {
+    restPath: 'book-room',
+    persubName: 'roomAvailabilityStateVersion',
+  },
   providers: [BookRoomService],
 })
 export class BookRoomCommand {
+  private stateUpdated = false;
+
   constructor(private readonly bookRoomService: BookRoomService) {}
 
   @Get('check-availability/:roomNumber')
@@ -30,6 +46,18 @@ export class BookRoomCommand {
     @Param('from') from: string,
     @Param('to') to: string,
   ): Promise<void> {
-    await this.bookRoomService.bookRoom(roomNumber, from, to);
+    await this.bookRoomService.bookRoom(
+      {
+        roomNumber,
+        from,
+        to,
+      },
+      this.stateUpdated,
+    );
+  }
+
+  @PersubEventHook
+  public getLastStateVersion(): void {
+    this.stateUpdated = true;
   }
 }

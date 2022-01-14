@@ -8,6 +8,7 @@ import * as Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
+import { Reservation } from '../../model/reservation';
 
 const moment = extendMoment(Moment);
 
@@ -29,7 +30,42 @@ export class BookRoomService {
     return projectionState.rooms[roomNumber].slots;
   }
 
-  public async bookRoom(roomNumber: number, from: string, to: string) {
+  public async bookRoom(
+    reservation: Reservation,
+    updateStateRequested: boolean,
+  ) {
+    const { roomNumber, from, to } = reservation;
+
+    if (updateStateRequested) {
+      await this.recheckDatas(roomNumber, from, to);
+    }
+
+    const event: RoomBookedEvent = {
+      metadata: { streamName: 'guest.room-booked' },
+      type: 'RoomBookedEvent',
+      data: {
+        id: this.idGeneratorService.generateId(),
+        roomNumber,
+        occupiedFromDate: {
+          day: +from.split('-')[0],
+          month: +from.split('-')[1],
+          year: +from.split('-')[2],
+        },
+        occupiedUntilDate: {
+          day: +to.split('-')[0],
+          month: +to.split('-')[1],
+          year: +to.split('-')[2],
+        },
+      },
+    };
+    this.eventEmitter.emit(event.metadata.streamName, event);
+  }
+
+  private async recheckDatas(
+    roomNumber: number,
+    from: string,
+    to: string,
+  ): Promise<void> {
     const client: Client = await this.connection.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
@@ -57,25 +93,5 @@ export class BookRoomService {
         throw new Error(`The room ${roomNumber} is used on this dates`);
       }
     });
-
-    const event: RoomBookedEvent = {
-      metadata: { streamName: 'guest.room-booked' },
-      type: 'RoomBookedEvent',
-      data: {
-        id: this.idGeneratorService.generateId(),
-        roomNumber,
-        occupiedFromDate: {
-          day: +from.split('-')[0],
-          month: +from.split('-')[1],
-          year: +from.split('-')[2],
-        },
-        occupiedUntilDate: {
-          day: +to.split('-')[0],
-          month: +to.split('-')[1],
-          year: +to.split('-')[2],
-        },
-      },
-    };
-    this.eventEmitter.emit(event.metadata.streamName, event);
   }
 }

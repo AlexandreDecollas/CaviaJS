@@ -65,33 +65,33 @@ export class Eventbus implements OnApplicationBootstrap {
   private plugPersistentSubscriptionHooks(): void {
     const persubHooks = [];
     const controllers = this.discoveryService.getControllers();
-    controllers.forEach((controller) => {
+    controllers.forEach((controller: InstanceWrapper) => {
       if (Reflect.hasMetadata(PERSUB_HOOK_METADATA, controller.metatype)) {
         persubHooks.push(controller);
       }
     });
 
-    persubHooks.forEach((persubHook): void => {
+    persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
       const persubName = Reflect.getMetadata(
         PERSUB_HOOK_METADATA,
-        persubHook.metatype,
+        persubHookContainer.metatype,
       );
 
       const persistentSubscriptions: ProvidedPersistentSubscriptions =
         fetchConnectedPersistentSubscriptions();
-      const paymentProcessorPersub: PersistentSubscription =
+      const persistentSubscription: PersistentSubscription =
         persistentSubscriptions[persubName];
-      paymentProcessorPersub.on('data', async (payloadEvent: ResolvedEvent) => {
+      persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
         try {
           const hookMethod = Reflect.getMetadata(
             EXTERNAL_EVENT_HOOK,
-            persubHook.instance,
+            persubHookContainer.instance,
           );
 
-          persubHook.instance[hookMethod](payloadEvent.event);
-          await paymentProcessorPersub.ack(payloadEvent);
+          persubHookContainer.instance[hookMethod](payloadEvent.event);
+          await persistentSubscription.ack(payloadEvent);
         } catch (e) {
-          await paymentProcessorPersub.nack(PARK, e.message, payloadEvent);
+          await persistentSubscription.nack(PARK, e.message, payloadEvent);
         }
       });
     });

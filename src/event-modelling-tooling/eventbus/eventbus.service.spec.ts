@@ -1,33 +1,131 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { Eventbus } from './eventbus.service';
+import { PERSUB_HOOK_METADATA } from '../constants';
+import {
+  fetchConnectedPersistentSubscriptions,
+  fetchProvidedPersistentSubscriptionsConfigurations,
+  provideConnectedPersistentSubscription,
+} from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
+import { ExternalEventHook } from '../command-decorators/method-decorator/external-event-hook.decorator';
+import { PARK } from '@eventstore/db-client';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
 import { Logger } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { REDIS_QUEUE_CONFIGURATION } from './constants';
+import { DiscoveryService } from '@nestjs/core';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import spyOn = jest.spyOn;
 
-describe('EventbusService', () => {
+describe('Eventbus', () => {
   let service: Eventbus;
 
+  const redisQueueConfMock = { connection: { host: '', port: 1234 } } as any;
+  const discoveryServiceMock = {
+    getControllers: jest.fn(),
+  } as any;
+  const connectionMock = {} as any;
+  const eventEmitter2Mock = {} as any;
+  const loggerMock = {} as any;
+
   beforeEach(async () => {
+    spyOn(console, 'warn');
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Eventbus,
         {
-          provide: Eventbus,
-          useValue: {},
+          provide: REDIS_QUEUE_CONFIGURATION,
+          useValue: redisQueueConfMock,
+        },
+        {
+          provide: DiscoveryService,
+          useValue: discoveryServiceMock,
         },
         {
           provide: ESDBConnectionService,
-          useValue: {},
+          useValue: connectionMock,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitter2Mock,
         },
         {
           provide: Logger,
-          useValue: {},
+          useValue: loggerMock,
         },
       ],
     }).compile();
-
     service = module.get<Eventbus>(Eventbus);
+
+    const persubs = fetchProvidedPersistentSubscriptionsConfigurations();
+    Object.keys(persubs).forEach((key: string) => delete persubs[key]);
+
+    const connectedPersubs = fetchConnectedPersistentSubscriptions();
+    Object.keys(connectedPersubs).forEach(
+      (key: string) => delete connectedPersubs[key],
+    );
+    jest.resetAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('persistent subscription management', () => {
+    const handlerSpy = jest.fn();
+
+    class Command {
+      toto(...args) {
+        handlerSpy(args);
+      }
+    }
+    const command = new Command();
+    const controllers = [{ metatype: command, instance: command }];
+
+    ExternalEventHook(command, 'toto');
+
+    const onEventHandlerSpy = jest.fn();
+    const ackSpy = jest.fn();
+    const nackSpy = jest.fn();
+
+    beforeEach(async () => {
+      provideConnectedPersistentSubscription('persubName', {
+        on: onEventHandlerSpy,
+        ack: ackSpy,
+        nack: nackSpy,
+      } as any);
+      Reflect.defineMetadata(
+        PERSUB_HOOK_METADATA,
+        'persubName',
+        controllers[0].metatype,
+      );
+      discoveryServiceMock.getControllers.mockReturnValue(controllers);
+
+      await service.onApplicationBootstrap();
+    });
+
+    it('should plug all persistent subscriptions provided in features to eventstore at app bootstrap', async () => {
+      const hook = onEventHandlerSpy.mock.calls[0][1];
+      await hook({});
+      expect(onEventHandlerSpy).toHaveBeenCalled();
+    });
+
+    it('should nack an event when it is invalid', async () => {
+      const hook = onEventHandlerSpy.mock.calls[0][1];
+      await hook(null);
+      await expect(nackSpy).toHaveBeenCalledWith(
+        PARK,
+        expect.any(String),
+        null,
+      );
+    });
+
+    it('should ack an event when it is valid', async () => {
+      const hook = onEventHandlerSpy.mock.calls[0][1];
+      const payload = { event: 123 };
+      await hook(payload);
+      await expect(ackSpy).toHaveBeenCalledWith(payload);
+    });
+
+    it('should call the specified handler in the command', async () => {
+      const hook = onEventHandlerSpy.mock.calls[0][1];
+      const payload = { event: 123 };
+      await hook(payload);
+      await expect(handlerSpy).toHaveBeenCalledWith([123]);
+    });
   });
 });

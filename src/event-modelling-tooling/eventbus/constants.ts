@@ -1,1 +1,1 @@
-export const REDIS_QUEUE_CONFIGURATION = Symbol();
+export const INTERNAL_EVENTS_QUEUE_CONFIGURATION = Symbol();

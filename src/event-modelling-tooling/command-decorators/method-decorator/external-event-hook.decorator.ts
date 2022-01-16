@@ -1,5 +1,5 @@
-import { EXTERNAL_EVENT_HOOK } from '../../constants';
+import { REDIS_EVENT_HOOK } from '../../constants';
 
 export const ExternalEventHook = (target: any, key: string | symbol): void => {
-  Reflect.defineMetadata(EXTERNAL_EVENT_HOOK, key, target);
+  Reflect.defineMetadata(REDIS_EVENT_HOOK, key, target);
 };

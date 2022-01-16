@@ -2,13 +2,13 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { Eventbus } from './eventbus.service';
 import { DiscoveryModule } from '@nestjs/core';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
-import { REDIS_QUEUE_CONFIGURATION } from './constants';
+import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 
 @Module({
   providers: [
     Eventbus,
     {
-      provide: REDIS_QUEUE_CONFIGURATION,
+      provide: INTERNAL_EVENTS_QUEUE_CONFIGURATION,
       useValue: undefined,
     },
   ],
@@ -24,7 +24,7 @@ export class EventbusModule {
       module: EventbusModule,
       providers: [
         {
-          provide: REDIS_QUEUE_CONFIGURATION,
+          provide: INTERNAL_EVENTS_QUEUE_CONFIGURATION,
           useValue: redisQueueConfiguration,
         },
       ],

@@ -20,11 +20,12 @@ import {
   ProvidedPersistentSubscriptions,
 } from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 import {
-  EXTERNAL_EVENT_HOOK,
+  REDIS_EVENT_HOOK,
+  PERSUB_EVENT_HOOK,
   PERSUB_HOOK_METADATA,
   REDIS_HOOK_METADATA,
 } from '../constants';
-import { REDIS_QUEUE_CONFIGURATION } from './constants';
+import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
 import { Queue, Worker } from 'bullmq';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
@@ -32,8 +33,8 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 @Injectable()
 export class Eventbus implements OnApplicationBootstrap {
   constructor(
-    @Inject(REDIS_QUEUE_CONFIGURATION)
-    private readonly redisQueueConf: RedisQueueConfiguration,
+    @Inject(INTERNAL_EVENTS_QUEUE_CONFIGURATION)
+    private readonly internalEventsQueueConf: RedisQueueConfiguration,
     private readonly discoveryService: DiscoveryService,
     private readonly connection: ESDBConnectionService,
     private readonly eventEmitter: EventEmitter2,
@@ -43,13 +44,13 @@ export class Eventbus implements OnApplicationBootstrap {
   public async onApplicationBootstrap(): Promise<void> {
     this.plugPersistentSubscriptionHooks();
     this.plugExternalEventsHooks();
-    this.plugRedisQueue();
+    this.plugInternalEventQueue();
   }
 
-  private plugRedisQueue(): void {
-    if (this.redisQueueConf) {
+  private plugInternalEventQueue(): void {
+    if (this.internalEventsQueueConf) {
       new Worker(
-        this.redisQueueConf.queueName,
+        this.internalEventsQueueConf.queueName,
         async (event) => {
           this.logger.debug(
             'Event hooked on internal event queue : ' +
@@ -57,7 +58,7 @@ export class Eventbus implements OnApplicationBootstrap {
           );
           await this.appendToEventstore(event.data);
         },
-        this.redisQueueConf.options,
+        this.internalEventsQueueConf.options,
       );
     }
   }
@@ -84,7 +85,7 @@ export class Eventbus implements OnApplicationBootstrap {
       persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
         try {
           const hookMethod = Reflect.getMetadata(
-            EXTERNAL_EVENT_HOOK,
+            PERSUB_EVENT_HOOK,
             persubHookContainer.instance,
           );
 
@@ -121,7 +122,7 @@ export class Eventbus implements OnApplicationBootstrap {
             }): ${JSON.stringify(event.data)}`,
           );
           const hookMethod = Reflect.getMetadata(
-            EXTERNAL_EVENT_HOOK,
+            REDIS_EVENT_HOOK,
             externalEventsHook.instance,
           );
 
@@ -147,7 +148,7 @@ export class Eventbus implements OnApplicationBootstrap {
       },
     });
 
-    if (this.redisQueueConf) {
+    if (this.internalEventsQueueConf) {
       await this.pushEventOnRedisQueue(formattedEvent);
     } else {
       await this.appendToEventstore(formattedEvent);
@@ -156,13 +157,17 @@ export class Eventbus implements OnApplicationBootstrap {
 
   private async pushEventOnRedisQueue(formattedEvent: any): Promise<void> {
     const messagesQueue = new Queue(
-      this.redisQueueConf.queueName,
-      this.redisQueueConf.options,
+      this.internalEventsQueueConf.queueName,
+      this.internalEventsQueueConf.options,
     );
-    await messagesQueue.add(this.redisQueueConf.queueName, formattedEvent, {
-      removeOnComplete: true,
-      removeOnFail: 1000,
-    });
+    await messagesQueue.add(
+      this.internalEventsQueueConf.queueName,
+      formattedEvent,
+      {
+        removeOnComplete: true,
+        removeOnFail: 1000,
+      },
+    );
 
     this.logger.debug(
       'Event queued on internal event queue: ' + JSON.stringify(formattedEvent),

@@ -1,5 +1,5 @@
 import { Eventbus } from './eventbus.service';
-import { PERSUB_HOOK_METADATA } from '../constants';
+import { PERSUB_HOOK_METADATA, REDIS_HOOK_METADATA } from '../constants';
 import {
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
@@ -10,21 +10,28 @@ import { PARK } from '@eventstore/db-client';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { REDIS_QUEUE_CONFIGURATION } from './constants';
+import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { DiscoveryService } from '@nestjs/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PersubEventHook } from '../command-decorators/method-decorator/persub-event-hook.decorator';
+import * as BullMQ from 'bullmq';
 import spyOn = jest.spyOn;
+import { RedisQueueConfiguration } from '../event-modelling.configuration';
 
 describe('Eventbus', () => {
   let service: Eventbus;
 
-  const redisQueueConfMock = { connection: { host: '', port: 1234 } } as any;
+  const redisQueueConfMock = {
+    queueName: 'tutu',
+    connection: { host: '', port: 1234 },
+  } as any;
   const discoveryServiceMock = {
     getControllers: jest.fn(),
   } as any;
   const connectionMock = {} as any;
   const eventEmitter2Mock = {} as any;
-  const loggerMock = {} as any;
+  const loggerMock = { debug: jest.fn() } as any;
+  spyOn(BullMQ, 'Worker').mockImplementation(() => null);
 
   beforeEach(async () => {
     spyOn(console, 'warn');
@@ -32,7 +39,7 @@ describe('Eventbus', () => {
       providers: [
         Eventbus,
         {
-          provide: REDIS_QUEUE_CONFIGURATION,
+          provide: INTERNAL_EVENTS_QUEUE_CONFIGURATION,
           useValue: redisQueueConfMock,
         },
         {
@@ -76,7 +83,7 @@ describe('Eventbus', () => {
     const command = new Command();
     const controllers = [{ metatype: command, instance: command }];
 
-    ExternalEventHook(command, 'toto');
+    PersubEventHook(command, 'toto');
 
     const onEventHandlerSpy = jest.fn();
     const ackSpy = jest.fn();
@@ -124,6 +131,53 @@ describe('Eventbus', () => {
     it('should call the specified handler in the command', async () => {
       const hook = onEventHandlerSpy.mock.calls[0][1];
       const payload = { event: 123 };
+      await hook(payload);
+      await expect(handlerSpy).toHaveBeenCalledWith([123]);
+    });
+  });
+
+  describe('External events management', () => {
+    const handlerSpy = jest.fn();
+
+    class Command {
+      toto(...args) {
+        handlerSpy(args);
+      }
+    }
+    const command = new Command();
+    const controllers = [{ metatype: command, instance: command }];
+
+    ExternalEventHook(command, 'toto');
+
+    const redisConf: RedisQueueConfiguration = {
+      options: {
+        connection: { host: 'hostname', port: 1234 },
+      },
+      queueName: 'redisQueue',
+    };
+
+    beforeEach(async () => {
+      Reflect.defineMetadata(
+        REDIS_HOOK_METADATA,
+        redisConf,
+        controllers[0].metatype,
+      );
+      discoveryServiceMock.getControllers.mockReturnValue(controllers);
+
+      await service.onApplicationBootstrap();
+    });
+
+    it('should make all external events listener start listening at app bootstrap', async () => {
+      expect(BullMQ.Worker['mock'].calls[0]).toEqual([
+        'redisQueue',
+        expect.any(Function),
+        { connection: redisConf.options },
+      ]);
+    });
+
+    it('should call the specified handler in the command', async () => {
+      const hook = BullMQ.Worker['mock'].calls[0][1];
+      const payload = { data: 123 };
       await hook(payload);
       await expect(handlerSpy).toHaveBeenCalledWith([123]);
     });

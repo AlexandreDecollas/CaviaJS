@@ -20,10 +20,10 @@ import {
   ProvidedPersistentSubscriptions,
 } from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 import {
-  REDIS_EVENT_HOOK,
+  EXTERNAL_EVENT_HOOK,
+  EXTERNAL_EVENT_HOOK_METADATA,
   PERSUB_EVENT_HOOK,
   PERSUB_HOOK_METADATA,
-  REDIS_HOOK_METADATA,
 } from '../constants';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
@@ -64,13 +64,8 @@ export class Eventbus implements OnApplicationBootstrap {
   }
 
   private plugPersistentSubscriptionHooks(): void {
-    const persubHooks = [];
-    const controllers = this.discoveryService.getControllers();
-    controllers.forEach((controller: InstanceWrapper) => {
-      if (Reflect.hasMetadata(PERSUB_HOOK_METADATA, controller.metatype)) {
-        persubHooks.push(controller);
-      }
-    });
+    const persubHooks: InstanceWrapper[] =
+      this.GetHookableCommands(PERSUB_HOOK_METADATA);
 
     persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
       const persubName = Reflect.getMetadata(
@@ -99,38 +94,44 @@ export class Eventbus implements OnApplicationBootstrap {
   }
 
   private plugExternalEventsHooks(): void {
-    const externalEventsHooks = [];
-    const controllers: InstanceWrapper[] =
-      this.discoveryService.getControllers();
-    controllers.forEach((controller) => {
-      if (Reflect.hasMetadata(REDIS_HOOK_METADATA, controller.metatype)) {
-        externalEventsHooks.push(controller);
-      }
-    });
+    const externalEventsHookCommands = this.GetHookableCommands(
+      EXTERNAL_EVENT_HOOK_METADATA,
+    );
 
-    externalEventsHooks.forEach((externalEventsHook: InstanceWrapper) => {
-      const externalEventQueueConf = Reflect.getMetadata(
-        REDIS_HOOK_METADATA,
-        externalEventsHook.metatype,
-      );
-      new Worker(
-        externalEventQueueConf.queueName,
-        async (event) => {
-          this.logger.debug(
-            `Event hooked on Redis (queueName : ${
-              externalEventQueueConf.queueName
-            }): ${JSON.stringify(event.data)}`,
+    externalEventsHookCommands.forEach(
+      (externalEventsHook: InstanceWrapper) => {
+        const externalEventQueueConf: RedisQueueConfiguration =
+          Reflect.getMetadata(
+            EXTERNAL_EVENT_HOOK_METADATA,
+            externalEventsHook.metatype,
           );
-          const hookMethod = Reflect.getMetadata(
-            REDIS_EVENT_HOOK,
-            externalEventsHook.instance,
-          );
+        new Worker(
+          externalEventQueueConf.queueName,
+          async (event) => {
+            this.logger.debug(
+              `Event hooked on Redis (queueName : ${
+                externalEventQueueConf.queueName
+              }): ${JSON.stringify(event.data)}`,
+            );
+            const hookMethod = Reflect.getMetadata(
+              EXTERNAL_EVENT_HOOK,
+              externalEventsHook.instance,
+            );
 
-          externalEventsHook.instance[hookMethod](event.data);
-        },
-        { connection: externalEventQueueConf.options },
+            externalEventsHook.instance[hookMethod](event.data);
+          },
+          { connection: externalEventQueueConf.options },
+        );
+      },
+    );
+  }
+
+  private GetHookableCommands(hookTypeMetadata: string): InstanceWrapper[] {
+    return this.discoveryService
+      .getControllers()
+      .filter((command: InstanceWrapper) =>
+        Reflect.hasMetadata(hookTypeMetadata, command.metatype),
       );
-    });
   }
 
   public emit(streamName: string, event: EventstoreEvent): void {

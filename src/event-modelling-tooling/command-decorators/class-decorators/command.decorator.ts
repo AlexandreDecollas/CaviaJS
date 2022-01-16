@@ -1,6 +1,9 @@
 import { Controller, Module, Type } from '@nestjs/common';
 import { CommandMetadata } from './command.metadata';
-import { PERSUB_HOOK_METADATA, REDIS_HOOK_METADATA } from '../../constants';
+import {
+  PERSUB_HOOK_METADATA,
+  EXTERNAL_EVENT_HOOK_METADATA,
+} from '../../constants';
 
 export function Command(metadata: CommandMetadata): ClassDecorator {
   return (target: object) => {
@@ -13,7 +16,7 @@ export function Command(metadata: CommandMetadata): ClassDecorator {
     }
     if (metadata.entryPoints.externalEventQueue) {
       Reflect.defineMetadata(
-        REDIS_HOOK_METADATA,
+        EXTERNAL_EVENT_HOOK_METADATA,
         metadata.entryPoints.externalEventQueue,
         target,
       );

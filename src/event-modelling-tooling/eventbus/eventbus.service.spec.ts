@@ -1,5 +1,8 @@
 import { Eventbus } from './eventbus.service';
-import { PERSUB_HOOK_METADATA, REDIS_HOOK_METADATA } from '../constants';
+import {
+  PERSUB_HOOK_METADATA,
+  EXTERNAL_EVENT_HOOK_METADATA,
+} from '../constants';
 import {
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
@@ -158,7 +161,7 @@ describe('Eventbus', () => {
 
     beforeEach(async () => {
       Reflect.defineMetadata(
-        REDIS_HOOK_METADATA,
+        EXTERNAL_EVENT_HOOK_METADATA,
         redisConf,
         controllers[0].metatype,
       );

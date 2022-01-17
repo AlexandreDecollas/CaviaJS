@@ -7,131 +7,41 @@ import {
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { EventstoreEvent } from '../../model/eventstoreEvent';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
-import {
-  jsonEvent,
-  PARK,
-  PersistentSubscription,
-  ResolvedEvent,
-} from '@eventstore/db-client';
+import { jsonEvent } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { DiscoveryService } from '@nestjs/core';
-import {
-  fetchConnectedPersistentSubscriptions,
-  ProvidedPersistentSubscriptions,
-} from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import {
-  EXTERNAL_EVENT_HOOK,
-  EXTERNAL_EVENT_HOOK_METADATA,
-  PERSUB_EVENT_HOOK,
-  PERSUB_HOOK_METADATA,
-} from '../constants';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
 import { Queue, Worker } from 'bullmq';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 @Injectable()
 export class Eventbus implements OnApplicationBootstrap {
   constructor(
     @Inject(INTERNAL_EVENTS_QUEUE_CONFIGURATION)
     private readonly internalEventsQueueConf: RedisQueueConfiguration,
-    private readonly discoveryService: DiscoveryService,
     private readonly connection: ESDBConnectionService,
     private readonly eventEmitter: EventEmitter2,
     private readonly logger: Logger,
   ) {}
 
   public async onApplicationBootstrap(): Promise<void> {
-    this.plugPersistentSubscriptionHooks();
-    this.plugExternalEventsHooks();
     this.plugInternalEventQueue();
   }
 
   private plugInternalEventQueue(): void {
-    if (this.internalEventsQueueConf) {
-      new Worker(
-        this.internalEventsQueueConf.queueName,
-        async (event) => {
-          this.logger.debug(
-            'Event hooked on internal event queue : ' +
-              JSON.stringify(event.data),
-          );
-          await this.appendToEventstore(event.data);
-        },
-        this.internalEventsQueueConf.options,
-      );
+    if (!this.internalEventsQueueConf) {
+      return;
     }
-  }
-
-  private plugPersistentSubscriptionHooks(): void {
-    const persubHooks: InstanceWrapper[] =
-      this.GetHookableCommands(PERSUB_HOOK_METADATA);
-
-    persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
-      const persubName = Reflect.getMetadata(
-        PERSUB_HOOK_METADATA,
-        persubHookContainer.metatype,
-      );
-
-      const persistentSubscriptions: ProvidedPersistentSubscriptions =
-        fetchConnectedPersistentSubscriptions();
-      const persistentSubscription: PersistentSubscription =
-        persistentSubscriptions[persubName];
-      persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
-        try {
-          const hookMethod = Reflect.getMetadata(
-            PERSUB_EVENT_HOOK,
-            persubHookContainer.instance,
-          );
-
-          persubHookContainer.instance[hookMethod](payloadEvent.event);
-          await persistentSubscription.ack(payloadEvent);
-        } catch (e) {
-          await persistentSubscription.nack(PARK, e.message, payloadEvent);
-        }
-      });
-    });
-  }
-
-  private plugExternalEventsHooks(): void {
-    const externalEventsHookCommands = this.GetHookableCommands(
-      EXTERNAL_EVENT_HOOK_METADATA,
-    );
-
-    externalEventsHookCommands.forEach(
-      (externalEventsHook: InstanceWrapper) => {
-        const externalEventQueueConf: RedisQueueConfiguration =
-          Reflect.getMetadata(
-            EXTERNAL_EVENT_HOOK_METADATA,
-            externalEventsHook.metatype,
-          );
-        new Worker(
-          externalEventQueueConf.queueName,
-          async (event) => {
-            this.logger.debug(
-              `Event hooked on Redis (queueName : ${
-                externalEventQueueConf.queueName
-              }): ${JSON.stringify(event.data)}`,
-            );
-            const hookMethod = Reflect.getMetadata(
-              EXTERNAL_EVENT_HOOK,
-              externalEventsHook.instance,
-            );
-
-            externalEventsHook.instance[hookMethod](event.data);
-          },
-          { connection: externalEventQueueConf.options },
+    new Worker(
+      this.internalEventsQueueConf.queueName,
+      async (event) => {
+        this.logger.debug(
+          'Event hooked on internal event queue : ' +
+            JSON.stringify(event.data),
         );
+        await this.appendToEventstore(event.data);
       },
+      this.internalEventsQueueConf.options,
     );
-  }
-
-  private GetHookableCommands(hookTypeMetadata: string): InstanceWrapper[] {
-    return this.discoveryService
-      .getControllers()
-      .filter((command: InstanceWrapper) =>
-        Reflect.hasMetadata(hookTypeMetadata, command.metatype),
-      );
   }
 
   public emit(streamName: string, event: EventstoreEvent): void {

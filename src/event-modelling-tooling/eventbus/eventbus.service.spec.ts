@@ -1,53 +1,46 @@
 import { Eventbus } from './eventbus.service';
 import {
-  PERSUB_HOOK_METADATA,
-  EXTERNAL_EVENT_HOOK_METADATA,
-} from '../constants';
-import {
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
-  provideConnectedPersistentSubscription,
 } from '../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { ExternalEventHook } from '../command-decorators/method-decorator/external-event-hook.decorator';
-import { PARK } from '@eventstore/db-client';
 import { ESDBConnectionService } from '../eventstore-connector/connection-initializer/esdb-connection.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
-import { DiscoveryService } from '@nestjs/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PersubEventHook } from '../command-decorators/method-decorator/persub-event-hook.decorator';
 import * as BullMQ from 'bullmq';
 import spyOn = jest.spyOn;
-import { RedisQueueConfiguration } from '../event-modelling.configuration';
 
 describe('Eventbus', () => {
   let service: Eventbus;
 
-  const redisQueueConfMock = {
-    queueName: 'tutu',
-    connection: { host: '', port: 1234 },
+  function getDefaultRedisQueueConf() {
+    return {
+      queueName: 'tutu',
+      options: {
+        connection: {
+          host: '',
+          port: 1234,
+        },
+      },
+    } as any;
+  }
+
+  let redisQueueConfMock;
+  const connectionMock = {
+    getConnectedClient: jest.fn(),
   } as any;
-  const discoveryServiceMock = {
-    getControllers: jest.fn(),
-  } as any;
-  const connectionMock = {} as any;
   const eventEmitter2Mock = {} as any;
   const loggerMock = { debug: jest.fn() } as any;
   spyOn(BullMQ, 'Worker').mockImplementation(() => null);
 
-  beforeEach(async () => {
-    spyOn(console, 'warn');
+  async function initService(): Promise<Eventbus> {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Eventbus,
         {
           provide: INTERNAL_EVENTS_QUEUE_CONFIGURATION,
           useValue: redisQueueConfMock,
-        },
-        {
-          provide: DiscoveryService,
-          useValue: discoveryServiceMock,
         },
         {
           provide: ESDBConnectionService,
@@ -63,7 +56,14 @@ describe('Eventbus', () => {
         },
       ],
     }).compile();
-    service = module.get<Eventbus>(Eventbus);
+    return module.get<Eventbus>(Eventbus);
+  }
+
+  beforeEach(async () => {
+    spyOn(console, 'warn');
+
+    redisQueueConfMock = getDefaultRedisQueueConf();
+    service = await initService();
 
     const persubs = fetchProvidedPersistentSubscriptionsConfigurations();
     Object.keys(persubs).forEach((key: string) => delete persubs[key]);
@@ -75,114 +75,75 @@ describe('Eventbus', () => {
     jest.resetAllMocks();
   });
 
-  describe('persistent subscription management', () => {
-    const handlerSpy = jest.fn();
+  it('should not init internal redis queue conf when no conf provided at startup', async () => {
+    redisQueueConfMock = null;
+    jest.resetAllMocks();
+    spyOn(BullMQ, 'Worker').mockImplementation(() => null);
+    service = await initService();
 
-    class Command {
-      toto(...args) {
-        handlerSpy(args);
-      }
-    }
-    const command = new Command();
-    const controllers = [{ metatype: command, instance: command }];
+    await service.onApplicationBootstrap();
 
-    PersubEventHook(command, 'toto');
+    expect(BullMQ.Worker).not.toHaveBeenCalled();
+  });
 
-    const onEventHandlerSpy = jest.fn();
-    const ackSpy = jest.fn();
-    const nackSpy = jest.fn();
+  it('should listen on events from internal redis queue at module startup', async () => {
+    await service.onApplicationBootstrap();
 
-    beforeEach(async () => {
-      provideConnectedPersistentSubscription('persubName', {
-        on: onEventHandlerSpy,
-        ack: ackSpy,
-        nack: nackSpy,
-      } as any);
-      Reflect.defineMetadata(
-        PERSUB_HOOK_METADATA,
-        'persubName',
-        controllers[0].metatype,
-      );
-      discoveryServiceMock.getControllers.mockReturnValue(controllers);
+    expect(BullMQ.Worker).toHaveBeenCalledWith(
+      'tutu',
+      expect.any(Function),
+      redisQueueConfMock.options,
+    );
+  });
 
-      await service.onApplicationBootstrap();
+  it('should append to eventstore events when spotted on external eventbus', async () => {
+    await service.onApplicationBootstrap();
+    const handler = BullMQ.Worker['mock'].calls[0][1];
+    const appendToStreamSpy = jest.fn();
+    connectionMock.getConnectedClient.mockReturnValue({
+      appendToStream: appendToStreamSpy,
     });
 
-    it('should plug all persistent subscriptions provided in features to eventstore at app bootstrap', async () => {
-      const hook = onEventHandlerSpy.mock.calls[0][1];
-      await hook({});
-      expect(onEventHandlerSpy).toHaveBeenCalled();
-    });
+    await handler({ data: { metadata: { streamName: 'toto' } } });
 
-    it('should nack an event when it is invalid', async () => {
-      const hook = onEventHandlerSpy.mock.calls[0][1];
-      await hook(null);
-      await expect(nackSpy).toHaveBeenCalledWith(
-        PARK,
-        expect.any(String),
-        null,
-      );
-    });
-
-    it('should ack an event when it is valid', async () => {
-      const hook = onEventHandlerSpy.mock.calls[0][1];
-      const payload = { event: 123 };
-      await hook(payload);
-      await expect(ackSpy).toHaveBeenCalledWith(payload);
-    });
-
-    it('should call the specified handler in the command', async () => {
-      const hook = onEventHandlerSpy.mock.calls[0][1];
-      const payload = { event: 123 };
-      await hook(payload);
-      await expect(handlerSpy).toHaveBeenCalledWith([123]);
+    expect(appendToStreamSpy).toHaveBeenCalledWith('toto', {
+      metadata: { streamName: 'toto' },
     });
   });
 
-  describe('External events management', () => {
-    const handlerSpy = jest.fn();
+  it('should push to redis when a conf is provided while event is emitted', async () => {
+    const addEventSpy = jest.fn();
+    spyOn(BullMQ, 'Queue').mockReturnValue({ add: addEventSpy } as any);
 
-    class Command {
-      toto(...args) {
-        handlerSpy(args);
-      }
-    }
-    const command = new Command();
-    const controllers = [{ metatype: command, instance: command }];
-
-    ExternalEventHook(command, 'toto');
-
-    const redisConf: RedisQueueConfiguration = {
-      options: {
-        connection: { host: 'hostname', port: 1234 },
-      },
-      queueName: 'redisQueue',
-    };
-
-    beforeEach(async () => {
-      Reflect.defineMetadata(
-        EXTERNAL_EVENT_HOOK_METADATA,
-        redisConf,
-        controllers[0].metatype,
-      );
-      discoveryServiceMock.getControllers.mockReturnValue(controllers);
-
-      await service.onApplicationBootstrap();
+    await service.hookEvent({
+      data: { toto: 123 },
+      metadata: { streamName: 'plpl' },
+      type: 'ff',
     });
 
-    it('should make all external events listener start listening at app bootstrap', async () => {
-      expect(BullMQ.Worker['mock'].calls[0]).toEqual([
-        'redisQueue',
-        expect.any(Function),
-        { connection: redisConf.options },
-      ]);
+    expect(BullMQ.Queue).toHaveBeenCalledWith(
+      'tutu',
+      redisQueueConfMock.options,
+    );
+    expect(addEventSpy).toHaveBeenCalled();
+  });
+
+  it('should push directly to eventstore when no redis conf is provided while event is emitted', async () => {
+    redisQueueConfMock = null;
+    jest.resetAllMocks();
+    service = await initService();
+    const appendToStreamSpy = jest.fn();
+    connectionMock.getConnectedClient.mockReturnValue({
+      appendToStream: appendToStreamSpy,
     });
 
-    it('should call the specified handler in the command', async () => {
-      const hook = BullMQ.Worker['mock'].calls[0][1];
-      const payload = { data: 123 };
-      await hook(payload);
-      await expect(handlerSpy).toHaveBeenCalledWith([123]);
+    await service.hookEvent({
+      data: { toto: 123 },
+      metadata: { streamName: 'okok' },
+      type: 'ff',
     });
+
+    expect(appendToStreamSpy).toHaveBeenCalledWith('okok', expect.anything());
+    expect(appendToStreamSpy.mock.calls[0][1].type).toEqual('ff');
   });
 });

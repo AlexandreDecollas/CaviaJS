@@ -3,7 +3,7 @@ import { Eventbus } from './eventbus.service';
 import { DiscoveryModule } from '@nestjs/core';
 import { RedisQueueConfiguration } from '../event-modelling.configuration';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
-import { ExternalEventBusStarterService } from './internal-queue/eventbus-starter.service';
+import { ExternalEventbusStarterService } from './internal-queue/external-eventbus-starter.service';
 
 @Module({
   providers: [
@@ -12,7 +12,7 @@ import { ExternalEventBusStarterService } from './internal-queue/eventbus-starte
       provide: INTERNAL_EVENTS_QUEUE_CONFIGURATION,
       useValue: undefined,
     },
-    ExternalEventBusStarterService,
+    ExternalEventbusStarterService,
   ],
   imports: [DiscoveryModule],
   exports: [Eventbus],

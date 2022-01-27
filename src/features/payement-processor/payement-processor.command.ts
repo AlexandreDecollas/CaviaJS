@@ -23,7 +23,7 @@ provideProjection({
 });
 
 @Command({
-  entryPoints: { persubName: 'paymentProcessor' },
+  restOptions: { path: 'paymentProcessor' },
 })
 export class PayementProcessorCommand {
   constructor(

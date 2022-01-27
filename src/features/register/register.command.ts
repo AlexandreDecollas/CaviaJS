@@ -9,12 +9,10 @@ import { RegistrationRequestedEvent } from '../../model/registration-requested.e
 import { ExternalEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/external-event-hook.decorator';
 
 @Command({
-  entryPoints: {
-    restPath: 'register',
-    externalEventQueue: {
-      queueName: 'register-queue',
-      options: { host: '127.0.0.1', port: 6379 },
-    },
+  restOptions: { path: 'register' },
+  externalEventQueue: {
+    queueName: 'register-queue',
+    options: { host: '127.0.0.1', port: 6379 },
   },
 })
 export class RegisterCommand {

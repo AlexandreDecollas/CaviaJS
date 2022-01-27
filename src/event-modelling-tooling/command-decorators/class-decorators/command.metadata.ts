@@ -1,12 +1,9 @@
 import { ModuleMetadata } from '@nestjs/common';
 import { RedisQueueConfiguration } from '../../event-modelling.configuration';
-
-export interface CommandEntryPoint {
-  restPath?: string;
-  persubName?: string;
-  externalEventQueue?: RedisQueueConfiguration;
-}
+import { ControllerOptions } from '@nestjs/common/decorators/core/controller.decorator';
 
 export interface CommandMetadata extends ModuleMetadata {
-  entryPoints?: CommandEntryPoint;
+  restOptions: ControllerOptions;
+  persubName?: string;
+  externalEventQueue?: RedisQueueConfiguration;
 }

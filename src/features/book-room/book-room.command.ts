@@ -22,10 +22,8 @@ providePersistentSubscription({
 });
 
 @Command({
-  entryPoints: {
-    restPath: 'book-room',
-    persubName: 'roomAvailabilityStateVersion',
-  },
+  restOptions: { path: 'book-room' },
+  persubName: 'roomAvailabilityStateVersion',
   providers: [BookRoomService],
 })
 export class BookRoomCommand {

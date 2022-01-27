@@ -5,7 +5,7 @@ import { IdGeneratorService } from '../../utils/id-generator/id-generator.servic
 import { PayementRequestedEvent } from '../../model/payement-requested.event';
 
 @Command({
-  entryPoints: { restPath: 'payement-requested' },
+  restOptions: { path: 'payement-requested' },
 })
 export class PayementRequestedCommand {
   constructor(

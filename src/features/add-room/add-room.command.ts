@@ -5,7 +5,7 @@ import { RoomAddedEvent } from '../../model/room-added.event';
 import { Get, Param } from '@nestjs/common';
 
 @Command({
-  entryPoints: { restPath: 'add-room' },
+  restOptions: { path: 'add-room' },
 })
 export class AddRoomCommand {
   constructor(

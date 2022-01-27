@@ -7,21 +7,17 @@ import {
 
 export function Command(metadata: CommandMetadata): ClassDecorator {
   return (target: object) => {
-    if (metadata.entryPoints.persubName) {
-      Reflect.defineMetadata(
-        PERSUB_HOOK_METADATA,
-        metadata.entryPoints.persubName,
-        target,
-      );
+    if (metadata.persubName) {
+      Reflect.defineMetadata(PERSUB_HOOK_METADATA, metadata.persubName, target);
     }
-    if (metadata.entryPoints.externalEventQueue) {
+    if (metadata.externalEventQueue) {
       Reflect.defineMetadata(
         EXTERNAL_EVENT_HOOK_METADATA,
-        metadata.entryPoints.externalEventQueue,
+        metadata.externalEventQueue,
         target,
       );
     }
-    Controller({ path: metadata.entryPoints.restPath })(target as any);
+    Controller({ path: metadata.restOptions.path })(target as any);
 
     Module({
       providers: metadata.providers,

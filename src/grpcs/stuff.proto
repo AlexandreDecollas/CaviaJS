@@ -1,0 +1,14 @@
+// hero/hero.proto
+syntax = "proto3";
+
+package grpcs;
+
+service StuffService {
+  rpc ApplyStuff (StuffId) returns (VoidResponse) {}
+}
+
+message VoidResponse {}
+
+message StuffId {
+  string id = 1;
+}

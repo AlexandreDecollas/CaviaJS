@@ -23,9 +23,12 @@
   },
   "dependencies": {
     "@eventstore/db-client": "^2.1.1",
+    "@grpc/grpc-js": "^1.5.3",
+    "@grpc/proto-loader": "^0.6.9",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/event-emitter": "^1.0.0",
+    "@nestjs/microservices": "^8.2.6",
     "@nestjs/platform-express": "^8.0.0",
     "bullmq": "^1.64.0",
     "env-cmd": "^10.1.0",
@@ -37,7 +40,8 @@
     "prettier-format": "^3.0.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "sharp": "^0.29.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

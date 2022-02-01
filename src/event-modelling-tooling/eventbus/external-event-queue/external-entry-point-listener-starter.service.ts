@@ -36,7 +36,7 @@ export class ExternalEntryPointListenerStarterService
 
   private plugPersistentSubscriptionHooks(): void {
     const persubHooks: InstanceWrapper[] =
-      this.GetHookableCommands(PERSUB_HOOK_METADATA);
+      this.getHookableCommands(PERSUB_HOOK_METADATA);
 
     persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
       const persubName = Reflect.getMetadata(
@@ -73,7 +73,7 @@ export class ExternalEntryPointListenerStarterService
   }
 
   private plugExternalEventsHooks(): void {
-    const externalEventsHookCommands = this.GetHookableCommands(
+    const externalEventsHookCommands = this.getHookableCommands(
       EXTERNAL_EVENT_HOOK_METADATA,
     );
 
@@ -105,7 +105,7 @@ export class ExternalEntryPointListenerStarterService
     );
   }
 
-  private GetHookableCommands(hookTypeMetadata: string): InstanceWrapper[] {
+  private getHookableCommands(hookTypeMetadata: string): InstanceWrapper[] {
     return this.discoveryService
       .getControllers()
       .filter((command: InstanceWrapper) =>

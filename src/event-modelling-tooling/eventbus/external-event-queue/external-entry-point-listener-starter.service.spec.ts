@@ -10,16 +10,13 @@ import {
   ProvidedPersistentSubscriptionsConfigurations,
 } from '../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 import { PersubEventHook } from '../../command-decorators/method-decorator/persub-event-hook.decorator';
-import {
-  EXTERNAL_EVENT_HOOK_METADATA,
-  PERSUB_HOOK_METADATA,
-} from '../../constants';
+import { EXTERNAL_EVENT_HOOK_METADATA } from '../../constants';
 import { PARK } from '@eventstore/db-client';
 import { ExternalEventHook } from '../../command-decorators/method-decorator/external-event-hook.decorator';
 import { RedisQueueConfiguration } from '../../event-modelling.configuration';
-import spyOn = jest.spyOn;
 import { Command } from '../../command-decorators/class-decorators/command.decorator';
 import { ExternalEntryPointListenerStarterService } from './external-entry-point-listener-starter.service';
+import spyOn = jest.spyOn;
 
 describe('ExternalEntryPointListenerStarterService', () => {
   let service: ExternalEntryPointListenerStarterService;
@@ -116,29 +113,28 @@ describe('ExternalEntryPointListenerStarterService', () => {
   describe('External events management', () => {
     const handlerSpy = jest.fn();
 
-    class Command {
-      @ExternalEventHook
-      toto(...args) {
-        handlerSpy(args);
-      }
-    }
-
-    const command = new Command();
-    const controllers = [{ metatype: command, instance: command }];
-
     const redisConf: RedisQueueConfiguration = {
       options: {
         connection: { host: 'hostname', port: 1234 },
       },
       queueName: 'redisQueue',
     };
+    @Command({ externalEventQueue: redisConf })
+    class TutuCommand {
+      @ExternalEventHook
+      toto(...args) {
+        handlerSpy(args);
+      }
+    }
 
     beforeEach(async () => {
-      Reflect.defineMetadata(
-        EXTERNAL_EVENT_HOOK_METADATA,
-        redisConf,
-        controllers[0].metatype,
-      );
+      const command = new TutuCommand();
+      const controllers = [{ metatype: command, instance: command }];
+      // Reflect.defineMetadata(
+      //   EXTERNAL_EVENT_HOOK_METADATA,
+      //   redisConf,
+      //   controllers[0].metatype,
+      // );
       discoveryServiceMock.getControllers.mockReturnValue(controllers);
 
       await service.onApplicationBootstrap();

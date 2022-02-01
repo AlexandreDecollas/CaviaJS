@@ -10,8 +10,8 @@ async function bootstrap() {
       transport: Transport.GRPC,
       logger: ['error', 'warn', 'log', 'debug'],
       options: {
-        package: 'hero',
-        protoPath: join(__dirname, 'grpcs/stuff.proto'),
+        package: 'grpcs',
+        protoPath: join(__dirname, '../assets/protos/stuff.proto'),
       },
     },
   );

@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "assets": ["**/*.proto"],
-    "watchAssets": true,
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,

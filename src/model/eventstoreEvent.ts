@@ -1,4 +1,4 @@
-export interface EventstoreEvent {
+export abstract class EventstoreEvent {
   version?: number;
   data: any;
   metadata: {

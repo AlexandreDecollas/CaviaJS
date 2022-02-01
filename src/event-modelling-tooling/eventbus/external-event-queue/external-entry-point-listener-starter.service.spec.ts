@@ -6,6 +6,8 @@ import {
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
   provideConnectedPersistentSubscription,
+  ProvidedPersistentSubscriptions,
+  ProvidedPersistentSubscriptionsConfigurations,
 } from '../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 import { PersubEventHook } from '../../command-decorators/method-decorator/persub-event-hook.decorator';
 import {
@@ -16,22 +18,24 @@ import { PARK } from '@eventstore/db-client';
 import { ExternalEventHook } from '../../command-decorators/method-decorator/external-event-hook.decorator';
 import { RedisQueueConfiguration } from '../../event-modelling.configuration';
 import spyOn = jest.spyOn;
-import { ExternalEventbusStarterService } from './external-eventbus-starter.service';
+import { Command } from '../../command-decorators/class-decorators/command.decorator';
+import { ExternalEntryPointListenerStarterService } from './external-entry-point-listener-starter.service';
 
-describe('EventbusStarterService', () => {
-  let service: ExternalEventbusStarterService;
+describe('ExternalEntryPointListenerStarterService', () => {
+  let service: ExternalEntryPointListenerStarterService;
 
   const discoveryServiceMock = {
     getControllers: jest.fn(),
   } as any;
   const loggerMock = { debug: jest.fn() } as any;
-  spyOn(BullMQ, 'Worker').mockImplementation(() => null);
 
   beforeEach(async () => {
+    jest.resetAllMocks();
     spyOn(console, 'warn');
+    spyOn(BullMQ, 'Worker').mockImplementation(() => null);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ExternalEventbusStarterService,
+        ExternalEntryPointListenerStarterService,
         {
           provide: DiscoveryService,
           useValue: discoveryServiceMock,
@@ -42,37 +46,25 @@ describe('EventbusStarterService', () => {
         },
       ],
     }).compile();
-    service = module.get<ExternalEventbusStarterService>(
-      ExternalEventbusStarterService,
+    service = module.get<ExternalEntryPointListenerStarterService>(
+      ExternalEntryPointListenerStarterService,
     );
 
-    const persubs = fetchProvidedPersistentSubscriptionsConfigurations();
-    Object.keys(persubs).forEach((key: string) => delete persubs[key]);
-
-    const connectedPersubs = fetchConnectedPersistentSubscriptions();
-    Object.keys(connectedPersubs).forEach(
-      (key: string) => delete connectedPersubs[key],
-    );
-    jest.resetAllMocks();
+    resetPersubs();
   });
 
   describe('persistent subscription management', () => {
     const handlerSpy = jest.fn();
-
-    class Command {
-      toto(...args) {
-        handlerSpy(args);
-      }
-    }
-
-    const command = new Command();
-    const controllers = [{ metatype: command, instance: command }];
-
-    PersubEventHook(command, 'toto');
-
     const onEventHandlerSpy = jest.fn();
     const ackSpy = jest.fn();
     const nackSpy = jest.fn();
+
+    class TotoCommand {
+      @PersubEventHook
+      public toto(...args): void {
+        handlerSpy(args);
+      }
+    }
 
     beforeEach(async () => {
       provideConnectedPersistentSubscription('persubName', {
@@ -80,11 +72,11 @@ describe('EventbusStarterService', () => {
         ack: ackSpy,
         nack: nackSpy,
       } as any);
-      Reflect.defineMetadata(
-        PERSUB_HOOK_METADATA,
-        'persubName',
-        controllers[0].metatype,
-      );
+
+      const command = new TotoCommand();
+      Command({ persubName: 'persubName' })(command as any);
+
+      const controllers = [{ metatype: command, instance: command }];
       discoveryServiceMock.getControllers.mockReturnValue(controllers);
 
       await service.onApplicationBootstrap();
@@ -125,6 +117,7 @@ describe('EventbusStarterService', () => {
     const handlerSpy = jest.fn();
 
     class Command {
+      @ExternalEventHook
       toto(...args) {
         handlerSpy(args);
       }
@@ -132,8 +125,6 @@ describe('EventbusStarterService', () => {
 
     const command = new Command();
     const controllers = [{ metatype: command, instance: command }];
-
-    ExternalEventHook(command, 'toto');
 
     const redisConf: RedisQueueConfiguration = {
       options: {
@@ -169,3 +160,15 @@ describe('EventbusStarterService', () => {
     });
   });
 });
+
+export const resetPersubs = () => {
+  const persubsDatas: ProvidedPersistentSubscriptionsConfigurations =
+    fetchProvidedPersistentSubscriptionsConfigurations();
+  Object.keys(persubsDatas).forEach((key: string) => delete persubsDatas[key]);
+
+  const connectedPersubs: ProvidedPersistentSubscriptions =
+    fetchConnectedPersistentSubscriptions();
+  Object.keys(connectedPersubs).forEach(
+    (key: string) => delete connectedPersubs[key],
+  );
+};

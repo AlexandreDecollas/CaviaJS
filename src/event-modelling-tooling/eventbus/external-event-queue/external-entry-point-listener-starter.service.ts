@@ -5,6 +5,7 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
   EXTERNAL_EVENT_HOOK,
   EXTERNAL_EVENT_HOOK_METADATA,
+  PERSUB_ALLOWED_EVENT_NAME,
   PERSUB_EVENT_HOOK,
   PERSUB_HOOK_METADATA,
 } from '../../constants';
@@ -20,7 +21,9 @@ import {
 import { Worker } from 'bullmq';
 
 @Injectable()
-export class ExternalEventbusStarterService implements OnApplicationBootstrap {
+export class ExternalEntryPointListenerStarterService
+  implements OnApplicationBootstrap
+{
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly logger: Logger,
@@ -52,6 +55,14 @@ export class ExternalEventbusStarterService implements OnApplicationBootstrap {
             persubHookContainer.instance,
           );
 
+          const allowedEventType = Reflect.getMetadata(
+            PERSUB_ALLOWED_EVENT_NAME,
+            persubHookContainer.instance,
+          );
+
+          if (payloadEvent.event.type !== allowedEventType) {
+            return;
+          }
           persubHookContainer.instance[hookMethod](payloadEvent.event);
           await persistentSubscription.ack(payloadEvent);
         } catch (e) {

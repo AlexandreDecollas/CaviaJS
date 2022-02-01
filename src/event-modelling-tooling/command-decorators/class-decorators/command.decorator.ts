@@ -17,7 +17,7 @@ export function Command(metadata: CommandMetadata): ClassDecorator {
         target,
       );
     }
-    Controller({ path: metadata.restOptions.path })(target as any);
+    Controller({ path: metadata.restOptions?.path ?? '' })(target as any);
 
     Module({
       providers: metadata.providers,

@@ -13,6 +13,7 @@ import {
   ProvidedPersistentSubscriptions,
 } from '../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
 import {
+  EventType,
   PARK,
   PersistentSubscription,
   ResolvedEvent,
@@ -42,50 +43,138 @@ export class ExternalEntryPointListenerStarterService
       fetchConnectedPersistentSubscriptions();
 
     persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
-      const persubName = Reflect.getMetadata(
-        PERSUB_HOOK_METADATA,
-        persubHookContainer.metatype,
+      this.plugPersistentSubscriptionHook(
+        persubHookContainer,
+        persistentSubscriptions,
       );
-
-      const persistentSubscription: PersistentSubscription =
-        persistentSubscriptions[persubName];
-      persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
-        try {
-          const metadatas: PersubHookMetadata[] = Reflect.getMetadata(
-            PERSUB_EVENT_HOOK,
-            persubHookContainer.metatype.prototype,
-          );
-          for (const metadata of metadatas) {
-            if (
-              metadata.allowedEventTypes.length > 0 &&
-              metadata.allowedEventTypes.indexOf(
-                payloadEvent.event.constructor.name,
-              ) >= 0
-            ) {
-              const index = metadatas.indexOf(metadata);
-              (metadatas[index] as PersubHookMetadata).sequenceState[
-                payloadEvent.event.constructor.name
-              ] = true;
-              Reflect.defineMetadata(
-                PERSUB_EVENT_HOOK,
-                metadatas,
-                persubHookContainer.metatype.prototype,
-              );
-            }
-            if (
-              metadata.allowedEventTypes.length !==
-              Object.keys(metadata.sequenceState).length
-            ) {
-              return;
-            }
-            persubHookContainer.instance[metadata.method](payloadEvent.event);
-            await persistentSubscription.ack(payloadEvent);
-          }
-        } catch (e) {
-          await persistentSubscription.nack(PARK, e.message, payloadEvent);
-        }
-      });
     });
+  }
+
+  private plugPersistentSubscriptionHook(
+    persubHookContainer: InstanceWrapper<any>,
+    persistentSubscriptions: ProvidedPersistentSubscriptions,
+  ): void {
+    const persubName = Reflect.getMetadata(
+      PERSUB_HOOK_METADATA,
+      persubHookContainer.metatype,
+    );
+
+    const persistentSubscription: PersistentSubscription =
+      persistentSubscriptions[persubName];
+    persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
+      await this.welcomeNewEvent(
+        persubHookContainer,
+        payloadEvent,
+        persistentSubscription,
+      );
+    });
+  }
+
+  private async welcomeNewEvent(
+    persubHookContainer: InstanceWrapper<any>,
+    payloadEvent: ResolvedEvent<EventType>,
+    persistentSubscription: PersistentSubscription<EventType>,
+  ): Promise<void> {
+    try {
+      const persubHookmetadatas: PersubHookMetadata[] = Reflect.getMetadata(
+        PERSUB_EVENT_HOOK,
+        persubHookContainer.metatype.prototype,
+      );
+      for (const persubHookMetadata of persubHookmetadatas) {
+        const index = persubHookmetadatas.indexOf(persubHookMetadata);
+        this.updateEventsSequenceState(
+          persubHookmetadatas,
+          persubHookMetadata,
+          payloadEvent,
+          persubHookContainer,
+        );
+        if (this.eventsSequenceIsNotCompletedYet(persubHookMetadata)) {
+          return;
+        }
+        this.reinitEventsSequence(persubHookmetadatas, index);
+        this.triggerPersubEventHook(
+          persubHookContainer,
+          persubHookMetadata,
+          payloadEvent,
+        );
+        await persistentSubscription.ack(payloadEvent);
+      }
+    } catch (e) {
+      await persistentSubscription.nack(PARK, e.message, payloadEvent);
+    }
+  }
+
+  private updateEventsSequenceState(
+    metadatas: PersubHookMetadata[],
+    currentMetadata: PersubHookMetadata,
+    payloadEvent: ResolvedEvent<EventType>,
+    persubHookContainer: InstanceWrapper<any>,
+  ): void {
+    if (
+      this.allEventsAreAllowed(currentMetadata) ||
+      this.currentEventIsNotAllowed(currentMetadata, payloadEvent)
+    ) {
+      return;
+    }
+    this.takeNoteThatOneOfAllowedEventsHappened(currentMetadata, payloadEvent);
+    this.updateStateInHookMetadatas(metadatas, persubHookContainer);
+  }
+
+  private updateStateInHookMetadatas(
+    metadatas: PersubHookMetadata[],
+    persubHookContainer: InstanceWrapper<any>,
+  ): void {
+    Reflect.defineMetadata(
+      PERSUB_EVENT_HOOK,
+      metadatas,
+      persubHookContainer.metatype.prototype,
+    );
+  }
+
+  private currentEventIsNotAllowed(
+    metadata: PersubHookMetadata,
+    payloadEvent: ResolvedEvent<EventType>,
+  ) {
+    return (
+      metadata.allowedEventTypes.indexOf(
+        payloadEvent.event.constructor.name,
+      ) === -1
+    );
+  }
+
+  private allEventsAreAllowed(metadata: PersubHookMetadata): boolean {
+    return metadata.allowedEventTypes.length === 0;
+  }
+
+  private takeNoteThatOneOfAllowedEventsHappened(
+    metadata: PersubHookMetadata,
+    payloadEvent: ResolvedEvent<EventType>,
+  ) {
+    metadata.sequenceState[payloadEvent.event.constructor.name] = true;
+  }
+
+  private triggerPersubEventHook(
+    persubHookContainer: InstanceWrapper<any>,
+    metadata: PersubHookMetadata,
+    payloadEvent: ResolvedEvent<EventType>,
+  ) {
+    persubHookContainer.instance[metadata.method](payloadEvent.event);
+  }
+
+  private eventsSequenceIsNotCompletedYet(
+    metadata: PersubHookMetadata,
+  ): boolean {
+    return (
+      metadata.allowedEventTypes.length !==
+      Object.keys(metadata.sequenceState).length
+    );
+  }
+
+  private reinitEventsSequence(
+    metadatas: PersubHookMetadata[],
+    index: number,
+  ): void {
+    (metadatas[index] as PersubHookMetadata).sequenceState = {};
   }
 
   private plugExternalEventsHooks(): void {

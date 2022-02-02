@@ -73,6 +73,10 @@ describe('ExternalEntryPointListenerStarterService', () => {
     let hookPersub1;
     let hookPersub2;
     let hookPersub3;
+    const allowedEvent1 = new AllowedEvent1();
+    const allowedEvent2 = new AllowedEvent2();
+    const allowedEvent3 = new AllowedEvent3();
+
     beforeEach(async () => {
       jest.resetAllMocks();
       await service.onApplicationBootstrap();
@@ -120,22 +124,27 @@ describe('ExternalEntryPointListenerStarterService', () => {
     });
 
     it('should not trigger the hook when each event of the sequence is not spotted at least once each', async () => {
-      const allowedEvent1 = new AllowedEvent1();
-      const allowedEvent2 = new AllowedEvent2();
       await hookPersub3({ event: allowedEvent1 });
       await hookPersub3({ event: allowedEvent2 });
 
       await expect(persubOnEventSequenceHandlerSpy).not.toHaveBeenCalled();
     });
 
-    it('should trigger the hook when each event of the sequence is spotted at least once each', async () => {
-      const allowedEvent1 = new AllowedEvent1();
-      const allowedEvent2 = new AllowedEvent2();
-      const allowedEvent3 = new AllowedEvent3();
+    fit('should trigger the hook when each event of the sequence is spotted at least once each', async () => {
       await hookPersub3({ event: allowedEvent1 });
       await hookPersub3({ event: allowedEvent2 });
       await hookPersub3({ event: allowedEvent3 });
 
+      await expect(persubOnEventSequenceHandlerSpy).toHaveBeenCalledTimes(1);
+    });
+
+    fit('should reset the sequence once the hook is triggered based on the sequence', async () => {
+      await hookPersub3({ event: allowedEvent1 });
+      await hookPersub3({ event: allowedEvent2 });
+      await hookPersub3({ event: allowedEvent3 });
+
+      await hookPersub3({ event: allowedEvent1 });
+      await hookPersub3({ event: allowedEvent2 });
       await expect(persubOnEventSequenceHandlerSpy).toHaveBeenCalledTimes(1);
     });
   });

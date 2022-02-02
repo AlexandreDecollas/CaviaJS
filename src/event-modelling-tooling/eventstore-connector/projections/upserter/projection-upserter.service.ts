@@ -24,7 +24,7 @@ export class ProjectionUpserterService implements OnModuleInit {
     }
   }
 
-  public async upsertProjection(
+  private async upsertProjection(
     name: string,
     projection: string,
   ): Promise<void> {

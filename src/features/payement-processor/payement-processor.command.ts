@@ -31,7 +31,7 @@ export class PayementProcessorCommand {
     private readonly eventEmitter: Eventbus,
   ) {}
 
-  @PersubEventHook
+  @PersubEventHook()
   public persubCallback(event: PayementRequestedEvent): void {
     const payementSuccededEvent: PayementSuccededEvent = {
       metadata: { streamName: 'guest.payement-succedded' },

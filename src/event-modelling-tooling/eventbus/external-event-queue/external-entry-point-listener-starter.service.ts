@@ -57,10 +57,12 @@ export class ExternalEntryPointListenerStarterService
           );
           for (const metadata of metadatas) {
             if (
-              metadata.allowedEventType === '*' ||
-              metadata.allowedEventType === (payloadEvent as any).type
-            )
-              persubHookContainer.instance[metadata.method](payloadEvent.event);
+              metadata.allowedEventType !== '*' &&
+              metadata.allowedEventType !== (payloadEvent as any).type
+            ) {
+              return;
+            }
+            persubHookContainer.instance[metadata.method](payloadEvent.event);
             await persistentSubscription.ack(payloadEvent);
           }
         } catch (e) {

@@ -54,7 +54,7 @@ export class BookRoomCommand {
     );
   }
 
-  @PersubEventHook
+  @PersubEventHook()
   public getLastStateVersion(): void {
     this.stateUpdated = true;
   }

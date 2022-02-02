@@ -3,58 +3,51 @@ import * as BullMQ from 'bullmq';
 import { DiscoveryService } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { provideConnectedPersistentSubscription } from '../../eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { PersubEventHook } from '../../command-decorators/method-decorator/persub-event-hook.decorator';
 import { PARK } from '@eventstore/db-client';
-import { ExternalEventHook } from '../../command-decorators/method-decorator/external-event-hook.decorator';
-import { RedisQueueConfiguration } from '../../event-modelling.configuration';
-import { Command } from '../../command-decorators/class-decorators/command.decorator';
 import { ExternalEntryPointListenerStarterService } from './external-entry-point-listener-starter.service';
-import spyOn = jest.spyOn;
 import { EventstoreEvent } from '../../../model/eventstoreEvent';
+import {
+  ackSpy,
+  AllowedEvent1,
+  AllowedEvent2,
+  AllowedEvent3,
+  externalEventHandlerSpy,
+  nackSpy,
+  persubAllEventHandlerSpy,
+  persubHookHandlerSpy1,
+  persubHookHandlerSpy2,
+  persubHookHandlerSpy3,
+  persubOnEventSequenceHandlerSpy,
+  persubOnlyOneEventHandlerSpy,
+  redisConf,
+  TeteCommand,
+  TotoCommand,
+  TutuCommand,
+} from './helpers/external-entry-point-listener-starter.service.spec.helper';
+import spyOn = jest.spyOn;
 
 describe('ExternalEntryPointListenerStarterService', () => {
   let service: ExternalEntryPointListenerStarterService;
 
-  const persubHandlerSpy = jest.fn();
-  const externalEventHandlerSpy = jest.fn();
-  const onEventHandlerSpy = jest.fn();
-  const ackSpy = jest.fn();
-  const nackSpy = jest.fn();
+  beforeAll(() => {
+    provideConnectedPersistentSubscription('persubName1', {
+      on: persubHookHandlerSpy1,
+      ack: ackSpy,
+      nack: nackSpy,
+    } as any);
 
-  class AllowedEvent extends EventstoreEvent {
-    type: 'AllowedEvent';
-  }
+    provideConnectedPersistentSubscription('persubName2', {
+      on: persubHookHandlerSpy2,
+      ack: ackSpy,
+      nack: nackSpy,
+    } as any);
 
-  const redisConf: RedisQueueConfiguration = {
-    options: {
-      connection: { host: 'hostname', port: 1234 },
-    },
-    queueName: 'redisQueue',
-  };
-
-  @Command({ persubName: 'persubName', externalEventQueue: redisConf })
-  class TotoCommand {
-    @PersubEventHook()
-    public toto(...args): void {
-      persubHandlerSpy(args);
-    }
-
-    @PersubEventHook(AllowedEvent)
-    public titi(...args): void {
-      persubHandlerSpy(args);
-    }
-
-    @ExternalEventHook
-    tutu(...args) {
-      externalEventHandlerSpy(args);
-    }
-  }
-
-  provideConnectedPersistentSubscription('persubName', {
-    on: onEventHandlerSpy,
-    ack: ackSpy,
-    nack: nackSpy,
-  } as any);
+    provideConnectedPersistentSubscription('persubName3', {
+      on: persubHookHandlerSpy3,
+      ack: ackSpy,
+      nack: nackSpy,
+    } as any);
+  });
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -69,29 +62,32 @@ describe('ExternalEntryPointListenerStarterService', () => {
           useValue: { debug: jest.fn() },
         },
       ],
-      imports: [TotoCommand],
+      imports: [TotoCommand, TutuCommand, TeteCommand],
     }).compile();
     service = module.get<ExternalEntryPointListenerStarterService>(
       ExternalEntryPointListenerStarterService,
     );
-
-    await service.onApplicationBootstrap();
   });
 
-  describe('on persistent subscriptions event hookd', () => {
-    let hook;
-
-    beforeEach(() => {
-      hook = onEventHandlerSpy.mock.calls[0][1];
+  describe('on persistent subscriptions event hooked', () => {
+    let hookPersub1;
+    let hookPersub2;
+    let hookPersub3;
+    beforeEach(async () => {
+      jest.resetAllMocks();
+      await service.onApplicationBootstrap();
+      hookPersub1 = persubHookHandlerSpy1.mock.calls[0][1];
+      hookPersub2 = persubHookHandlerSpy2.mock.calls[0][1];
+      hookPersub3 = persubHookHandlerSpy3.mock.calls[0][1];
     });
 
     it('should plug all persistent subscriptions provided in features to eventstore at app bootstrap', async () => {
-      await hook({});
-      expect(onEventHandlerSpy).toHaveBeenCalled();
+      await hookPersub1({});
+      expect(persubHookHandlerSpy1).toHaveBeenCalled();
     });
 
     it('should nack an event when it is invalid', async () => {
-      await hook(null);
+      await hookPersub1(null);
       await expect(nackSpy).toHaveBeenCalledWith(
         PARK,
         expect.any(String),
@@ -101,14 +97,14 @@ describe('ExternalEntryPointListenerStarterService', () => {
 
     it('should ack an event when it is valid', async () => {
       const payload = { event: 123 };
-      await hook(payload);
+      await hookPersub1(payload);
       await expect(ackSpy).toHaveBeenCalledWith(payload);
     });
 
     it('should call the specified handler in the command', async () => {
       const payload = { event: 123 };
-      await hook(payload);
-      await expect(persubHandlerSpy).toHaveBeenCalledWith([123]);
+      await hookPersub1(payload);
+      await expect(persubAllEventHandlerSpy).toHaveBeenCalledWith([123]);
     });
 
     it('should trigger hook only when allowed event is emitted', async () => {
@@ -116,26 +112,52 @@ describe('ExternalEntryPointListenerStarterService', () => {
         type: 'ForbindenEvent';
         data: { toto: 123 };
       }
-
       const forbidenEvent: ForbindenEvent = new ForbindenEvent();
       const payload = { event: forbidenEvent };
-      await hook(payload);
-      await expect(persubHandlerSpy).toHaveBeenCalledTimes(1);
+
+      await hookPersub2(payload);
+      expect(persubOnlyOneEventHandlerSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger the hook when each event of the sequence is not spotted at least once each', async () => {
+      const allowedEvent1 = new AllowedEvent1();
+      const allowedEvent2 = new AllowedEvent2();
+      await hookPersub3({ event: allowedEvent1 });
+      await hookPersub3({ event: allowedEvent2 });
+
+      await expect(persubOnEventSequenceHandlerSpy).not.toHaveBeenCalled();
+    });
+
+    it('should trigger the hook when each event of the sequence is spotted at least once each', async () => {
+      const allowedEvent1 = new AllowedEvent1();
+      const allowedEvent2 = new AllowedEvent2();
+      const allowedEvent3 = new AllowedEvent3();
+      await hookPersub3({ event: allowedEvent1 });
+      await hookPersub3({ event: allowedEvent2 });
+      await hookPersub3({ event: allowedEvent3 });
+
+      await expect(persubOnEventSequenceHandlerSpy).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('should make all external events listener start listening at app bootstrap', async () => {
-    expect(BullMQ.Worker['mock'].calls[0]).toEqual([
-      'redisQueue',
-      expect.any(Function),
-      { connection: redisConf.options },
-    ]);
-  });
+  describe('on external event hooked', () => {
+    beforeEach(async () => {
+      await service.onApplicationBootstrap();
+    });
 
-  it('should call the specified handler in the command', async () => {
-    const hook = BullMQ.Worker['mock'].calls[0][1];
-    const payload = { data: 123 };
-    await hook(payload);
-    await expect(externalEventHandlerSpy).toHaveBeenCalledWith([123]);
+    it('should make all external events listener start listening at app bootstrap', async () => {
+      expect(BullMQ.Worker['mock'].calls[0]).toEqual([
+        'redisQueue',
+        expect.any(Function),
+        { connection: redisConf.options },
+      ]);
+    });
+
+    it('should call the specified handler in the command', async () => {
+      const hook = BullMQ.Worker['mock'].calls[0][1];
+      const payload = { data: 123 };
+      await hook(payload);
+      await expect(externalEventHandlerSpy).toHaveBeenCalledWith([123]);
+    });
   });
 });

@@ -3,7 +3,6 @@ import { RedisQueueConfiguration } from '../../event-modelling.configuration';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
-  ANY_EVENT,
   EXTERNAL_EVENT_HOOK,
   EXTERNAL_EVENT_HOOK_METADATA,
   PERSUB_EVENT_HOOK,
@@ -58,8 +57,24 @@ export class ExternalEntryPointListenerStarterService
           );
           for (const metadata of metadatas) {
             if (
-              metadata.allowedEventType !== ANY_EVENT &&
-              metadata.allowedEventType !== (payloadEvent as any).type
+              metadata.allowedEventTypes.length > 0 &&
+              metadata.allowedEventTypes.indexOf(
+                payloadEvent.event.constructor.name,
+              ) >= 0
+            ) {
+              const index = metadatas.indexOf(metadata);
+              (metadatas[index] as PersubHookMetadata).sequenceState[
+                payloadEvent.event.constructor.name
+              ] = true;
+              Reflect.defineMetadata(
+                PERSUB_EVENT_HOOK,
+                metadatas,
+                persubHookContainer.metatype.prototype,
+              );
+            }
+            if (
+              metadata.allowedEventTypes.length !==
+              Object.keys(metadata.sequenceState).length
             ) {
               return;
             }

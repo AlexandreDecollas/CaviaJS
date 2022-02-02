@@ -72,51 +72,51 @@ export class ExternalEntryPointListenerStarterService
 
   private async welcomeNewEvent(
     persubHookContainer: InstanceWrapper<any>,
-    payloadEvent: ResolvedEvent<EventType>,
+    eventPayload: ResolvedEvent<EventType>,
     persistentSubscription: PersistentSubscription<EventType>,
   ): Promise<void> {
     try {
-      const persubHookmetadatas: PersubHookMetadata[] = Reflect.getMetadata(
+      const persubHookMetadatas: PersubHookMetadata[] = Reflect.getMetadata(
         PERSUB_EVENT_HOOK,
         persubHookContainer.metatype.prototype,
       );
-      for (const persubHookMetadata of persubHookmetadatas) {
-        const index = persubHookmetadatas.indexOf(persubHookMetadata);
+      for (const persubHookMetadata of persubHookMetadatas) {
+        const index: number = persubHookMetadatas.indexOf(persubHookMetadata);
         this.updateEventsSequenceState(
-          persubHookmetadatas,
+          persubHookMetadatas,
           persubHookMetadata,
-          payloadEvent,
+          eventPayload,
           persubHookContainer,
         );
         if (this.eventsSequenceIsNotCompletedYet(persubHookMetadata)) {
           return;
         }
-        this.reinitEventsSequence(persubHookmetadatas, index);
+        this.reinitEventsSequence(persubHookMetadatas, index);
         this.triggerPersubEventHook(
           persubHookContainer,
           persubHookMetadata,
-          payloadEvent,
+          eventPayload,
         );
-        await persistentSubscription.ack(payloadEvent);
+        await persistentSubscription.ack(eventPayload);
       }
     } catch (e) {
-      await persistentSubscription.nack(PARK, e.message, payloadEvent);
+      await persistentSubscription.nack(PARK, e.message, eventPayload);
     }
   }
 
   private updateEventsSequenceState(
     metadatas: PersubHookMetadata[],
     currentMetadata: PersubHookMetadata,
-    payloadEvent: ResolvedEvent<EventType>,
+    eventPayload: ResolvedEvent<EventType>,
     persubHookContainer: InstanceWrapper<any>,
   ): void {
     if (
       this.allEventsAreAllowed(currentMetadata) ||
-      this.currentEventIsNotAllowed(currentMetadata, payloadEvent)
+      this.currentEventIsNotAllowed(currentMetadata, eventPayload)
     ) {
       return;
     }
-    this.takeNoteThatOneOfAllowedEventsHappened(currentMetadata, payloadEvent);
+    this.takeNoteThatOneOfAllowedEventsHappened(currentMetadata, eventPayload);
     this.updateStateInHookMetadatas(metadatas, persubHookContainer);
   }
 
@@ -133,11 +133,11 @@ export class ExternalEntryPointListenerStarterService
 
   private currentEventIsNotAllowed(
     metadata: PersubHookMetadata,
-    payloadEvent: ResolvedEvent<EventType>,
-  ) {
+    eventPayload: ResolvedEvent<EventType>,
+  ): boolean {
     return (
       metadata.allowedEventTypes.indexOf(
-        payloadEvent.event.constructor.name,
+        eventPayload.event.constructor.name,
       ) === -1
     );
   }

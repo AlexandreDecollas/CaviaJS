@@ -3,6 +3,7 @@ import { RedisQueueConfiguration } from '../../event-modelling.configuration';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
+  ANY_EVENT,
   EXTERNAL_EVENT_HOOK,
   EXTERNAL_EVENT_HOOK_METADATA,
   PERSUB_EVENT_HOOK,
@@ -57,7 +58,7 @@ export class ExternalEntryPointListenerStarterService
           );
           for (const metadata of metadatas) {
             if (
-              metadata.allowedEventType !== '*' &&
+              metadata.allowedEventType !== ANY_EVENT &&
               metadata.allowedEventType !== (payloadEvent as any).type
             ) {
               return;

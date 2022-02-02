@@ -31,6 +31,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
     },
     queueName: 'redisQueue',
   };
+
   @Command({ persubName: 'persubName', externalEventQueue: redisConf })
   class TotoCommand {
     @PersubEventHook()

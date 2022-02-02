@@ -1,4 +1,4 @@
-import { PERSUB_EVENT_HOOK } from '../../constants';
+import { ANY_EVENT, PERSUB_EVENT_HOOK } from '../../constants';
 
 export interface PersubHookMetadata {
   method: string | symbol;
@@ -15,7 +15,7 @@ export const PersubEventHook = (eventType?: object): MethodDecorator => {
     metadatas = metadatas ?? [];
     metadatas.push({
       method: key,
-      allowedEventType: (eventType as any)?.name ?? '*',
+      allowedEventType: (eventType as any)?.name ?? ANY_EVENT,
     });
     Reflect.defineMetadata(PERSUB_EVENT_HOOK, metadatas, target);
   };

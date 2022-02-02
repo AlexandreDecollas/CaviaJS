@@ -5,7 +5,6 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
   EXTERNAL_EVENT_HOOK,
   EXTERNAL_EVENT_HOOK_METADATA,
-  PERSUB_ALLOWED_EVENT_NAME,
   PERSUB_EVENT_HOOK,
   PERSUB_HOOK_METADATA,
 } from '../../constants';
@@ -19,6 +18,7 @@ import {
   ResolvedEvent,
 } from '@eventstore/db-client';
 import { Worker } from 'bullmq';
+import { PersubHookMetadata } from '../../command-decorators/method-decorator/persub-event-hook.decorator';
 
 @Injectable()
 export class ExternalEntryPointListenerStarterService
@@ -38,33 +38,31 @@ export class ExternalEntryPointListenerStarterService
     const persubHooks: InstanceWrapper[] =
       this.getHookableCommands(PERSUB_HOOK_METADATA);
 
+    const persistentSubscriptions: ProvidedPersistentSubscriptions =
+      fetchConnectedPersistentSubscriptions();
+
     persubHooks.forEach((persubHookContainer: InstanceWrapper): void => {
       const persubName = Reflect.getMetadata(
         PERSUB_HOOK_METADATA,
         persubHookContainer.metatype,
       );
 
-      const persistentSubscriptions: ProvidedPersistentSubscriptions =
-        fetchConnectedPersistentSubscriptions();
       const persistentSubscription: PersistentSubscription =
         persistentSubscriptions[persubName];
       persistentSubscription.on('data', async (payloadEvent: ResolvedEvent) => {
         try {
-          const hookMethod = Reflect.getMetadata(
+          const metadatas: PersubHookMetadata[] = Reflect.getMetadata(
             PERSUB_EVENT_HOOK,
-            persubHookContainer.instance,
+            persubHookContainer.metatype.prototype,
           );
-
-          const allowedEventType = Reflect.getMetadata(
-            PERSUB_ALLOWED_EVENT_NAME,
-            persubHookContainer.instance,
-          );
-
-          if (payloadEvent.event.type !== allowedEventType) {
-            return;
+          for (const metadata of metadatas) {
+            if (
+              metadata.allowedEventType === '*' ||
+              metadata.allowedEventType === (payloadEvent as any).type
+            )
+              persubHookContainer.instance[metadata.method](payloadEvent.event);
+            await persistentSubscription.ack(payloadEvent);
           }
-          persubHookContainer.instance[hookMethod](payloadEvent.event);
-          await persistentSubscription.ack(payloadEvent);
         } catch (e) {
           await persistentSubscription.nack(PARK, e.message, payloadEvent);
         }

@@ -1,8 +1,8 @@
 import { Controller, Module, Type } from '@nestjs/common';
 import { CommandMetadata } from './command.metadata';
 import {
-  PERSUB_HOOK_METADATA,
   EXTERNAL_EVENT_HOOK_METADATA,
+  PERSUB_HOOK_METADATA,
 } from '../../constants';
 
 export function Command(metadata: CommandMetadata): ClassDecorator {

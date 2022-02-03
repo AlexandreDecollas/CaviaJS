@@ -3,6 +3,7 @@ import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.servic
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RoomAddedEvent } from '../../model/room-added.event';
 import { Get, Param } from '@nestjs/common';
+import { CAVIA } from 'cavia-js';
 
 @Command({
   restOptions: { path: 'add-room' },
@@ -23,6 +24,7 @@ export class AddRoomCommand {
       },
       metadata: { streamName: 'manager.room-added' },
     };
+    console.log('CAVIA : ', CAVIA);
     this.eventEmitter.emit(event.metadata.streamName, event);
   }
 }

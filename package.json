@@ -1,25 +1,26 @@
 {
-  "name": "eventmodeling-example",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "name": "cavia-js-tmp",
+  "version": "0.0.44",
+  "description": "Making event-modelling with NestJS easy",
+  "author": "Alexandre Decollas<alexandre.decollas.pro@gmail.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "build:lib": "rimraf dist && tsc -p ./lib/cavia-js/tsconfig.lib.json",
+    "export": "npm publish",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "env-cmd nest start",
-    "start:dev": "env-cmd nest start --watch",
-    "start:debug": "env-cmd nest start --debug --watch",
-    "start:debug:node": "env-cmd node --inspect-brk -r tsconfig-paths/register -r ts-node/register src/main.ts",
+    "format": "prettier --write \\\"apps/**/*.ts\\\" \\\"lib/**/*.ts\\\"",
+    "start:example": "env-cmd nest start hotel-example",
+    "start:dev:example": "env-cmd nest start --watch hotel-example",
+    "start:debug:example": "env-cmd nest start --debug --watch hotel-example",
+    "start:debug:node:example": "env-cmd node --inspect-brk -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config apps/hotel-example/test/jest-e2e.json"
   },
   "dependencies": {
     "@eventstore/db-client": "^2.1.1",
@@ -72,7 +73,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\-?spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": [
@@ -89,7 +90,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/lib/",
+      "<rootDir>/apps/hotel-example/src"
+    ],
+    "moduleNameMapper": {
+      "^cavia-js$": "<rootDir>/lib"
+    }
   }
 }

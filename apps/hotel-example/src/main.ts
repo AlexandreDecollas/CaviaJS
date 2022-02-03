@@ -11,7 +11,7 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug'],
       options: {
         package: 'grpcs',
-        protoPath: join(__dirname, '../assets/protos/stuff.proto'),
+        protoPath: join(__dirname, 'assets/protos/stuff.proto'),
       },
     },
   );

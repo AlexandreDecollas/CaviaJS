@@ -1,4 +1,4 @@
-import { EventstoreEvent } from '../../model/eventstoreEvent';
+import { EventstoreEvent } from 'cavia-js';
 
 export interface StuffEventData {
   id: string;

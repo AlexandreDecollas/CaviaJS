@@ -1,6 +1,6 @@
 {
   "name": "cavia-js-tmp",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "Making event-modelling with NestJS easy",
   "author": "Alexandre Decollas<alexandre.decollas.pro@gmail.com>",
   "license": "MIT",
@@ -97,7 +97,7 @@
       "<rootDir>/apps/hotel-example/src"
     ],
     "moduleNameMapper": {
-      "^cavia-js$": "<rootDir>/lib"
+      "^cavia-js$": "<rootDir>/lib/cavia-js/src"
     }
   }
 }

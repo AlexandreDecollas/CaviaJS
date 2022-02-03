@@ -1,11 +1,13 @@
 import { Get, Param } from '@nestjs/common';
 import { BookRoomService } from './services/book-room/book-room.service';
-import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildRoomAvailabilityProjection } from './projections/room-availability.projections';
-import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { Slot } from './model/slot';
-import { providePersistentSubscription } from '../../event-modelling-tooling/eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { PersubEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/persub-event-hook.decorator';
+import {
+  Command,
+  PersubEventHook,
+  providePersistentSubscription,
+  provideProjection,
+} from 'cavia-js';
 
 provideProjection({
   name: 'roomAvailability',

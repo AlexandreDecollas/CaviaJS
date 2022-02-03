@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookRoomService } from './book-room.service';
-import { ESDBConnectionService } from '../../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { IdGeneratorService } from '../../../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../../../event-modelling-tooling/eventbus/eventbus.service';
 import { Logger } from '@nestjs/common';
+import { ESDBConnectionService, Eventbus } from 'cavia-js';
 
 describe('BookRoomService', () => {
   let service: BookRoomService;

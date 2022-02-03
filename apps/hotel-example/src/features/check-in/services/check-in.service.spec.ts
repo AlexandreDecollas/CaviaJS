@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CheckInService } from './check-in.service';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ESDBConnectionService } from '../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
-import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
+import { ESDBConnectionService, Eventbus } from 'cavia-js';
 
 describe('CheckInService', () => {
   let service: CheckInService;

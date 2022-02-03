@@ -8,10 +8,10 @@ import { HotelProximityCommand } from './features/hotel-proximity/hotel-proximit
 import { CheckOutCommand } from './features/check-out/check-out.command';
 import { PayementRequestedCommand } from './features/payement-requested/payement-requested.command';
 import { PayementProcessorCommand } from './features/payement-processor/payement-processor.command';
-import { EventModellingModule } from './event-modelling-tooling/event-modelling.module';
 import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
 import { LoggerModule } from './utils/logger/logger.module';
 import { RegisterCommand } from './features/register/register.command';
+import { EventModellingModule } from 'cavia-js';
 
 const commands = [
   RegisterCommand,

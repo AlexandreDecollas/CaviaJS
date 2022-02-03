@@ -1,12 +1,14 @@
 import { Get, Param } from '@nestjs/common';
-import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildCleaningScheduleProjection } from './projections/cleaning-schedule.projection';
-import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
-import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
-import { ESDBConnectionService } from '../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { RoomReadiedEvent } from '../../model/room-readied.event';
+import {
+  Command,
+  ESDBConnectionService,
+  Eventbus,
+  provideProjection,
+} from 'cavia-js';
 
 provideProjection({
   name: 'cleaning-schedule',

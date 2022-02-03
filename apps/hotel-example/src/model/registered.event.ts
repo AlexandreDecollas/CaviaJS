@@ -1,4 +1,4 @@
-import { EventstoreEvent } from './eventstoreEvent';
+import { EventstoreEvent } from 'cavia-js';
 
 export interface RegisteredEvent extends EventstoreEvent {
   data: {

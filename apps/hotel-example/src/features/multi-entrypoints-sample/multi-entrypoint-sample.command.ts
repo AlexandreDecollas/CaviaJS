@@ -1,11 +1,9 @@
 import { Get, Logger, Param } from '@nestjs/common';
-import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
-import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
-import { ExternalEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/external-event-hook.decorator';
 import { GrpcMethod } from '@nestjs/microservices';
 import { StuffId } from './stuff';
 import { StuffEvent } from './stuff.event.ts';
+import { Command, Eventbus, ExternalEventHook } from 'cavia-js';
 
 @Command({
   restOptions: { path: 'register' },

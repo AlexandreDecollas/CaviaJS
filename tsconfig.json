@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "cavia-js": [
-        "lib"
+        "lib/cavia-js/src"
       ],
     }
   }

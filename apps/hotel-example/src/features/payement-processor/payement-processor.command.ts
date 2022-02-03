@@ -1,12 +1,14 @@
-import { provideProjection } from '../../event-modelling-tooling/eventstore-connector/projections/provider/projection.provider';
 import { buildPayementToProcessProjection } from './projections/payement-to-process.projection';
-import { providePersistentSubscription } from '../../event-modelling-tooling/eventstore-connector/persistent-subscription/provider/persistent-suscriptions.provider';
-import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { PayementRequestedEvent } from '../../model/payement-requested.event';
 import { PayementSuccededEvent } from '../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
-import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
-import { PersubEventHook } from '../../event-modelling-tooling/command-decorators/method-decorator/persub-event-hook.decorator';
+import {
+  Command,
+  Eventbus,
+  PersubEventHook,
+  providePersistentSubscription,
+  provideProjection,
+} from 'cavia-js';
 
 providePersistentSubscription({
   name: 'paymentProcessor',

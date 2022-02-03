@@ -1,9 +1,8 @@
 import { Get, Param } from '@nestjs/common';
-import { Command } from '../../event-modelling-tooling/command-decorators/class-decorators/command.decorator';
 import { GuestLeftEvent } from '../../model/guest-left.event';
-import { Eventbus } from '../../event-modelling-tooling/eventbus/eventbus.service';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { GuestEnteredEvent } from '../../model/guest-entered.event';
+import { Command, Eventbus } from 'cavia-js';
 
 @Command({
   restOptions: { path: 'hotel-proximity' },

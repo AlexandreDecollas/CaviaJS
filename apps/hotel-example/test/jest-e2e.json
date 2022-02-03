@@ -11,6 +11,6 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^cavia-js$": "<rootDir>/../../../lib"
+    "^cavia-js$": "<rootDir>/../../../lib/cavia-js/src"
   }
 }

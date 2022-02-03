@@ -1,10 +1,9 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CheckedInEvent } from '../../../model/checked-in.event';
 import { IdGeneratorService } from '../../../utils/id-generator/id-generator.service';
-import { ESDBConnectionService } from '../../../event-modelling-tooling/eventstore-connector/connection-initializer/esdb-connection.service';
 import { CheckInState } from '../projections/check-in.projection';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { Eventbus } from '../../../event-modelling-tooling/eventbus/eventbus.service';
+import { ESDBConnectionService, Eventbus } from 'cavia-js';
 
 @Injectable()
 export class CheckInService {

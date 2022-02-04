@@ -11,6 +11,7 @@
     "build": "nest build",
     "format": "prettier --write \\\"apps/**/*.ts\\\" \\\"lib/**/*.ts\\\"",
     "start:example": "env-cmd nest start hotel-example",
+    "start:example:mcsv": "env-cmd nest start hotel-example-mcsv",
     "start:dev:example": "env-cmd nest start --watch hotel-example",
     "start:debug:example": "env-cmd nest start --debug --watch hotel-example",
     "start:debug:node:example": "env-cmd node --inspect-brk -r tsconfig-paths/register -r ts-node/register src/main.ts",

@@ -1,5 +1,5 @@
 export const CLI_BAD_OPTION_MESSAGE =
-  'No or unknown option is given, do nothing...';
+  'No or unknown option is given, do nothing... (-h for help)';
 export const CLI_HELP_MESSAGE = `\n\n-==[  CaviaJS Command Line Tool  ]==-\n
 The CLI commands you can use are : 
       -h  : help

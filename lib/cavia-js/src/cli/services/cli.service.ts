@@ -32,7 +32,7 @@ export class CliService {
     return cliEntryPoint !== undefined;
   }
 
-  public async runCommand(commandName: string) {
+  public async runCommand(commandName: string, ...args: any): Promise<void> {
     const instantiatedCommands: InstanceWrapper[] =
       this.discoveryService.getControllers();
 
@@ -46,6 +46,6 @@ export class CliService {
       CLI_ENTRY_POINT_METADATA,
       commandInstance.instance,
     );
-    await commandInstance.instance[cliEntryPoint]();
+    await commandInstance.instance[cliEntryPoint](...args);
   }
 }

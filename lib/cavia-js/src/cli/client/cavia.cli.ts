@@ -19,6 +19,11 @@ class CaviaCliModule {
 
 export class CaviaCli {
   public static async run(appModule: object, argv: string[]): Promise<void> {
+    if (argv.indexOf('-h') > -1) {
+      this.printHelp();
+      return;
+    }
+
     const app: INestApplication = await NestFactory.create(
       CaviaCliModule.instanciate(appModule),
     );
@@ -31,8 +36,6 @@ export class CaviaCli {
       this.printIfCommandHasEntryPoint(cliService, argv, argIndex);
     } else if (argv.indexOf('-c') > -1) {
       await this.runCommand(cliService, argv);
-    } else if (argv.indexOf('-h') > -1) {
-      this.printHelp();
     } else if (argv.indexOf('-l') > -1) {
       this.printAllCommandsImported(cliService);
     } else {
@@ -62,8 +65,20 @@ export class CaviaCli {
     cliService: CliService,
     argv: string[],
   ): Promise<void> {
-    const commandName: string = argv[argv.indexOf('-c') + 1];
-    await cliService.runCommand(commandName);
+    const argumentIndex: number = argv.indexOf('-c');
+    const commandName: string = argv[argumentIndex + 1];
+
+    const commandArumentIndex: number = argv.indexOf('-p');
+    const commandHasArguments: boolean = commandArumentIndex > -1;
+    const commandArguments: any[] = [];
+    if (commandHasArguments) {
+      let i: number = commandArumentIndex;
+      while (argv[i] === '-p') {
+        commandArguments.push(JSON.parse(argv[i + 1]) as any);
+        i += 2;
+      }
+    }
+    return await cliService.runCommand(commandName, ...commandArguments);
   }
 
   private static printAllCommandsImported(cliService: CliService): void {

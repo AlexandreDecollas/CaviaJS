@@ -24,8 +24,23 @@ class Command2 {
   }
 }
 
+const command3Spy = jest.fn();
 @Command({})
-class Command3 {}
+class Command3 {
+  @Cli()
+  toto(cpt: number) {
+    command3Spy(cpt);
+  }
+}
+
+const command4Spy = jest.fn();
+@Command({})
+class Command4 {
+  @Cli()
+  toto(val: number, dto: any) {
+    command4Spy(val, dto);
+  }
+}
 
 @Module({
   imports: [
@@ -36,6 +51,7 @@ class Command3 {}
     Command1,
     Command2,
     Command3,
+    Command4,
   ],
 })
 class TotoModule {}
@@ -50,7 +66,9 @@ describe('CaviaCli', () => {
   it('should return the list of the given commands', async () => {
     await runCli(['-l']);
 
-    expect(console.log).toHaveBeenCalledWith(`Command1, Command2, Command3`);
+    expect(console.log).toHaveBeenCalledWith(
+      `Command1, Command2, Command3, Command4`,
+    );
   });
 
   it('should return return true when the command has a cli entry point', async () => {
@@ -65,16 +83,43 @@ describe('CaviaCli', () => {
     expect(console.log).toHaveBeenCalledWith(CLI_BAD_OPTION_MESSAGE);
   });
 
+  it('should print a doc when command -h is used', async () => {
+    await runCli(['-h']);
+
+    expect(console.log).toHaveBeenCalledWith(CLI_HELP_MESSAGE);
+  });
+
   it('should run the given command on its entry point', async () => {
     await runCli(['-c', 'Command2']);
 
     expect(command2Spy).toHaveBeenCalled();
   });
 
-  it('should print a doc when command -h is used', async () => {
-    await runCli(['-h']);
+  it('should run the command and pass 123 in parameter', async () => {
+    await runCli(['-c', 'Command3', '-p', '123']);
 
-    expect(console.log).toHaveBeenCalledWith(CLI_HELP_MESSAGE);
+    expect(command3Spy).toHaveBeenCalledWith(123);
+  });
+
+  it('should run the command and pass the object and number in parameter', async () => {
+    const dto = {
+      toto: { eee: 123 },
+      id: '4567',
+    };
+    const val = 999;
+    await runCli([
+      '-c',
+      'Command4',
+      '-p',
+      JSON.stringify(dto),
+      '-p',
+      JSON.stringify(val),
+    ]);
+
+    expect(command4Spy).toHaveBeenCalledWith(
+      { id: '4567', toto: { eee: 123 } },
+      999,
+    );
   });
 });
 

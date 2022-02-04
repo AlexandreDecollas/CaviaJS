@@ -10,6 +10,7 @@
     "export": "npm publish",
     "build": "nest build",
     "format": "prettier --write \\\"apps/**/*.ts\\\" \\\"lib/**/*.ts\\\"",
+    "cli": "env-cmd nest start cli",
     "start:example": "env-cmd nest start hotel-example",
     "start:example:mcsv": "env-cmd nest start hotel-example-mcsv",
     "start:dev:example": "env-cmd nest start --watch hotel-example",

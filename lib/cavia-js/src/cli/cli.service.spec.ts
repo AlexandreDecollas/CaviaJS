@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CliService } from './cli.service';
-import { Command } from 'cavia-js';
+import { Cli, CliService, Command } from 'cavia-js';
 import { DiscoveryService } from '@nestjs/core';
-import { Cli } from '../command-decorators/cli-decorator';
+
+const commandSpy = jest.fn();
 
 @Command({})
 class Command1 {
   @Cli()
   public toto() {
+    commandSpy();
     return 123;
   }
 }
@@ -36,12 +37,18 @@ describe('CliService', () => {
   });
 
   it('should return true when a command has a cli entry point method', () => {
-    const entryPointMethod: boolean = service.hasEntryPointMethod(Command1);
+    const entryPointMethod: boolean = service.hasEntryPointMethod('Command1');
     expect(entryPointMethod).toEqual(true);
   });
 
   it('should return false when a command do not have cli entry point', () => {
-    const entryPointMethod: boolean = service.hasEntryPointMethod(Command2);
+    const entryPointMethod: boolean = service.hasEntryPointMethod('Command2');
     expect(entryPointMethod).toEqual(false);
+  });
+
+  it('should run the command on its entryPoint', async () => {
+    await service.runCommand('Command1');
+
+    expect(commandSpy).toHaveBeenCalled();
   });
 });

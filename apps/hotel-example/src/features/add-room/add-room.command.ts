@@ -1,7 +1,7 @@
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import { RoomAddedEvent } from '../../model/room-added.event';
 import { Get, Param } from '@nestjs/common';
-import { Command, Eventbus } from 'cavia-js';
+import { Cli, Command, Eventbus } from 'cavia-js';
 
 @Command({
   restOptions: { path: 'add-room' },
@@ -23,5 +23,10 @@ export class AddRoomCommand {
       metadata: { streamName: 'manager.room-added' },
     };
     this.eventEmitter.emit(event.metadata.streamName, event);
+  }
+
+  @Cli()
+  toto() {
+    console.log('totototo');
   }
 }

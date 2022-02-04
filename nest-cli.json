@@ -28,6 +28,19 @@
         "watchAssets": true
       }
     },
+    "cli": {
+      "type": "application",
+      "root": "apps/hotel-example",
+      "entryFile": "cli",
+      "sourceRoot": "apps/hotel-example/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/hotel-example/tsconfig.app.json",
+        "assets": [
+          "**/*.proto"
+        ],
+        "watchAssets": true
+      }
+    },
     "hotel-example-mcsv": {
       "type": "application",
       "root": "apps/hotel-example",

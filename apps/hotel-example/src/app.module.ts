@@ -29,7 +29,8 @@ const commands = [
     EventModellingModule.forRoot({
       checkHeartBeatOnInterval: 10_000,
       eventstoreConnectionString:
-        process.env.CONNECTION_STRING || 'esdb://127.0.0.1:2113?tls=false',
+        process.env.CONNECTION_STRING ||
+        'esdb://admin:changeit@127.0.0.1:2113?tls=false',
       redisQueueConfiguration: {
         queueName: 'tutu',
         options: { connection: { host: 'localhost', port: 6379 } },

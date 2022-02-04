@@ -21,8 +21,8 @@ module.exports = {
       {
         patterns: [
           {
-            group: ['*../lib/cavia-js*', '*cavia-js/*'],
-            message: 'usage of import1 private modules not allowed.',
+            group: ['**/lib/cavia-js'],
+            message: "Prefer using 'cavia-js' directly instead.",
           },
         ],
       },

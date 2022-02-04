@@ -1,4 +1,4 @@
-import { CaviaCli } from '../../../lib/cavia-js/src/cli/client/cavia.cli';
+import { CaviaCli } from 'cavia-js';
 import { AppModule } from './app.module';
 
 CaviaCli.run(AppModule, process.argv);

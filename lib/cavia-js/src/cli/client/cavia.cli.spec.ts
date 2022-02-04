@@ -1,15 +1,14 @@
 import {
+  CaviaCli,
   Cli,
   CLI_BAD_OPTION_MESSAGE,
+  CLI_HELP_MESSAGE,
   Command,
   EventModellingModule,
 } from 'cavia-js';
-import { CaviaCli } from './cavia.cli';
 import { Module } from '@nestjs/common';
-import { IdGeneratorModule } from '../../../../../apps/hotel-example/src/utils/id-generator/id-generator.module';
-import { LoggerModule } from '../../../../../apps/hotel-example/src/utils/logger/logger.module';
+import { LoggerModule } from '../../misc/logger.module';
 import spyOn = jest.spyOn;
-import { CLI_HELP_MESSAGE } from 'cavia-js';
 
 @Command({})
 class Command1 {}
@@ -45,7 +44,6 @@ class Command4 {
 @Module({
   imports: [
     EventModellingModule.forRootTesting(),
-    IdGeneratorModule,
     LoggerModule,
 
     Command1,

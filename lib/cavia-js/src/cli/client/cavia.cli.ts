@@ -1,21 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { DynamicModule, INestApplication, Module } from '@nestjs/common';
-import {
-  CLI_BAD_OPTION_MESSAGE,
-  CLI_HELP_MESSAGE,
-  CliModule,
-  CliService,
-} from 'cavia-js';
-
-@Module({})
-class CaviaCliModule {
-  public static instanciate(appModule: object): DynamicModule {
-    return {
-      module: CaviaCliModule,
-      imports: [appModule as DynamicModule, CliModule],
-    };
-  }
-}
+import { INestApplication } from '@nestjs/common';
+import { CLI_BAD_OPTION_MESSAGE, CLI_HELP_MESSAGE, CliService } from 'cavia-js';
+import { CaviaCliModule } from './cavia-cli.injectable.module';
 
 export class CaviaCli {
   public static async run(appModule: object, argv: string[]): Promise<void> {
@@ -24,25 +10,37 @@ export class CaviaCli {
       return;
     }
 
-    const app: INestApplication = await NestFactory.create(
-      CaviaCliModule.instanciate(appModule),
-    );
+    await this.execCLIRequest(appModule, argv);
 
-    await app.init();
-    const cliService: CliService = app.get(CliService);
-
-    const argIndex = argv.indexOf('-ce');
-    if (argIndex > -1) {
-      this.printIfCommandHasEntryPoint(cliService, argv, argIndex);
-    } else if (argv.indexOf('-c') > -1) {
-      await this.runCommand(cliService, argv);
-    } else if (argv.indexOf('-l') > -1) {
-      this.printAllCommandsImported(cliService);
-    } else {
-      this.printError();
-    }
-    await app.close();
     process.exit(0);
+  }
+
+  private static async execCLIRequest(
+    appModule: object,
+    argv: string[],
+  ): Promise<void> {
+    try {
+      const app: INestApplication = await NestFactory.create(
+        CaviaCliModule.instanciate(appModule),
+      );
+
+      await app.init();
+      const cliService: CliService = app.get(CliService);
+
+      const argIndex = argv.indexOf('-ce');
+      if (argIndex > -1) {
+        this.printIfCommandHasEntryPoint(cliService, argv, argIndex);
+      } else if (argv.indexOf('-c') > -1) {
+        await this.runCommand(cliService, argv);
+      } else if (argv.indexOf('-l') > -1) {
+        this.printAllCommandsImported(cliService);
+      } else {
+        this.printError();
+      }
+      await app.close();
+    } catch (e) {
+      console.log(`Something really bad happened... (Details : ${e})`);
+    }
   }
 
   private static printError(): void {

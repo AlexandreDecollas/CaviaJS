@@ -2,12 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CliService } from './cli.service';
 import { Command } from 'cavia-js';
 import { DiscoveryService } from '@nestjs/core';
-
-const Cli = (): MethodDecorator => {
-  return (target: any, key: string | symbol): void => {
-    Reflect.defineMetadata('cli-entry-point', key, target);
-  };
-};
+import { Cli } from '../command-decorators/cli-decorator';
 
 @Command({})
 class Command1 {

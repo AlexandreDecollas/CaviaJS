@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { CLI_ENTRY_POINT_METADATA } from '../command-decorators/cli-decorator';
+import { CLI_ENTRY_POINT_METADATA } from '../../command-decorators/cli-decorator';
 
 @Injectable()
 export class CliService {

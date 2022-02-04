@@ -6,8 +6,8 @@ import {
 } from 'cavia-js';
 import { CaviaCli } from './cavia.cli';
 import { Module } from '@nestjs/common';
-import { IdGeneratorModule } from '../../../../apps/hotel-example/src/utils/id-generator/id-generator.module';
-import { LoggerModule } from '../../../../apps/hotel-example/src/utils/logger/logger.module';
+import { IdGeneratorModule } from '../../../../../apps/hotel-example/src/utils/id-generator/id-generator.module';
+import { LoggerModule } from '../../../../../apps/hotel-example/src/utils/logger/logger.module';
 import spyOn = jest.spyOn;
 import { CLI_HELP_MESSAGE } from 'cavia-js';
 

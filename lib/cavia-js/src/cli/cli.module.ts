@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { CliService } from './cli.service';
+import { CliService } from './services/cli.service';
 import { DiscoveryService } from '@nestjs/core';
 
 @Global()

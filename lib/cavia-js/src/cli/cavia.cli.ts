@@ -1,6 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { DynamicModule, INestApplication, Module } from '@nestjs/common';
-import { CliModule, CliService } from 'cavia-js';
+import {
+  CLI_BAD_OPTION_MESSAGE,
+  CLI_HELP_MESSAGE,
+  CliModule,
+  CliService,
+} from 'cavia-js';
 
 @Module({})
 class CaviaCliModule {
@@ -26,6 +31,8 @@ export class CaviaCli {
       this.printIfCommandHasEntryPoint(cliService, argv, argIndex);
     } else if (argv.indexOf('-c') > -1) {
       await this.runCommand(cliService, argv);
+    } else if (argv.indexOf('-h') > -1) {
+      this.printHelp();
     } else if (argv.indexOf('-l') > -1) {
       this.printAllCommandsImported(cliService);
     } else {
@@ -36,7 +43,11 @@ export class CaviaCli {
   }
 
   private static printError(): void {
-    console.log('No or unknown option is given, do nothing...');
+    console.log(CLI_BAD_OPTION_MESSAGE);
+  }
+
+  private static printHelp(): void {
+    console.log(CLI_HELP_MESSAGE);
   }
 
   private static printIfCommandHasEntryPoint(

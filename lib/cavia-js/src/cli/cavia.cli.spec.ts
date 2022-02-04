@@ -1,9 +1,15 @@
-import { Cli, Command, EventModellingModule } from 'cavia-js';
+import {
+  Cli,
+  CLI_BAD_OPTION_MESSAGE,
+  Command,
+  EventModellingModule,
+} from 'cavia-js';
 import { CaviaCli } from './cavia.cli';
 import { Module } from '@nestjs/common';
 import { IdGeneratorModule } from '../../../../apps/hotel-example/src/utils/id-generator/id-generator.module';
 import { LoggerModule } from '../../../../apps/hotel-example/src/utils/logger/logger.module';
 import spyOn = jest.spyOn;
+import { CLI_HELP_MESSAGE } from 'cavia-js';
 
 @Command({})
 class Command1 {}
@@ -54,17 +60,21 @@ describe('CaviaCli', () => {
   });
 
   it('should print an error when no option is given', async () => {
-    await runCli(['po']);
+    await runCli(['unknown']);
 
-    expect(console.log).toHaveBeenCalledWith(
-      'No or unknown option is given, do nothing...',
-    );
+    expect(console.log).toHaveBeenCalledWith(CLI_BAD_OPTION_MESSAGE);
   });
 
   it('should run the given command on its entry point', async () => {
     await runCli(['-c', 'Command2']);
 
     expect(command2Spy).toHaveBeenCalled();
+  });
+
+  it('should print a doc when command -h is used', async () => {
+    await runCli(['-h']);
+
+    expect(console.log).toHaveBeenCalledWith(CLI_HELP_MESSAGE);
   });
 });
 

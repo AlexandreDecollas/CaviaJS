@@ -4,6 +4,7 @@ import { EventbusModule } from './eventbus';
 import { EventStoreConnectorModule } from './eventstore-connector';
 import { DiscoveryModule } from '@nestjs/core';
 import { EventModellingConfiguration } from './event-modelling.configuration';
+import { CliModule } from './cli/cli.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { EventModellingConfiguration } from './event-modelling.configuration';
       wildcard: true,
     }),
     DiscoveryModule,
+    CliModule,
   ],
 })
 export class EventModellingModule {

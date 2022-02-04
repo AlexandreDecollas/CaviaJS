@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { RedisQueueConfiguration } from '../../event-modelling.configuration';
+import { RedisQueueConfiguration } from '../../misc/event-modelling.configuration';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
@@ -7,7 +7,7 @@ import {
   EXTERNAL_EVENT_HOOK_METADATA,
   PERSUB_EVENT_HOOK,
   PERSUB_HOOK_METADATA,
-} from '../../constants';
+} from '../../misc/constants';
 import {
   fetchConnectedPersistentSubscriptions,
   ProvidedPersistentSubscriptions,

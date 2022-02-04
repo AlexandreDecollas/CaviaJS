@@ -21,7 +21,7 @@ export class CaviaCli {
   ): Promise<void> {
     try {
       const app: INestApplication = await NestFactory.create(
-        CaviaCliModule.instanciate(appModule),
+        CaviaCliModule.instantiate(appModule),
       );
 
       await app.init();

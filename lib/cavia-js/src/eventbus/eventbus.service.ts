@@ -9,9 +9,9 @@ import { ESDBConnectionService } from '../eventstore-connector';
 import { jsonEvent } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
-import { RedisQueueConfiguration } from '../event-modelling.configuration';
+import { RedisQueueConfiguration } from '../misc/event-modelling.configuration';
 import { Queue, Worker } from 'bullmq';
-import { EventstoreEvent } from '../eventstore.event';
+import { EventstoreEvent } from '../misc/eventstore.event';
 
 @Injectable()
 export class Eventbus implements OnApplicationBootstrap {

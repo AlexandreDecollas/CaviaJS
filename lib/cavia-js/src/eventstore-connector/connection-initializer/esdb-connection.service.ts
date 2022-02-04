@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventStoreDBClient } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { CONNECTION_STRING } from '../../constants';
+import { CONNECTION_STRING } from '../../misc/constants';
 
 @Injectable()
 export class ESDBConnectionService {

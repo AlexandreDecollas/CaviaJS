@@ -1,4 +1,4 @@
-import { PERSUB_EVENT_HOOK } from '../../constants';
+import { PERSUB_EVENT_HOOK } from '../../misc/constants';
 
 export interface PersubHookMetadata {
   method: string | symbol;

@@ -3,7 +3,7 @@ import { CommandMetadata } from './command.metadata';
 import {
   EXTERNAL_EVENT_HOOK_METADATA,
   PERSUB_HOOK_METADATA,
-} from '../../constants';
+} from '../../misc/constants';
 
 export function Command(metadata: CommandMetadata): ClassDecorator {
   return (target: object) => {

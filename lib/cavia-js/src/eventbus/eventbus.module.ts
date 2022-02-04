@@ -1,7 +1,7 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { Eventbus } from './eventbus.service';
 import { DiscoveryModule } from '@nestjs/core';
-import { RedisQueueConfiguration } from '../event-modelling.configuration';
+import { RedisQueueConfiguration } from '../misc/event-modelling.configuration';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { ExternalEntryPointListenerStarterService } from './external-event-queue/external-entry-point-listener-starter.service';
 

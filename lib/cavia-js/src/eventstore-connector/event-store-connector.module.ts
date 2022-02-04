@@ -2,7 +2,7 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ESDBConnectionService } from './connection-initializer';
 import { ProjectionUpserterService } from './projections';
 import { PersistentSubscriptionService } from './persistent-subscription';
-import { CONNECTION_STRING, HEARTBEAT_INTERVAL } from '../constants';
+import { CONNECTION_STRING, HEARTBEAT_INTERVAL } from '../misc/constants';
 import { HeartbeatService } from './heartbeat';
 
 @Global()

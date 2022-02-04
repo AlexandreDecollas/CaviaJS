@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ESDBConnectionService } from '../connection-initializer';
 import { Client } from '@eventstore/db-client/dist/Client';
-import { HEARTBEAT_INTERVAL } from '../../constants';
+import { HEARTBEAT_INTERVAL } from '../../misc/constants';
 
 @Injectable()
 export class HeartbeatService implements OnModuleInit {

@@ -1,7 +1,8 @@
 {
-  "name": "cavia-js-tmp",
-  "version": "0.0.45",
+  "name": "cavia-js",
+  "version": "1.0.0",
   "description": "Making event-modelling with NestJS easy",
+  "keywords": ["eventmodeling", "eventsourcing", "nestjs", "cqrs", "eventstore", "BDD"],
   "author": "Alexandre Decollas<alexandre.decollas.pro@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",

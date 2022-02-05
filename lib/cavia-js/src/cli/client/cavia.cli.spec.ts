@@ -37,6 +37,8 @@ const command4Spy = jest.fn();
 class Command4 {
   @Cli()
   toto(val: number, dto: any) {
+    console.log('val--> : ', val);
+    console.log('dto--> : ', dto);
     command4Spy(val, dto);
   }
 }
@@ -96,7 +98,7 @@ describe('CaviaCli', () => {
   it('should run the command and pass 123 in parameter', async () => {
     await runCli(['-c', 'Command3', '-p', '123']);
 
-    expect(command3Spy).toHaveBeenCalledWith(123);
+    expect(command3Spy).toHaveBeenCalledWith('123');
   });
 
   it('should run the command and pass the object and number in parameter', async () => {
@@ -114,10 +116,8 @@ describe('CaviaCli', () => {
       JSON.stringify(val),
     ]);
 
-    expect(command4Spy).toHaveBeenCalledWith(
-      { id: '4567', toto: { eee: 123 } },
-      999,
-    );
+    expect(JSON.parse(command4Spy.mock.calls[0][0])).toEqual(dto);
+    expect(JSON.parse(command4Spy.mock.calls[0][1])).toEqual(val);
   });
 });
 

@@ -63,20 +63,13 @@ export class CaviaCli {
     cliService: CliService,
     argv: string[],
   ): Promise<void> {
-    const argumentIndex: number = argv.indexOf('-c');
-    const commandName: string = argv[argumentIndex + 1];
+    const commandeNameIndex = argv.indexOf('-c') + 1;
+    const commandName: string = argv[commandeNameIndex];
+    const cleanedArgv = argv
+      .slice(commandeNameIndex + 2)
+      .filter((arg: string) => arg !== '-p');
 
-    const commandArumentIndex: number = argv.indexOf('-p');
-    const commandHasArguments: boolean = commandArumentIndex > -1;
-    const commandArguments: any[] = [];
-    if (commandHasArguments) {
-      let i: number = commandArumentIndex;
-      while (argv[i] === '-p') {
-        commandArguments.push(JSON.parse(argv[i + 1]) as any);
-        i += 2;
-      }
-    }
-    return await cliService.runCommand(commandName, ...commandArguments);
+    return await cliService.runCommand(commandName, ...cleanedArgv);
   }
 
   private static printAllCommandsImported(cliService: CliService): void {

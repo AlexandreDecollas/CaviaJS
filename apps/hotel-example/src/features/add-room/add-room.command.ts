@@ -26,7 +26,8 @@ export class AddRoomCommand {
   }
 
   @Cli()
-  toto() {
-    console.log('totototo');
+  toto(val1, val2: any) {
+    console.log('val1 : ', val1);
+    console.log('val2 : ', val2);
   }
 }

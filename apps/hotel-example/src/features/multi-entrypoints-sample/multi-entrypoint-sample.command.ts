@@ -26,7 +26,7 @@ export class MultiEntrypointSampleCommand {
 
   @Get('triggerExternalEvent')
   @GrpcMethod('StuffService', 'ApplyStuff')
-  public applyStuff(@Param() stuffId: StuffId): void {
+  public async applyStuff(@Param() stuffId: StuffId): Promise<void> {
     const event: StuffEvent = {
       metadata: { streamName: 'testStream' },
       type: 'StuffEvent',
@@ -34,6 +34,6 @@ export class MultiEntrypointSampleCommand {
         id: stuffId.id,
       },
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

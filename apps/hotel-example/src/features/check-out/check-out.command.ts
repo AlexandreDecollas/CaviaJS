@@ -38,7 +38,7 @@ export class CheckOutCommand {
       type: 'CheckedOutEvent',
     };
 
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 
   @Get('check-client-in-roster/:clientName')

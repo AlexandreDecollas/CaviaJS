@@ -4,7 +4,6 @@ import {
   Logger,
   OnApplicationBootstrap,
 } from '@nestjs/common';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { ESDBConnectionService } from '../eventstore-connector';
 import { jsonEvent } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
@@ -19,7 +18,6 @@ export class Eventbus implements OnApplicationBootstrap {
     @Inject(INTERNAL_EVENTS_QUEUE_CONFIGURATION)
     private readonly internalEventsQueueConf: RedisQueueConfiguration,
     private readonly connection: ESDBConnectionService,
-    private readonly eventEmitter: EventEmitter2,
     private readonly logger: Logger,
   ) {}
 
@@ -44,12 +42,7 @@ export class Eventbus implements OnApplicationBootstrap {
     );
   }
 
-  public emit(streamName: string, event: EventstoreEvent): void {
-    this.eventEmitter.emit(streamName, event);
-  }
-
-  @OnEvent('**')
-  public async hookEvent(event: EventstoreEvent): Promise<void> {
+  public async emit(event: EventstoreEvent): Promise<void> {
     const formattedEvent = jsonEvent({
       type: event.type,
       data: event.data,

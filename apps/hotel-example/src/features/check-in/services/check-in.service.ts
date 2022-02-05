@@ -37,6 +37,6 @@ export class CheckInService {
       },
     };
 
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

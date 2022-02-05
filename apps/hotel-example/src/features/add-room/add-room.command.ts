@@ -12,8 +12,9 @@ export class AddRoomCommand {
     private readonly idGeneratorService: IdGeneratorService,
   ) {}
 
+  @Cli()
   @Get('/:roomNumber')
-  public addRoom(@Param('roomNumber') roomNumber: number): void {
+  public async addRoom(@Param('roomNumber') roomNumber: number): Promise<void> {
     const event: RoomAddedEvent = {
       type: 'RoomAddedEvent',
       data: {
@@ -22,10 +23,9 @@ export class AddRoomCommand {
       },
       metadata: { streamName: 'manager.room-added' },
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 
-  @Cli()
   toto(val1, val2: any) {
     console.log('val1 : ', val1);
     console.log('val2 : ', val2);

@@ -50,10 +50,10 @@ export class RegisterCommand {
   }
 
   @Get('/:clientName/:clientSurname')
-  public register(
+  public async register(
     @Param('clientName') clientName: string,
     @Param('clientSurname') clientSurname: string,
-  ): void {
+  ): Promise<void> {
     const registerLine: RegisterLine = {
       clientName,
       clientSurname,
@@ -67,6 +67,6 @@ export class RegisterCommand {
       },
       metadata: { streamName: 'guest.registered' },
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

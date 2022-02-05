@@ -6,7 +6,6 @@ import {
   INTERNAL_EVENTS_QUEUE_CONFIGURATION,
 } from 'cavia-js';
 import { Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as BullMQ from 'bullmq';
 import { Test, TestingModule } from '@nestjs/testing';
 import spyOn = jest.spyOn;
@@ -30,7 +29,6 @@ describe('Eventbus', () => {
   const connectionMock = {
     getConnectedClient: jest.fn(),
   } as any;
-  const eventEmitter2Mock = {} as any;
   const loggerMock = { debug: jest.fn() } as any;
   spyOn(BullMQ, 'Worker').mockImplementation(() => null);
 
@@ -45,10 +43,6 @@ describe('Eventbus', () => {
         {
           provide: ESDBConnectionService,
           useValue: connectionMock,
-        },
-        {
-          provide: EventEmitter2,
-          useValue: eventEmitter2Mock,
         },
         {
           provide: Logger,
@@ -115,7 +109,7 @@ describe('Eventbus', () => {
     const addEventSpy = jest.fn();
     spyOn(BullMQ, 'Queue').mockReturnValue({ add: addEventSpy } as any);
 
-    await service.hookEvent({
+    await service.emit({
       data: { toto: 123 },
       metadata: { streamName: 'plpl' },
       type: 'ff',
@@ -137,7 +131,7 @@ describe('Eventbus', () => {
       appendToStream: appendToStreamSpy,
     });
 
-    await service.hookEvent({
+    await service.emit({
       data: { toto: 123 },
       metadata: { streamName: 'okok' },
       type: 'ff',

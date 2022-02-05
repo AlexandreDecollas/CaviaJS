@@ -22,6 +22,6 @@ export class PayementRequestedCommand {
       metadata: { streamName: 'guest.request-payement' },
       type: 'PayementRequestedEvent',
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

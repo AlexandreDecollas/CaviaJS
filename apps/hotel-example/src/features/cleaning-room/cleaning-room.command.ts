@@ -41,6 +41,6 @@ export class CleaningRoomCommand {
       metadata: { streamName: 'manager.room-readied' },
       type: 'RoomReadiedEvent',
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

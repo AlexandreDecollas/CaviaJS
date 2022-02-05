@@ -57,7 +57,7 @@ export class BookRoomService {
         },
       },
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 
   private async recheckDatas(

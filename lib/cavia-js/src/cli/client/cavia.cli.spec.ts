@@ -7,7 +7,6 @@ import {
   EventModellingModule,
 } from 'cavia-js';
 import { Module } from '@nestjs/common';
-import { LoggerModule } from '../../misc/logger.module';
 import spyOn = jest.spyOn;
 
 @Command({})
@@ -46,7 +45,6 @@ class Command4 {
 @Module({
   imports: [
     EventModellingModule.forRootTesting(),
-    LoggerModule,
 
     Command1,
     Command2,

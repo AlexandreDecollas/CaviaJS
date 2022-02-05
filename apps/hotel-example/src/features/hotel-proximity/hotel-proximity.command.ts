@@ -25,7 +25,7 @@ export class HotelProximityCommand {
       metadata: { streamName: 'gps.guest-left' },
       type: 'GuestLeftEvent',
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 
   @Get('guest/entered/:clientName')
@@ -40,6 +40,6 @@ export class HotelProximityCommand {
       metadata: { streamName: 'gps.guest-left' },
       type: 'GuestEnteredEvent',
     };
-    this.eventEmitter.emit(event.metadata.streamName, event);
+    await this.eventEmitter.emit(event);
   }
 }

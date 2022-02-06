@@ -8,6 +8,7 @@ import {
   providePersistentSubscription,
   provideProjection,
 } from 'cavia-js';
+import { ApiParam } from '@nestjs/swagger';
 
 provideProjection({
   name: 'roomAvailability',
@@ -33,6 +34,7 @@ export class BookRoomCommand {
   constructor(private readonly bookRoomService: BookRoomService) {}
 
   @Get('check-availability/:roomNumber')
+  @ApiParam({ name: 'roomNumber', example: 123, type: Number })
   public async register(
     @Param('roomNumber') roomNumber: number,
   ): Promise<Slot[]> {
@@ -40,6 +42,9 @@ export class BookRoomCommand {
   }
 
   @Get('/:roomNumber/:from/:to')
+  @ApiParam({ name: 'roomNumber', example: 123, type: Number })
+  @ApiParam({ name: 'from', example: 'DD-MM-YYYY', type: String })
+  @ApiParam({ name: 'to', example: 'DD-MM-YYYY', type: String })
   public async book(
     @Param('roomNumber') roomNumber: number,
     @Param('from') from: string,

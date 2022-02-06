@@ -10,6 +10,7 @@ import { PayementProcessorModule } from './features/payement-processor/payement-
 import { CheckInModule } from './features/check-in/check-in.module';
 import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
 import { RegisterModule } from './features/register/register.module';
+import { MultiEntrypointSampleModule } from './features/multi-entrypoints-sample/multi-entrypoint-sample.module';
 
 const commandModules = [
   RegisterModule,
@@ -21,6 +22,7 @@ const commandModules = [
   CheckOutModule,
   PayementRequestedModule,
   PayementProcessorModule,
+  MultiEntrypointSampleModule,
 ];
 
 @Module({

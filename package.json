@@ -2,7 +2,14 @@
   "name": "cavia-js",
   "version": "1.0.0",
   "description": "Making event-modelling with NestJS easy",
-  "keywords": ["eventmodeling", "eventsourcing", "nestjs", "cqrs", "eventstore", "BDD"],
+  "keywords": [
+    "eventmodeling",
+    "eventsourcing",
+    "nestjs",
+    "cqrs",
+    "eventstore",
+    "BDD"
+  ],
   "author": "Alexandre Decollas<alexandre.decollas.pro@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -23,7 +30,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config apps/hotel-example/test/jest-e2e.json"
+    "test:e2e": "jest --config apps/hotel-example/test/jest-e2e.json --forceExit"
   },
   "dependencies": {
     "@eventstore/db-client": "^2.1.1",
@@ -33,6 +40,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/microservices": "^8.2.6",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/swagger": "^5.2.0",
     "bullmq": "^1.64.0",
     "env-cmd": "^10.1.0",
     "eventstore-ts-projection-builder": "^1.0.6",
@@ -44,7 +52,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "sharp": "^0.29.3"
+    "sharp": "^0.29.3",
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

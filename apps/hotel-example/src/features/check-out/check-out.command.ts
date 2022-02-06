@@ -12,6 +12,7 @@ import {
   Eventbus,
   provideProjection,
 } from 'cavia-js';
+import { ApiParam } from '@nestjs/swagger';
 
 provideProjection({
   name: 'guestRoster',
@@ -29,6 +30,7 @@ export class CheckOutCommand {
   ) {}
 
   @Get('/:clientName')
+  @ApiParam({ name: 'clientName', example: 'Rambo', type: String })
   public async checkOut(
     @Param('clientName') clientName: string,
   ): Promise<void> {
@@ -42,6 +44,7 @@ export class CheckOutCommand {
   }
 
   @Get('check-client-in-roster/:clientName')
+  @ApiParam({ name: 'clientName', example: 'Rambo', type: String })
   public async checkGuestRoster(
     @Param('clientName') clientName: string,
   ): Promise<boolean> {

@@ -1,7 +1,6 @@
-export interface Stuff {
-  name: string;
-}
+import { ApiProperty } from '@nestjs/swagger';
 
-export interface StuffId {
+export class StuffId {
+  @ApiProperty()
   id: string;
 }

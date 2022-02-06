@@ -9,6 +9,7 @@ import {
   Eventbus,
   provideProjection,
 } from 'cavia-js';
+import { ApiParam } from '@nestjs/swagger';
 
 provideProjection({
   name: 'cleaning-schedule',
@@ -32,6 +33,7 @@ export class CleaningRoomCommand {
   }
 
   @Get('ready-room/:roomNumber')
+  @ApiParam({ name: 'roomNumber', example: 123, type: Number })
   public async readyRoom(@Param('roomNumber') roomNumber: number) {
     const event: RoomReadiedEvent = {
       data: {

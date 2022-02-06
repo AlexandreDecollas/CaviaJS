@@ -5,6 +5,7 @@ import { RegisteredEvent } from '../../model/registered.event';
 import { Queue } from 'bullmq';
 import { RegistrationRequestedEvent } from '../../model/registration-requested.event';
 import { Command, Eventbus, ExternalEventHook } from 'cavia-js';
+import { ApiParam } from '@nestjs/swagger';
 
 @Command({
   restOptions: { path: 'register' },
@@ -50,6 +51,8 @@ export class RegisterCommand {
   }
 
   @Get('/:clientName/:clientSurname')
+  @ApiParam({ name: 'clientName', example: 'Rambo', type: String })
+  @ApiParam({ name: 'clientSurname', example: 'John', type: String })
   public async register(
     @Param('clientName') clientName: string,
     @Param('clientSurname') clientSurname: string,

@@ -4,6 +4,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { StuffId } from './stuff';
 import { StuffEvent } from './stuff.event.ts';
 import { Command, Eventbus, ExternalEventHook } from 'cavia-js';
+import { ApiBody } from '@nestjs/swagger';
 
 @Command({
   restOptions: { path: 'register' },
@@ -26,6 +27,7 @@ export class MultiEntrypointSampleCommand {
 
   @Get('triggerExternalEvent')
   @GrpcMethod('StuffService', 'ApplyStuff')
+  @ApiBody({ type: StuffId })
   public async applyStuff(@Param() stuffId: StuffId): Promise<void> {
     const event: StuffEvent = {
       metadata: { streamName: 'testStream' },

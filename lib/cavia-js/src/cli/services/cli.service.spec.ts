@@ -25,7 +25,7 @@ describe('CliService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [CliService, DiscoveryService],
-      imports: [Command1, Command2, Command3],
+      controllers: [Command1, Command2, Command3],
     }).compile();
 
     service = module.get<CliService>(CliService);

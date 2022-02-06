@@ -1,27 +1,26 @@
 import { Module } from '@nestjs/common';
-
-import { AddRoomCommand } from './features/add-room/add-room.command';
-import { BookRoomCommand } from './features/book-room/book-room.command';
-import { CheckInCommand } from './features/check-in/check-in.command';
-import { CleaningRoomCommand } from './features/cleaning-room/cleaning-room.command';
-import { HotelProximityCommand } from './features/hotel-proximity/hotel-proximity.command';
-import { CheckOutCommand } from './features/check-out/check-out.command';
-import { PayementRequestedCommand } from './features/payement-requested/payement-requested.command';
-import { PayementProcessorCommand } from './features/payement-processor/payement-processor.command';
 import { IdGeneratorModule } from './utils/id-generator/id-generator.module';
-import { RegisterCommand } from './features/register/register.command';
 import { EventModellingModule } from 'cavia-js';
+import { HotelProximityModule } from './features/hotel-proximity/hotel-proximity.module';
+import { AddRoomModule } from './features/add-room/add-room.module';
+import { BookRoomModule } from './features/book-room/book-room.module';
+import { CleaningRoomModule } from './features/cleaning-room/cleaning-room.module';
+import { CheckOutModule } from './features/check-out/check-out.module';
+import { PayementProcessorModule } from './features/payement-processor/payement-processor.module';
+import { CheckInModule } from './features/check-in/check-in.module';
+import { PayementRequestedModule } from './features/payement-requested/payement-requested.module';
+import { RegisterModule } from './features/register/register.module';
 
-const commands = [
-  RegisterCommand,
-  AddRoomCommand,
-  BookRoomCommand,
-  CleaningRoomCommand,
-  CheckInCommand,
-  HotelProximityCommand,
-  CheckOutCommand,
-  PayementRequestedCommand,
-  PayementProcessorCommand,
+const commandModules = [
+  RegisterModule,
+  AddRoomModule,
+  BookRoomModule,
+  CleaningRoomModule,
+  CheckInModule,
+  HotelProximityModule,
+  CheckOutModule,
+  PayementRequestedModule,
+  PayementProcessorModule,
 ];
 
 @Module({
@@ -38,7 +37,7 @@ const commands = [
     }),
     IdGeneratorModule,
 
-    ...commands,
+    ...commandModules,
   ],
 })
 export class AppModule {}

@@ -13,6 +13,7 @@ import spyOn = jest.spyOn;
 class Command1 {}
 
 const command2Spy = jest.fn();
+
 @Command({})
 class Command2 {
   @Cli()
@@ -23,6 +24,7 @@ class Command2 {
 }
 
 const command3Spy = jest.fn();
+
 @Command({})
 class Command3 {
   @Cli()
@@ -32,6 +34,7 @@ class Command3 {
 }
 
 const command4Spy = jest.fn();
+
 @Command({})
 class Command4 {
   @Cli()
@@ -43,14 +46,8 @@ class Command4 {
 }
 
 @Module({
-  imports: [
-    EventModellingModule.forRootTesting(),
-
-    Command1,
-    Command2,
-    Command3,
-    Command4,
-  ],
+  imports: [EventModellingModule.forRootTesting()],
+  controllers: [Command1, Command2, Command3, Command4],
 })
 class TotoModule {}
 

@@ -64,7 +64,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
           useValue: { debug: jest.fn() },
         },
       ],
-      imports: [TotoCommand, TutuCommand, TeteCommand],
+      controllers: [TotoCommand, TutuCommand, TeteCommand],
     }).compile();
     service = module.get<ExternalEntryPointListenerStarterService>(
       ExternalEntryPointListenerStarterService,

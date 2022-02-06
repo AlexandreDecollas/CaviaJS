@@ -26,7 +26,6 @@ providePersistentSubscription({
 @Command({
   restOptions: { path: 'book-room' },
   persubName: 'roomAvailabilityStateVersion',
-  providers: [BookRoomService],
 })
 export class BookRoomCommand {
   private stateUpdated = false;

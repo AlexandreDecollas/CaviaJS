@@ -10,7 +10,6 @@ provideProjection({
 
 @Command({
   restOptions: { path: 'check-in' },
-  providers: [CheckInService],
 })
 export class CheckInCommand {
   constructor(private readonly checkInService: CheckInService) {}

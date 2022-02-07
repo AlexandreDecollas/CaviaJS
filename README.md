@@ -1,8 +1,10 @@
-# Event modeling the empirical way
+# CaviaJS
 
-The aim is to implement the [event modeling example](https://eventmodeling.org/posts/what-is-event-modeling/blueprint_large.jpg).
+NestJS-CQRS is a paine for making event sourcing and espacially event mdoeling on NestJS ecosystem.  The aim of this framework is to give tools for easily implement backends with the event-modeling methodology.
+In order to develop easily and as fast as possible a backend project using event-modeling, here is CaviaJS. This framework is on top of NestJS, and get ride of the CQRS lib. 
 
-It uses an eventstore. You can get on by using this docker image: 
-```
-docker run -d --name hotel-example-eventstore -it -p 21135:2113 -p 11135:1113 ghcr.io/eventstore/eventstore:21.10.0-alpha-arm64v8 --insecure --run-projections=All --enable-atom-pub-over-http
-```
+The book says "UX -> Command -> event ->  ViewModel -> UX", and so does CaviaJS.
+
+You can play with the example given in the app folder for a better understanding of what is it all about.
+
+You can find the entire documentation on this page : [https://doc.cavia-js.com/](https://doc.cavia-js.com/)

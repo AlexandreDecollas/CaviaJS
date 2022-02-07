@@ -132,7 +132,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
       await expect(persubOnEventSequenceHandlerSpy).not.toHaveBeenCalled();
     });
 
-    fit('should trigger the hook when each event of the sequence is spotted at least once each', async () => {
+    it('should trigger the hook when each event of the sequence is spotted at least once each', async () => {
       await hookPersub3({ event: allowedEvent1 });
       await hookPersub3({ event: allowedEvent2 });
       await hookPersub3({ event: allowedEvent3 });
@@ -140,7 +140,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
       await expect(persubOnEventSequenceHandlerSpy).toHaveBeenCalledTimes(1);
     });
 
-    fit('should reset the sequence once the hook is triggered based on the sequence', async () => {
+    it('should reset the sequence once the hook is triggered based on the sequence', async () => {
       await hookPersub3({ event: allowedEvent1 });
       await hookPersub3({ event: allowedEvent2 });
       await hookPersub3({ event: allowedEvent3 });

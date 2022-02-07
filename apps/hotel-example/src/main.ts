@@ -9,7 +9,7 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('CaviaJS')
+    .setTitle('CaviaJS Demo')
     .setDescription('Event modeling, the hotel example')
     .setVersion('1.0')
     .build();
@@ -17,7 +17,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document, {});
 
   await app.listen(port);
-  console.log(`App is litenning on port ${port}`);
+  console.log(`App is listening on port ${port}`);
+  console.log(`Swagger on /api`);
 }
 
 bootstrap();

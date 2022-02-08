@@ -27,9 +27,4 @@ export class AddRoomCommand {
     };
     await this.eventEmitter.emit(event);
   }
-
-  toto(val1, val2: any) {
-    console.log('val1 : ', val1);
-    console.log('val2 : ', val2);
-  }
 }

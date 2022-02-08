@@ -72,7 +72,7 @@ export class BookRoomService {
     const client: Client = await this.connection.getConnectedClient();
 
     const projectionState: BookedRoomsState = await client.getProjectionState(
-      'freeSlotsState',
+      'roomAvailability',
     );
 
     const slots: Slot[] = projectionState.rooms[roomNumber].slots;

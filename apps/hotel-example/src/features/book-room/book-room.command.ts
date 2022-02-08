@@ -1,4 +1,4 @@
-import { Get, Param } from '@nestjs/common';
+import { Get, HttpException, Param } from '@nestjs/common';
 import { BookRoomService } from './services/book-room/book-room.service';
 import { buildRoomAvailabilityProjection } from './projections/room-availability.projections';
 import { Slot } from './model/slot';
@@ -38,7 +38,11 @@ export class BookRoomCommand {
   public async register(
     @Param('roomNumber') roomNumber: number,
   ): Promise<Slot[]> {
-    return this.bookRoomService.checkRoomAvailability(roomNumber);
+    try {
+      return await this.bookRoomService.checkRoomAvailability(roomNumber);
+    } catch (e) {
+      throw new HttpException(e.message, 404);
+    }
   }
 
   @Get('/:roomNumber/:from/:to')

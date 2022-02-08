@@ -8,6 +8,7 @@ import { extendMoment } from 'moment-range';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { Reservation } from '../../model/reservation';
 import { ESDBConnectionService, Eventbus } from 'cavia-js';
+import { RoomDoesNotExistError } from './room-does-not-exist.error';
 
 const moment = extendMoment(Moment);
 
@@ -26,7 +27,10 @@ export class BookRoomService {
       'roomAvailability',
     );
 
-    return projectionState.rooms[roomNumber].slots;
+    if (projectionState && projectionState.rooms[roomNumber])
+      return projectionState.rooms[roomNumber].slots;
+
+    throw new RoomDoesNotExistError(roomNumber);
   }
 
   public async bookRoom(

@@ -12,7 +12,7 @@ docker run --name esdb-node -it -p 2113:2113 -p 1113:1113 \
 
 # On neww M1 apple silicone
 docker run -d --name hotel-example-eventstore -it \
-    -p 21135:2113 -p 11135:1113 ghcr.io/eventstore/eventstore:21.10.0-alpha-arm64v8 \
+    -p 2113:2113 -p 1113:1113 ghcr.io/eventstore/eventstore:21.10.0-alpha-arm64v8 \
     --insecure --run-projections=All --enable-atom-pub-over-http
 ```
 

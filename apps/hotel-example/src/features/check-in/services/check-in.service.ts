@@ -28,14 +28,13 @@ export class CheckInService {
       throw new HttpException('Unregistered client tries to check-in', 401);
     }
 
-    const event: CheckedInEvent = {
-      metadata: { streamName: 'guest.checkin' },
-      type: 'CheckedInEvent',
-      data: {
+    const event: CheckedInEvent = new CheckedInEvent(
+      {
         id: this.idGeneratorService.generateId(),
         clientName,
       },
-    };
+      { streamName: 'guest.checkin' },
+    );
 
     await this.eventEmitter.emit(event);
   }

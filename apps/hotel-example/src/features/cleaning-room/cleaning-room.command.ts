@@ -35,14 +35,13 @@ export class CleaningRoomCommand {
   @Get('ready-room/:roomNumber')
   @ApiParam({ name: 'roomNumber', example: 123, type: Number })
   public async readyRoom(@Param('roomNumber') roomNumber: number) {
-    const event: RoomReadiedEvent = {
-      data: {
+    const event: RoomReadiedEvent = new RoomReadiedEvent(
+      {
         id: this.idGeneratorService.generateId(),
         roomNumber,
       },
-      metadata: { streamName: 'manager.room-readied' },
-      type: 'RoomReadiedEvent',
-    };
+      { streamName: 'manager.room-readied' },
+    );
     await this.eventEmitter.emit(event);
   }
 }

@@ -4,17 +4,20 @@ import {
   roomBookedEventHandlerCallBack,
 } from './room-availability.projections';
 import { RoomBookedEvent } from '../../../model/room-booked.event';
+import { RoomAddedEvent } from '../../../model/room-added.event';
 
 describe('RoomAvailabilityProjection', () => {
   let state: BookedRoomsState;
 
   beforeEach(() => {
     state = new BookedRoomsState();
-    roomAddedEventHandlerCallBack(state, {
-      metadata: { streamName: 'manager.room-added' },
-      type: 'RoomAddedEvent',
-      data: { id: '', roomNumber: 123 },
-    });
+    roomAddedEventHandlerCallBack(
+      state,
+      new RoomAddedEvent(
+        { id: '', roomNumber: 123 },
+        { streamName: 'manager.room-added' },
+      ),
+    );
   });
 
   it('should add the booked slots when intersection is null', () => {

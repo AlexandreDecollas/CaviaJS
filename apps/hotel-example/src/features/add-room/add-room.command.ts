@@ -17,14 +17,13 @@ export class AddRoomCommand {
   @Get('/:roomNumber')
   @ApiParam({ name: 'roomNumber', example: 123, type: Number })
   public async addRoom(@Param('roomNumber') roomNumber: number): Promise<void> {
-    const event: RoomAddedEvent = {
-      type: 'RoomAddedEvent',
-      data: {
+    const event: RoomAddedEvent = new RoomAddedEvent(
+      {
         id: this.idGeneratorService.generateId(),
         roomNumber,
       },
-      metadata: { streamName: 'manager.room-added' },
-    };
+      { streamName: 'manager.room-added' },
+    );
     await this.eventEmitter.emit(event);
   }
 }

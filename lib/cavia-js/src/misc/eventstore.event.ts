@@ -19,6 +19,9 @@ export abstract class EventstoreEvent<
   public get data(): any {
     return this._data;
   }
+  public get type(): any {
+    return this.constructor.name;
+  }
 
   public get metadata(): EventstoreEventMetadata {
     return this._metadata;

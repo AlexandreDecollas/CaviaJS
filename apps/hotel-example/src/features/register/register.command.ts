@@ -22,13 +22,15 @@ export class RegisterCommand {
   ) {}
 
   @ExternalEventHook
-  public externalEventCallback(event: RegistrationRequestedEvent): void {
+  public async externalEventCallback(
+    event: RegistrationRequestedEvent,
+  ): Promise<void> {
     this.logger.debug(`External event hooked : ${event}`);
     if (event.type !== 'RegistrationRequestedEvent') {
       // could be class-validation here
       throw Error(`The event is incorrect.`);
     }
-    this.register(event.data.clientName, event.data.clientSurname);
+    await this.register(event.data.clientName, event.data.clientSurname);
   }
 
   // Simulate an external event, only for the demo purpose
@@ -37,15 +39,14 @@ export class RegisterCommand {
     const q = new Queue('register-queue', {
       connection: { host: 'localhost', port: 6379 },
     });
-    const event: RegistrationRequestedEvent = {
-      data: {
+    const event: RegistrationRequestedEvent = new RegistrationRequestedEvent(
+      {
         clientName: 'DOE',
         clientSurname: 'JOHN',
         id: this.idGeneratorService.generateId(),
       },
-      metadata: { streamName: 'okokok' },
-      type: 'RegistrationRequestedEvent',
-    };
+      { streamName: 'okokok' },
+    );
 
     await q.add('', event);
   }

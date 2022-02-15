@@ -20,7 +20,7 @@ export abstract class EventstoreEvent<
     return this._data;
   }
   public get type(): any {
-    return this.constructor.name;
+    return this.constructor.name.replace(/Event$/, '');
   }
 
   public get metadata(): EventstoreEventMetadata {

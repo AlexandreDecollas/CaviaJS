@@ -3,9 +3,9 @@ import { PayementRequestedEvent } from '../../model/payement-requested.event';
 import { PayementSuccededEvent } from '../../model/payement-succeded.event';
 import { IdGeneratorService } from '../../utils/id-generator/id-generator.service';
 import {
+  AllEventsHook,
   Command,
   Eventbus,
-  PersubEventHook,
   providePersistentSubscription,
   provideProjection,
 } from 'cavia-js';
@@ -33,7 +33,7 @@ export class PayementProcessorCommand {
     private readonly eventEmitter: Eventbus,
   ) {}
 
-  @PersubEventHook()
+  @AllEventsHook()
   public async persubCallback(event: PayementRequestedEvent): Promise<void> {
     const payementSuccededEvent: PayementSuccededEvent =
       new PayementSuccededEvent(

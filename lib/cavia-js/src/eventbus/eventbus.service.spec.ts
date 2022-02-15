@@ -1,6 +1,8 @@
 import {
   ESDBConnectionService,
   Eventbus,
+  EventstoreEvent,
+  EventstoreEventMetadata,
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
   INTERNAL_EVENTS_QUEUE_CONFIGURATION,
@@ -109,11 +111,10 @@ describe('Eventbus', () => {
     const addEventSpy = jest.fn();
     spyOn(BullMQ, 'Queue').mockReturnValue({ add: addEventSpy } as any);
 
-    await service.emit({
-      data: { toto: 123 },
-      metadata: { streamName: 'plpl' },
-      type: 'ff',
-    });
+    class TEvent extends EventstoreEvent<any, EventstoreEventMetadata> {}
+    const tEvent = new TEvent({}, { streamName: 'tt' });
+
+    await service.emit(tEvent);
 
     expect(BullMQ.Queue).toHaveBeenCalledWith(
       'tutu',
@@ -131,13 +132,12 @@ describe('Eventbus', () => {
       appendToStream: appendToStreamSpy,
     });
 
-    await service.emit({
-      data: { toto: 123 },
-      metadata: { streamName: 'okok' },
-      type: 'ff',
-    });
+    class TotoEvent extends EventstoreEvent<any, EventstoreEventMetadata> {}
+    const tEvent = new TotoEvent({}, { streamName: 'okok' });
+
+    await service.emit(tEvent);
 
     expect(appendToStreamSpy).toHaveBeenCalledWith('okok', expect.anything());
-    expect(appendToStreamSpy.mock.calls[0][1].type).toEqual('ff');
+    expect(appendToStreamSpy.mock.calls[0][1].type).toEqual('Toto');
   });
 });

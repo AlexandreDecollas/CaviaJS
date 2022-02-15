@@ -28,7 +28,6 @@ describe('AppController (e2e)', () => {
 
     return request(app.getHttpServer())
       .get('/book-room/check-availability/' + roomNumber)
-      .expect(200)
-      .expect([]);
+      .expect(404);
   });
 });

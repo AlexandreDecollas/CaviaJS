@@ -4,6 +4,7 @@ import { DiscoveryService } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import {
   EventstoreEvent,
+  EventstoreEventMetadata,
   ExternalEntryPointListenerStarterService,
   provideConnectedPersistentSubscription,
 } from 'cavia-js';
@@ -75,9 +76,9 @@ describe('ExternalEntryPointListenerStarterService', () => {
     let hookPersub1;
     let hookPersub2;
     let hookPersub3;
-    const allowedEvent1 = new AllowedEvent1();
-    const allowedEvent2 = new AllowedEvent2();
-    const allowedEvent3 = new AllowedEvent3();
+    const allowedEvent1 = new AllowedEvent1({}, { streamName: 'tt' });
+    const allowedEvent2 = new AllowedEvent2({}, { streamName: 'tt' });
+    const allowedEvent3 = new AllowedEvent3({}, { streamName: 'tt' });
 
     beforeEach(async () => {
       jest.resetAllMocks();
@@ -114,11 +115,14 @@ describe('ExternalEntryPointListenerStarterService', () => {
     });
 
     it('should trigger hook only when allowed event is emitted', async () => {
-      class ForbindenEvent extends EventstoreEvent {
-        type: 'ForbindenEvent';
-        data: { toto: 123 };
-      }
-      const forbidenEvent: ForbindenEvent = new ForbindenEvent();
+      class ForbindenEvent extends EventstoreEvent<
+        { toto: 123 },
+        EventstoreEventMetadata
+      > {}
+      const forbidenEvent: ForbindenEvent = new ForbindenEvent(
+        { toto: 123 },
+        { streamName: 'tt' },
+      );
       const payload = { event: forbidenEvent };
 
       await hookPersub2(payload);

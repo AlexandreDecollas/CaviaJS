@@ -3,8 +3,8 @@ import { BookRoomService } from './services/book-room/book-room.service';
 import { buildRoomAvailabilityProjection } from './projections/room-availability.projections';
 import { Slot } from './model/slot';
 import {
+  AllEventsHook,
   Command,
-  PersubEventHook,
   providePersistentSubscription,
   provideProjection,
 } from 'cavia-js';
@@ -64,7 +64,7 @@ export class BookRoomCommand {
     );
   }
 
-  @PersubEventHook()
+  @AllEventsHook()
   public getLastStateVersion(): void {
     this.stateUpdated = true;
   }

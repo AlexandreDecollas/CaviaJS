@@ -1,22 +1,26 @@
 import {
+  AllEventsHook,
   Command,
   EventstoreEvent,
+  EventstoreEventMetadata,
   ExternalEventHook,
-  PersubEventHook,
   RedisQueueConfiguration,
+  Saga,
+  SingleEventHook,
 } from 'cavia-js';
 
-export class AllowedEvent1 extends EventstoreEvent {
-  type: 'AllowedEvent1';
-}
-
-export class AllowedEvent2 extends EventstoreEvent {
-  type: 'AllowedEvent2';
-}
-
-export class AllowedEvent3 extends EventstoreEvent {
-  type: 'AllowedEvent3';
-}
+export class AllowedEvent1 extends EventstoreEvent<
+  any,
+  EventstoreEventMetadata
+> {}
+export class AllowedEvent2 extends EventstoreEvent<
+  any,
+  EventstoreEventMetadata
+> {}
+export class AllowedEvent3 extends EventstoreEvent<
+  any,
+  EventstoreEventMetadata
+> {}
 
 export const redisConf: RedisQueueConfiguration = {
   options: {
@@ -38,7 +42,7 @@ export const nackSpy = jest.fn();
 
 @Command({ persubName: 'persubName1', externalEventQueue: redisConf })
 export class TotoCommand {
-  @PersubEventHook()
+  @AllEventsHook()
   public toto(...args): void {
     persubAllEventHandlerSpy(args);
   }
@@ -51,7 +55,7 @@ export class TotoCommand {
 
 @Command({ persubName: 'persubName2', externalEventQueue: redisConf })
 export class TutuCommand {
-  @PersubEventHook([AllowedEvent1])
+  @SingleEventHook(AllowedEvent1)
   public titi(...args): void {
     persubOnlyOneEventHandlerSpy(args);
   }
@@ -59,7 +63,7 @@ export class TutuCommand {
 
 @Command({ persubName: 'persubName3', externalEventQueue: redisConf })
 export class TeteCommand {
-  @PersubEventHook([AllowedEvent1, AllowedEvent2, AllowedEvent3])
+  @Saga([AllowedEvent1, AllowedEvent2, AllowedEvent3])
   public tata(...args): void {
     persubOnEventSequenceHandlerSpy(args);
   }

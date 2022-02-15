@@ -1,4 +1,4 @@
-import { PERSUB_EVENT_HOOK } from '../../misc/constants';
+import { SAGA_HOOK } from '../../misc/constants';
 
 export interface PersubHookMetadata {
   method: string | symbol;
@@ -6,12 +6,15 @@ export interface PersubHookMetadata {
   sequenceState: { [key: string]: boolean };
 }
 
-export const PersubEventHook = (
-  eventTypeSequence: object[] = [],
-): MethodDecorator => {
+export const SingleEventHook = (eventType: object): MethodDecorator =>
+  Saga([eventType]);
+
+export const AllEventsHook = (): MethodDecorator => Saga([]);
+
+export const Saga = (eventTypeSequence: object[] = []): MethodDecorator => {
   return (target: any, key: string | symbol): void => {
     let metadatas: PersubHookMetadata[] = Reflect.getMetadata(
-      PERSUB_EVENT_HOOK,
+      SAGA_HOOK,
       target,
     );
 
@@ -23,6 +26,6 @@ export const PersubEventHook = (
       ),
       sequenceState: {},
     });
-    Reflect.defineMetadata(PERSUB_EVENT_HOOK, metadatas, target);
+    Reflect.defineMetadata(SAGA_HOOK, metadatas, target);
   };
 };

@@ -5,7 +5,7 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import {
   EXTERNAL_EVENT_HOOK,
   EXTERNAL_EVENT_HOOK_METADATA,
-  PERSUB_EVENT_HOOK,
+  SAGA_HOOK,
   PERSUB_HOOK_METADATA,
 } from '../../misc/constants';
 import {
@@ -77,7 +77,7 @@ export class ExternalEntryPointListenerStarterService
   ): Promise<void> {
     try {
       const persubHookMetadatas: PersubHookMetadata[] = Reflect.getMetadata(
-        PERSUB_EVENT_HOOK,
+        SAGA_HOOK,
         persubHookContainer.metatype.prototype,
       );
       for (const persubHookMetadata of persubHookMetadatas) {
@@ -125,7 +125,7 @@ export class ExternalEntryPointListenerStarterService
     persubHookContainer: InstanceWrapper<any>,
   ): void {
     Reflect.defineMetadata(
-      PERSUB_EVENT_HOOK,
+      SAGA_HOOK,
       metadatas,
       persubHookContainer.metatype.prototype,
     );

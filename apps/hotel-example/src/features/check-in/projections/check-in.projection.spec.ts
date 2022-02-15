@@ -10,15 +10,14 @@ describe('CheckInProjection', () => {
       guests: ['toto'],
     };
 
-    const registeredEvent: RegisteredEvent = {
-      metadata: { streamName: 'guest.registered' },
-      type: 'RegisteredEvent',
-      data: {
+    const registeredEvent: RegisteredEvent = new RegisteredEvent(
+      {
         id: 'ttutu',
         clientName: 'toto',
         clientSurname: 'jiji',
       },
-    };
+      { streamName: 'guest.registered' },
+    );
 
     guestRegisteredEventCallBack(state, registeredEvent);
 

@@ -19,14 +19,13 @@ export class HotelProximityCommand {
   public async guestLeft(
     @Param('clientName') clientName: string,
   ): Promise<void> {
-    const event: GuestLeftEvent = {
-      data: {
+    const event: GuestLeftEvent = new GuestLeftEvent(
+      {
         guestName: clientName,
         id: this.idGeneratorService.generateId(),
       },
-      metadata: { streamName: 'gps.guest-left' },
-      type: 'GuestLeftEvent',
-    };
+      { streamName: 'gps.guest-left' },
+    );
     await this.eventEmitter.emit(event);
   }
 

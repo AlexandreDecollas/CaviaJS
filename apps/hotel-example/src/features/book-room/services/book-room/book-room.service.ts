@@ -43,10 +43,8 @@ export class BookRoomService {
       await this.recheckDatas(roomNumber, from, to);
     }
 
-    const event: RoomBookedEvent = {
-      metadata: { streamName: 'guest.room-booked' },
-      type: 'RoomBookedEvent',
-      data: {
+    const event: RoomBookedEvent = new RoomBookedEvent(
+      {
         id: this.idGeneratorService.generateId(),
         roomNumber,
         occupiedFromDate: {
@@ -60,7 +58,9 @@ export class BookRoomService {
           year: +to.split('-')[2],
         },
       },
-    };
+      { streamName: 'guest.room-booked' },
+    );
+
     await this.eventEmitter.emit(event);
   }
 

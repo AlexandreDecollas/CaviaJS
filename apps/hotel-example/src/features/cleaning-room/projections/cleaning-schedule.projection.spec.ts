@@ -9,8 +9,8 @@ describe('CleaningScheduleProjection', () => {
   it('should show all rooms with the next date of checkout', () => {
     const state: CleaningScheduleState = new CleaningScheduleState();
 
-    const eventA: RoomBookedEvent = {
-      data: {
+    const eventA: RoomBookedEvent = new RoomBookedEvent(
+      {
         id: 'hoho',
         roomNumber: 123,
         occupiedFromDate: {
@@ -24,11 +24,10 @@ describe('CleaningScheduleProjection', () => {
           day: 5,
         },
       },
-      metadata: { streamName: 'plpl' },
-      type: 'RoomBookedEvent',
-    };
-    const eventB: RoomBookedEvent = {
-      data: {
+      { streamName: 'plpl' },
+    );
+    const eventB: RoomBookedEvent = new RoomBookedEvent(
+      {
         id: 'hoho',
         roomNumber: 123,
         occupiedFromDate: {
@@ -42,11 +41,10 @@ describe('CleaningScheduleProjection', () => {
           day: 6,
         },
       },
-      metadata: { streamName: 'plpl' },
-      type: 'RoomBookedEvent',
-    };
-    const eventC: RoomBookedEvent = {
-      data: {
+      { streamName: 'plpl' },
+    );
+    const eventC: RoomBookedEvent = new RoomBookedEvent(
+      {
         id: 'hoho',
         roomNumber: 209,
         occupiedFromDate: {
@@ -60,11 +58,10 @@ describe('CleaningScheduleProjection', () => {
           day: 14,
         },
       },
-      metadata: { streamName: 'plpl' },
-      type: 'RoomBookedEvent',
-    };
-    const eventD: RoomBookedEvent = {
-      data: {
+      { streamName: 'plpl' },
+    );
+    const eventD: RoomBookedEvent = new RoomBookedEvent(
+      {
         id: 'hoho',
         roomNumber: 450,
         occupiedFromDate: {
@@ -78,9 +75,8 @@ describe('CleaningScheduleProjection', () => {
           day: 24,
         },
       },
-      metadata: { streamName: 'plpl' },
-      type: 'RoomBookedEvent',
-    };
+      { streamName: 'plpl' },
+    );
 
     roomBookedEventCallBack(state, eventA);
     roomBookedEventCallBack(state, eventB);

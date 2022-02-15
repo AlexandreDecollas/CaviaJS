@@ -72,10 +72,8 @@ const getEvent = (
   monthTo: number,
   yearTo: number,
 ): RoomBookedEvent => {
-  return {
-    metadata: { streamName: 'manager.room-added' },
-    type: 'RoomBookedEvent',
-    data: {
+  return new RoomBookedEvent(
+    {
       id: 'AZE',
       roomNumber: 123,
       occupiedFromDate: {
@@ -89,5 +87,6 @@ const getEvent = (
         day: dayTo,
       },
     },
-  };
+    { streamName: 'manager.room-added' },
+  );
 };

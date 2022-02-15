@@ -34,11 +34,10 @@ export class CheckOutCommand {
   public async checkOut(
     @Param('clientName') clientName: string,
   ): Promise<void> {
-    const event: CheckedOutEvent = {
-      data: { clientName, id: this.idGeneratorService.generateId() },
-      metadata: { streamName: 'guest.checkout' },
-      type: 'CheckedOutEvent',
-    };
+    const event: CheckedOutEvent = new CheckedOutEvent(
+      { clientName, id: this.idGeneratorService.generateId() },
+      { streamName: 'guest.checkout' },
+    );
 
     await this.eventEmitter.emit(event);
   }

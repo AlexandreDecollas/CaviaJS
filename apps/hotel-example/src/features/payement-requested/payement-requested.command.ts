@@ -16,14 +16,13 @@ export class PayementRequestedCommand {
   @Get('/:clientName')
   @ApiParam({ name: 'clientName', example: 'Rambo', type: String })
   public async register(@Param('clientName') clientName: string) {
-    const event: PayementRequestedEvent = {
-      data: {
+    const event: PayementRequestedEvent = new PayementRequestedEvent(
+      {
         id: this.idGeneratorService.generateId(),
         clientName,
       },
-      metadata: { streamName: 'guest.request-payement' },
-      type: 'PayementRequestedEvent',
-    };
+      { streamName: 'guest.request-payement' },
+    );
     await this.eventEmitter.emit(event);
   }
 }

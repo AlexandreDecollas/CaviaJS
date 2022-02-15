@@ -10,11 +10,10 @@ describe('PayementToProcessProjection', () => {
   it('should show payement to proccess not done when not processed', () => {
     const state = new PayementToProcessProjectionState();
 
-    const event: PayementRequestedEvent = {
-      data: { clientName: 'toto', id: 'tutu' },
-      metadata: { streamName: 'titi' },
-      type: 'PayementRequestedEvent',
-    };
+    const event: PayementRequestedEvent = new PayementRequestedEvent(
+      { clientName: 'toto', id: 'tutu' },
+      { streamName: 'titi' },
+    );
 
     payementRequestedEventCallback(state, event);
 
@@ -24,16 +23,17 @@ describe('PayementToProcessProjection', () => {
   it('should show payement to proccess done when processed', () => {
     const state = new PayementToProcessProjectionState();
 
-    const payementRequestedEvent: PayementRequestedEvent = {
-      data: { clientName: 'toto', id: 'tutu' },
-      metadata: { streamName: 'titi' },
-      type: 'PayementRequestedEvent',
-    };
-    const payementSuccededEvent: PayementSuccededEvent = {
-      data: { clientName: 'toto', id: 'tutu' },
-      metadata: { streamName: 'titi' },
-      type: 'PayementSuccededEvent',
-    };
+    const payementRequestedEvent: PayementRequestedEvent =
+      new PayementRequestedEvent(
+        { clientName: 'toto', id: 'tutu' },
+        { streamName: 'titi' },
+      );
+
+    const payementSuccededEvent: PayementSuccededEvent =
+      new PayementSuccededEvent(
+        { clientName: 'toto', id: 'tutu' },
+        { streamName: 'titi' },
+      );
 
     payementRequestedEventCallback(state, payementRequestedEvent);
     payementSuccededEventCallback(state, payementSuccededEvent);

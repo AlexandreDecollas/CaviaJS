@@ -35,14 +35,14 @@ export class PayementProcessorCommand {
 
   @PersubEventHook()
   public async persubCallback(event: PayementRequestedEvent): Promise<void> {
-    const payementSuccededEvent: PayementSuccededEvent = {
-      metadata: { streamName: 'guest.payement-succedded' },
-      data: {
-        id: this.idGeneratorService.generateId(),
-        clientName: event.data.clientName,
-      },
-      type: 'PayementSuccededEvent',
-    };
+    const payementSuccededEvent: PayementSuccededEvent =
+      new PayementSuccededEvent(
+        {
+          id: this.idGeneratorService.generateId(),
+          clientName: event.data.clientName,
+        },
+        { streamName: 'guest.payement-succedded' },
+      );
     await this.eventEmitter.emit(payementSuccededEvent);
   }
 }

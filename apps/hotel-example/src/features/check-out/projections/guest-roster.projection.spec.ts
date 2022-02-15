@@ -14,11 +14,10 @@ describe('GuestRosterProjection', () => {
 
     const clientName = 'toto';
 
-    const checkedInEvent: CheckedInEvent = {
-      data: { clientName, id: 'glgl0' },
-      metadata: { streamName: 'bg' },
-      type: 'CheckedInEvent',
-    };
+    const checkedInEvent: CheckedInEvent = new CheckedInEvent(
+      { clientName, id: 'glgl0' },
+      { streamName: 'bg' },
+    );
 
     checkedInEventCallBack(state, checkedInEvent);
 
@@ -30,17 +29,15 @@ describe('GuestRosterProjection', () => {
 
     const clientName = 'toto';
 
-    const checkedInEvent: CheckedInEvent = {
-      data: { clientName, id: 'glgl0' },
-      metadata: { streamName: 'bg' },
-      type: 'CheckedInEvent',
-    };
+    const checkedInEvent: CheckedInEvent = new CheckedInEvent(
+      { clientName, id: 'glgl0' },
+      { streamName: 'bg' },
+    );
 
-    const guestLeftEvent: GuestLeftEvent = {
-      data: { guestName: clientName, id: 'glgl1' },
-      metadata: { streamName: 'bg' },
-      type: 'GuestLeftEvent',
-    };
+    const guestLeftEvent: GuestLeftEvent = new GuestLeftEvent(
+      { guestName: clientName, id: 'glgl1' },
+      { streamName: 'bg' },
+    );
 
     checkedInEventCallBack(state, checkedInEvent);
     guestLeftEventCallBack(state, guestLeftEvent);
@@ -53,23 +50,20 @@ describe('GuestRosterProjection', () => {
 
     const clientName = 'toto';
 
-    const checkedInEvent: CheckedInEvent = {
-      data: { clientName, id: 'glgl0' },
-      metadata: { streamName: 'bg' },
-      type: 'CheckedInEvent',
-    };
+    const checkedInEvent: CheckedInEvent = new CheckedInEvent(
+      { clientName, id: 'glgl0' },
+      { streamName: 'bg' },
+    );
 
-    const guestLeftEvent: GuestLeftEvent = {
-      data: { guestName: clientName, id: 'glgl1' },
-      metadata: { streamName: 'bg' },
-      type: 'GuestLeftEvent',
-    };
+    const guestLeftEvent: GuestLeftEvent = new GuestLeftEvent(
+      { guestName: clientName, id: 'glgl1' },
+      { streamName: 'bg' },
+    );
 
-    const checkedOutEvent: CheckedOutEvent = {
-      data: { clientName, id: 'glgl1' },
-      metadata: { streamName: 'bg' },
-      type: 'checkedOutEvent',
-    };
+    const checkedOutEvent: CheckedOutEvent = new CheckedOutEvent(
+      { clientName, id: 'glgl1' },
+      { streamName: 'bg' },
+    );
 
     checkedInEventCallBack(state, checkedInEvent);
     guestLeftEventCallBack(state, guestLeftEvent);

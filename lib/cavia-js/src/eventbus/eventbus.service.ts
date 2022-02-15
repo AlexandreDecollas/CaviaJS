@@ -42,7 +42,7 @@ export class Eventbus implements OnApplicationBootstrap {
     );
   }
 
-  public async emit(event: EventstoreEvent): Promise<void> {
+  public async emit(event: EventstoreEvent<any, any>): Promise<void> {
     const formattedEvent = jsonEvent({
       type: event.type,
       data: event.data,

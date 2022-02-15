@@ -29,13 +29,10 @@ export class MultiEntrypointSampleCommand {
   @GrpcMethod('StuffService', 'ApplyStuff')
   @ApiBody({ type: StuffId })
   public async applyStuff(@Param() stuffId: StuffId): Promise<void> {
-    const event: StuffEvent = {
-      metadata: { streamName: 'testStream' },
-      type: 'StuffEvent',
-      data: {
-        id: stuffId.id,
-      },
-    };
+    const event: StuffEvent = new StuffEvent(
+      { id: stuffId.id },
+      { streamName: 'testStream' },
+    );
     await this.eventEmitter.emit(event);
   }
 }

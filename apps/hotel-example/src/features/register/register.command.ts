@@ -61,15 +61,14 @@ export class RegisterCommand {
       clientName,
       clientSurname,
     };
-    const event: RegisteredEvent = {
-      type: 'RegisteredEvent',
-      data: {
+    const event: RegisteredEvent = new RegisteredEvent(
+      {
         id: this.idGeneratorService.generateId(),
         clientName: registerLine.clientName,
         clientSurname: registerLine.clientSurname,
       },
-      metadata: { streamName: 'guest.registered' },
-    };
+      { streamName: 'guest.registered' },
+    );
     await this.eventEmitter.emit(event);
   }
 }

@@ -1,4 +1,4 @@
-import { EventstoreEvent, EventstoreEventMetadata } from 'cavia-js';
+import { EventstoreEvent } from 'cavia-js';
 
 export interface RoomReadiedEventData {
   id: string;
@@ -7,5 +7,5 @@ export interface RoomReadiedEventData {
 
 export class RoomReadiedEvent extends EventstoreEvent<
   RoomReadiedEventData,
-  EventstoreEventMetadata
+  any
 > {}

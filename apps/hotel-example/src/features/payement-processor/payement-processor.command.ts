@@ -41,8 +41,11 @@ export class PayementProcessorCommand {
           id: this.idGeneratorService.generateId(),
           clientName: event.data.clientName,
         },
-        { streamName: 'guest.payement-succedded' },
+        {},
       );
-    await this.eventEmitter.emit(payementSuccededEvent);
+    await this.eventEmitter.emit(
+      'guest.payement-succedded',
+      payementSuccededEvent,
+    );
   }
 }

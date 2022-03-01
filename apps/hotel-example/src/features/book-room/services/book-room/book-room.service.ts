@@ -58,10 +58,10 @@ export class BookRoomService {
           year: +to.split('-')[2],
         },
       },
-      { streamName: 'guest.room-booked' },
+      {},
     );
 
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('guest.room-booked', event);
   }
 
   private async recheckDatas(

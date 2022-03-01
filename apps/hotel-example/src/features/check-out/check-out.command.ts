@@ -36,10 +36,10 @@ export class CheckOutCommand {
   ): Promise<void> {
     const event: CheckedOutEvent = new CheckedOutEvent(
       { clientName, id: this.idGeneratorService.generateId() },
-      { streamName: 'guest.checkout' },
+      {},
     );
 
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('guest.checkout', event);
   }
 
   @Get('check-client-in-roster/:clientName')

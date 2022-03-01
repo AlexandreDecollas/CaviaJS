@@ -2,10 +2,10 @@ import {
   ESDBConnectionService,
   Eventbus,
   EventstoreEvent,
-  EventstoreEventMetadata,
   fetchConnectedPersistentSubscriptions,
   fetchProvidedPersistentSubscriptionsConfigurations,
   INTERNAL_EVENTS_QUEUE_CONFIGURATION,
+  InternalQueueJobData,
 } from 'cavia-js';
 import { Logger } from '@nestjs/common';
 import * as BullMQ from 'bullmq';
@@ -100,10 +100,16 @@ describe('Eventbus', () => {
       appendToStream: appendToStreamSpy,
     });
 
-    await handler({ data: { metadata: { streamName: 'toto' } } });
+    const jobData: InternalQueueJobData<EventstoreEvent<any, any>, any, any> = {
+      event: { data: {}, metadata: {} },
+      streamName: 'toto',
+    };
+
+    await handler({ data: jobData });
 
     expect(appendToStreamSpy).toHaveBeenCalledWith('toto', {
-      metadata: { streamName: 'toto' },
+      data: {},
+      metadata: {},
     });
   });
 
@@ -111,10 +117,10 @@ describe('Eventbus', () => {
     const addEventSpy = jest.fn();
     spyOn(BullMQ, 'Queue').mockReturnValue({ add: addEventSpy } as any);
 
-    class TEvent extends EventstoreEvent<any, EventstoreEventMetadata> {}
-    const tEvent = new TEvent({}, { streamName: 'tt' });
+    class TEvent extends EventstoreEvent<any, any> {}
+    const tEvent = new TEvent({}, {});
 
-    await service.emit(tEvent);
+    await service.emit('tt', tEvent);
 
     expect(BullMQ.Queue).toHaveBeenCalledWith(
       'tutu',
@@ -132,10 +138,10 @@ describe('Eventbus', () => {
       appendToStream: appendToStreamSpy,
     });
 
-    class TotoEvent extends EventstoreEvent<any, EventstoreEventMetadata> {}
-    const tEvent = new TotoEvent({}, { streamName: 'okok' });
+    class TotoEvent extends EventstoreEvent<any, any> {}
+    const tEvent = new TotoEvent({}, {});
 
-    await service.emit(tEvent);
+    await service.emit('okok', tEvent);
 
     expect(appendToStreamSpy).toHaveBeenCalledWith('okok', expect.anything());
     expect(appendToStreamSpy.mock.calls[0][1].type).toEqual('Toto');

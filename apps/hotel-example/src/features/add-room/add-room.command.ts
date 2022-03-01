@@ -22,8 +22,8 @@ export class AddRoomCommand {
         id: this.idGeneratorService.generateId(),
         roomNumber,
       },
-      { streamName: 'manager.room-added' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('manager.room-added', event);
   }
 }

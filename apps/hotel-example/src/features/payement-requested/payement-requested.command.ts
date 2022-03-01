@@ -21,8 +21,8 @@ export class PayementRequestedCommand {
         id: this.idGeneratorService.generateId(),
         clientName,
       },
-      { streamName: 'guest.request-payement' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('guest.request-payement', event);
   }
 }

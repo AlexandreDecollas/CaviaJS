@@ -16,7 +16,7 @@ describe('CheckInProjection', () => {
         clientName: 'toto',
         clientSurname: 'jiji',
       },
-      { streamName: 'guest.registered' },
+      {},
     );
 
     guestRegisteredEventCallBack(state, registeredEvent);

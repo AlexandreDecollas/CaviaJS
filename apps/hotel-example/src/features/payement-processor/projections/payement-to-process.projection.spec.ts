@@ -12,7 +12,7 @@ describe('PayementToProcessProjection', () => {
 
     const event: PayementRequestedEvent = new PayementRequestedEvent(
       { clientName: 'toto', id: 'tutu' },
-      { streamName: 'titi' },
+      {},
     );
 
     payementRequestedEventCallback(state, event);

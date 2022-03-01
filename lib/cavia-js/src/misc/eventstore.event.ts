@@ -1,11 +1,4 @@
-export interface EventstoreEventMetadata {
-  streamName: string;
-}
-
-export abstract class EventstoreEvent<
-  Data,
-  Metadata extends EventstoreEventMetadata,
-> {
+export abstract class EventstoreEvent<Data, Metadata> {
   constructor(
     protected readonly _data: Data,
     protected readonly _metadata: Metadata,
@@ -23,7 +16,7 @@ export abstract class EventstoreEvent<
     return this.constructor.name.replace(/Event$/, '');
   }
 
-  public get metadata(): EventstoreEventMetadata {
+  public get metadata(): Metadata {
     return this._metadata;
   }
 }

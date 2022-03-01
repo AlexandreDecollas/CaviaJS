@@ -13,10 +13,7 @@ describe('RoomAvailabilityProjection', () => {
     state = new BookedRoomsState();
     roomAddedEventHandlerCallBack(
       state,
-      new RoomAddedEvent(
-        { id: '', roomNumber: 123 },
-        { streamName: 'manager.room-added' },
-      ),
+      new RoomAddedEvent({ id: '', roomNumber: 123 }, {}),
     );
   });
 

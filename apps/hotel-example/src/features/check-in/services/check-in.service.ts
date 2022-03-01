@@ -33,9 +33,9 @@ export class CheckInService {
         id: this.idGeneratorService.generateId(),
         clientName,
       },
-      { streamName: 'guest.checkin' },
+      {},
     );
 
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('guest.checkin', event);
   }
 }

@@ -4,7 +4,6 @@ import { DiscoveryService } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import {
   EventstoreEvent,
-  EventstoreEventMetadata,
   ExternalEntryPointListenerStarterService,
   provideConnectedPersistentSubscription,
 } from 'cavia-js';
@@ -115,10 +114,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
     });
 
     it('should trigger hook only when allowed event is emitted', async () => {
-      class ForbindenEvent extends EventstoreEvent<
-        { toto: 123 },
-        EventstoreEventMetadata
-      > {}
+      class ForbindenEvent extends EventstoreEvent<{ toto: 123 }, any> {}
       const forbidenEvent: ForbindenEvent = new ForbindenEvent(
         { toto: 123 },
         { streamName: 'tt' },

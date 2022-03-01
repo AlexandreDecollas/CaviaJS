@@ -2,25 +2,15 @@ import {
   AllEventsHook,
   Command,
   EventstoreEvent,
-  EventstoreEventMetadata,
   ExternalEventHook,
   RedisQueueConfiguration,
   Saga,
   SingleEventHook,
 } from 'cavia-js';
 
-export class AllowedEvent1 extends EventstoreEvent<
-  any,
-  EventstoreEventMetadata
-> {}
-export class AllowedEvent2 extends EventstoreEvent<
-  any,
-  EventstoreEventMetadata
-> {}
-export class AllowedEvent3 extends EventstoreEvent<
-  any,
-  EventstoreEventMetadata
-> {}
+export class AllowedEvent1 extends EventstoreEvent<any, any> {}
+export class AllowedEvent2 extends EventstoreEvent<any, any> {}
+export class AllowedEvent3 extends EventstoreEvent<any, any> {}
 
 export const redisConf: RedisQueueConfiguration = {
   options: {

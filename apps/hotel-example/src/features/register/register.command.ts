@@ -4,7 +4,12 @@ import { IdGeneratorService } from '../../utils/id-generator/id-generator.servic
 import { RegisteredEvent } from '../../model/registered.event';
 import { Queue } from 'bullmq';
 import { RegistrationRequestedEvent } from '../../model/registration-requested.event';
-import { Command, Eventbus, ExternalEventHook } from 'cavia-js';
+import {
+  Command,
+  Eventbus,
+  ExternalEventHook,
+  InternalQueueJobData,
+} from 'cavia-js';
 import { ApiParam } from '@nestjs/swagger';
 
 @Command({
@@ -36,19 +41,27 @@ export class RegisterCommand {
   // Simulate an external event, only for the demo purpose
   @Get('triggerExternalEvent')
   async triggerExternalEvent(): Promise<void> {
-    const q = new Queue('register-queue', {
-      connection: { host: 'localhost', port: 6379 },
-    });
+    const q = new Queue<InternalQueueJobData<any, any, any>, void, string>(
+      'register-queue',
+      {
+        connection: { host: 'localhost', port: 6379 },
+      },
+    );
     const event: RegistrationRequestedEvent = new RegistrationRequestedEvent(
       {
         clientName: 'DOE',
         clientSurname: 'JOHN',
         id: this.idGeneratorService.generateId(),
       },
-      { streamName: 'okokok' },
+      {},
     );
 
-    await q.add('', event);
+    const jobData: InternalQueueJobData<any, any, any> = {
+      event,
+      streamName: 'okokok',
+    };
+
+    await q.add('', jobData);
   }
 
   @Get('/:clientName/:clientSurname')
@@ -68,8 +81,8 @@ export class RegisterCommand {
         clientName: registerLine.clientName,
         clientSurname: registerLine.clientSurname,
       },
-      { streamName: 'guest.registered' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('guest.registered', event);
   }
 }

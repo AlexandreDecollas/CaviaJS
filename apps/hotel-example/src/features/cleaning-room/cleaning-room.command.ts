@@ -40,8 +40,8 @@ export class CleaningRoomCommand {
         id: this.idGeneratorService.generateId(),
         roomNumber,
       },
-      { streamName: 'manager.room-readied' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('manager.room-readied', event);
   }
 }

@@ -24,9 +24,9 @@ export class HotelProximityCommand {
         guestName: clientName,
         id: this.idGeneratorService.generateId(),
       },
-      { streamName: 'gps.guest-left' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('gps.guest-left', event);
   }
 
   @Get('guest/entered/:clientName')
@@ -39,8 +39,8 @@ export class HotelProximityCommand {
         guestName: clientName,
         id: this.idGeneratorService.generateId(),
       },
-      { streamName: 'gps.guest-left' },
+      {},
     );
-    await this.eventEmitter.emit(event);
+    await this.eventEmitter.emit('gps.guest-left', event);
   }
 }

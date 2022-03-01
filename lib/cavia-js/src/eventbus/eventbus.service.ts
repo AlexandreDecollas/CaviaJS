@@ -9,8 +9,9 @@ import { jsonEvent } from '@eventstore/db-client';
 import { Client } from '@eventstore/db-client/dist/Client';
 import { INTERNAL_EVENTS_QUEUE_CONFIGURATION } from './constants';
 import { RedisQueueConfiguration } from '../misc/event-modelling.configuration';
-import { Queue, Worker } from 'bullmq';
+import { Job, Queue, Worker } from 'bullmq';
 import { EventstoreEvent } from '../misc/eventstore.event';
+import { InternalQueueJobData } from './internal-queue-job-data';
 
 @Injectable()
 export class Eventbus implements OnApplicationBootstrap {
@@ -31,18 +32,23 @@ export class Eventbus implements OnApplicationBootstrap {
     }
     new Worker(
       this.internalEventsQueueConf.queueName,
-      async (event) => {
+      async (
+        job: Job<InternalQueueJobData<any, any, any>, void, string>,
+      ): Promise<void> => {
         this.logger.debug(
           'Event hooked on internal event queue : ' +
-            JSON.stringify(event.data),
+            JSON.stringify(job.data.event),
         );
-        await this.appendToEventstore(event.data);
+        await this.appendToEventstore(job.data.streamName, job.data.event);
       },
       this.internalEventsQueueConf.options,
     );
   }
 
-  public async emit(event: EventstoreEvent<any, any>): Promise<void> {
+  public async emit(
+    streamName: string,
+    event: EventstoreEvent<any, any>,
+  ): Promise<void> {
     const formattedEvent = jsonEvent({
       type: event.type,
       data: event.data,
@@ -55,7 +61,7 @@ export class Eventbus implements OnApplicationBootstrap {
     if (this.internalEventsQueueConf) {
       await this.pushEventOnRedisQueue(formattedEvent);
     } else {
-      await this.appendToEventstore(formattedEvent);
+      await this.appendToEventstore(streamName, formattedEvent);
     }
   }
 
@@ -78,12 +84,12 @@ export class Eventbus implements OnApplicationBootstrap {
     );
   }
 
-  private async appendToEventstore(formattedEvent: any): Promise<void> {
+  private async appendToEventstore(
+    streamName: string,
+    formattedEvent: any,
+  ): Promise<void> {
     const client: Client = await this.connection.getConnectedClient();
-    await client.appendToStream(
-      formattedEvent.metadata.streamName,
-      formattedEvent,
-    );
+    await client.appendToStream(streamName, formattedEvent);
     this.logger.debug(
       'Event appended on eventstore: ' + JSON.stringify(formattedEvent),
     );

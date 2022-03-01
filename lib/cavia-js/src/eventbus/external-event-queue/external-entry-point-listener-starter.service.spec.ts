@@ -75,9 +75,9 @@ describe('ExternalEntryPointListenerStarterService', () => {
     let hookPersub1;
     let hookPersub2;
     let hookPersub3;
-    const allowedEvent1 = new AllowedEvent1({}, { streamName: 'tt' });
-    const allowedEvent2 = new AllowedEvent2({}, { streamName: 'tt' });
-    const allowedEvent3 = new AllowedEvent3({}, { streamName: 'tt' });
+    const allowedEvent1 = new AllowedEvent1({}, {});
+    const allowedEvent2 = new AllowedEvent2({}, {});
+    const allowedEvent3 = new AllowedEvent3({}, {});
 
     beforeEach(async () => {
       jest.resetAllMocks();
@@ -117,7 +117,7 @@ describe('ExternalEntryPointListenerStarterService', () => {
       class ForbindenEvent extends EventstoreEvent<{ toto: 123 }, any> {}
       const forbidenEvent: ForbindenEvent = new ForbindenEvent(
         { toto: 123 },
-        { streamName: 'tt' },
+        {},
       );
       const payload = { event: forbidenEvent };
 

@@ -16,7 +16,7 @@ describe('GuestRosterProjection', () => {
 
     const checkedInEvent: CheckedInEvent = new CheckedInEvent(
       { clientName, id: 'glgl0' },
-      { streamName: 'bg' },
+      {},
     );
 
     checkedInEventCallBack(state, checkedInEvent);
@@ -31,12 +31,12 @@ describe('GuestRosterProjection', () => {
 
     const checkedInEvent: CheckedInEvent = new CheckedInEvent(
       { clientName, id: 'glgl0' },
-      { streamName: 'bg' },
+      {},
     );
 
     const guestLeftEvent: GuestLeftEvent = new GuestLeftEvent(
       { guestName: clientName, id: 'glgl1' },
-      { streamName: 'bg' },
+      {},
     );
 
     checkedInEventCallBack(state, checkedInEvent);
@@ -52,17 +52,17 @@ describe('GuestRosterProjection', () => {
 
     const checkedInEvent: CheckedInEvent = new CheckedInEvent(
       { clientName, id: 'glgl0' },
-      { streamName: 'bg' },
+      {},
     );
 
     const guestLeftEvent: GuestLeftEvent = new GuestLeftEvent(
       { guestName: clientName, id: 'glgl1' },
-      { streamName: 'bg' },
+      {},
     );
 
     const checkedOutEvent: CheckedOutEvent = new CheckedOutEvent(
       { clientName, id: 'glgl1' },
-      { streamName: 'bg' },
+      {},
     );
 
     checkedInEventCallBack(state, checkedInEvent);

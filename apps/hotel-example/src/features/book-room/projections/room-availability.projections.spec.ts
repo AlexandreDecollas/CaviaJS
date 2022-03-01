@@ -84,6 +84,6 @@ const getEvent = (
         day: dayTo,
       },
     },
-    { streamName: 'manager.room-added' },
+    {},
   );
 };

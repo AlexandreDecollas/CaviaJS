@@ -24,7 +24,7 @@ describe('CleaningScheduleProjection', () => {
           day: 5,
         },
       },
-      { streamName: 'plpl' },
+      {},
     );
     const eventB: RoomBookedEvent = new RoomBookedEvent(
       {
@@ -41,7 +41,7 @@ describe('CleaningScheduleProjection', () => {
           day: 6,
         },
       },
-      { streamName: 'plpl' },
+      {},
     );
     const eventC: RoomBookedEvent = new RoomBookedEvent(
       {
@@ -58,7 +58,7 @@ describe('CleaningScheduleProjection', () => {
           day: 14,
         },
       },
-      { streamName: 'plpl' },
+      {},
     );
     const eventD: RoomBookedEvent = new RoomBookedEvent(
       {
@@ -75,7 +75,7 @@ describe('CleaningScheduleProjection', () => {
           day: 24,
         },
       },
-      { streamName: 'plpl' },
+      {},
     );
 
     roomBookedEventCallBack(state, eventA);

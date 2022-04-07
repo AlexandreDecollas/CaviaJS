@@ -4,6 +4,7 @@ env:
   ROOT_PATH: ${{ github.workspace }}
 jobs:
   build:
+    name: CI CD pipeline
     runs-on: ubuntu-latest
     strategy:
       matrix:

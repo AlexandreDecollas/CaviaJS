@@ -1,8 +1,7 @@
 name: CaviaJS CI/CD
 
 on:
-  pull_request:
-    types: [opened, edited, reopened, synchronize, labeled]
+  push:
 
 env:
   APP_PATH: './lib/cavia-js'

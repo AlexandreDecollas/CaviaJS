@@ -1,6 +1,6 @@
 {
   "name": "cavia-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Making event-modelling with NestJS easy",
   "keywords": [
     "eventmodeling",

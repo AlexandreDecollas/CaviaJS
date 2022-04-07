@@ -3,8 +3,8 @@ on: [push]
 env:
   ROOT_PATH: ${{ github.workspace }}
 jobs:
-  build:
-    name: CI CD pipeline
+  Code-quality:
+    name: Run ${{ matrix.check }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,6 +24,11 @@ jobs:
           node-version: ${{ steps.node_version.outputs.VERSION }}
           cache: yarn
           cache-dependency-path: ${{ env.ROOT_PATH }}/yarn.lock
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install JS dependencies
         working-directory: ${{ env.ROOT_PATH }}

@@ -1,0 +1,41 @@
+name: CaviaJS CI/CD
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled]
+
+env:
+  APP_PATH: './lib/cavia-js'
+
+jobs:
+  build:
+    name: Build CaviaJS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+
+      - name: Get node version
+        id: node_version
+        working-directory: ${{ env.APP_PATH }}
+        run: |
+          NODE_VERSION=$(jq -r ".engines.node" package.json)
+          echo ::set-output name=VERSION::$NODE_VERSION
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.node_version.outputs.VERSION }}
+          cache: yarn
+          cache-dependency-path: ${{ env.APP_PATH }}/yarn.lock
+
+      - name: Install JS dependencies
+        working-directory: ${{ env.APP_PATH }}
+        run: yarn
+
+      - name: Build the lib
+        working-directory: ${{ env.APP_PATH }}
+        run: yarn build
+
+      - name: Publish the lib
+        working-directory: ${{ env.APP_PATH }}
+        run: npm publish

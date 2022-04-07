@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ steps.node_version.outputs.VERSION }}
           cache: yarn
           cache-dependency-path: ${{ env.APP_PATH }}/yarn.lock
-
+π
       - name: Install JS dependencies
         working-directory: ${{ env.APP_PATH }}
         run: yarn

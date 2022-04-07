@@ -110,5 +110,8 @@
     "moduleNameMapper": {
       "^cavia-js$": "<rootDir>/lib/cavia-js/src"
     }
+  },
+  "engines": {
+    "node": "16.10.0"
   }
 }

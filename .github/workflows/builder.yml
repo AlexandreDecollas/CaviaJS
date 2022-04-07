@@ -1,7 +1,6 @@
 name: CaviaJS CI/CD
 
-on:
-  push:
+on: [push]
 
 env:
   APP_PATH: './lib/cavia-js'

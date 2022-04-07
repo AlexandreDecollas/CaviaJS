@@ -5,6 +5,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        serie: [ 'build:lib', 'lint', 'test' ]
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v1
@@ -25,14 +28,6 @@ jobs:
         working-directory: ${{ env.ROOT_PATH }}
         run: yarn
 
-      - name: Build the lib
+      - name: Run yarn ${{ matrix.serie }}
         working-directory: ${{ env.ROOT_PATH }}
-        run: yarn build:lib
-
-      - name: Test the lib
-        working-directory: ${{ env.ROOT_PATH }}
-        run: yarn test
-
-      - name: Lint the lib
-        working-directory: ${{ env.ROOT_PATH }}
-        run: yarn lint
+        run: yarn ${{ matrix.serie }}

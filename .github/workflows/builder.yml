@@ -1,7 +1,7 @@
 name: CaviaJS CI/CD
 on: [push]
 env:
-  ROOT_PATH: '/'
+  ROOT_PATH: ${{ github.workspace }}
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -3,7 +3,7 @@ name: CaviaJS CI/CD
 on: [push]
 
 env:
-  APP_PATH: './lib/cavia-js'
+  ROOT_PATH: '/'
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
 
       - name: Get node version
         id: node_version
-        working-directory: ${{ env.APP_PATH }}
+        working-directory: ${{ env.ROOT_PATH }}
         run: |
           NODE_VERSION=$(jq -r ".engines.node" package.json)
           echo ::set-output name=VERSION::$NODE_VERSION
@@ -24,16 +24,16 @@ jobs:
         with:
           node-version: ${{ steps.node_version.outputs.VERSION }}
           cache: yarn
-          cache-dependency-path: ${{ env.APP_PATH }}/yarn.lock
+          cache-dependency-path: ${{ env.ROOT_PATH }}/yarn.lock
 π
       - name: Install JS dependencies
-        working-directory: ${{ env.APP_PATH }}
+        working-directory: ${{ env.ROOT_PATH }}
         run: yarn
 
       - name: Build the lib
-        working-directory: ${{ env.APP_PATH }}
+        working-directory: ${{ env.ROOT_PATH }}
         run: yarn build
 
       - name: Publish the lib
-        working-directory: ${{ env.APP_PATH }}
+        working-directory: ${{ env.ROOT_PATH }}
         run: npm publish

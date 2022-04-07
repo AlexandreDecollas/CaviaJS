@@ -1,0 +1,38 @@
+name: CaviaJS CI/CD
+on: [push]
+env:
+  ROOT_PATH: ${{ github.workspace }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+
+      - name: Get node version
+        id: node_version
+        working-directory: ${{ env.ROOT_PATH }}
+        run: |
+          NODE_VERSION=$(jq -r ".engines.node" package.json)
+          echo ::set-output name=VERSION::$NODE_VERSION
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.node_version.outputs.VERSION }}
+          cache: yarn
+          cache-dependency-path: ${{ env.ROOT_PATH }}/yarn.lock
+
+      - name: Install JS dependencies
+        working-directory: ${{ env.ROOT_PATH }}
+        run: yarn
+
+      - name: Build the lib
+        working-directory: ${{ env.ROOT_PATH }}
+        run: yarn build:lib
+
+      - name: Test the lib
+        working-directory: ${{ env.ROOT_PATH }}
+        run: yarn test
+
+      - name: Lint the lib
+        working-directory: ${{ env.ROOT_PATH }}
+        run: yarn lint

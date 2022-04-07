@@ -1,5 +1,7 @@
 name: CaviaJS CI/CD
-on: [push]
+on:
+  release:
+    types: [created]
 env:
   ROOT_PATH: ${{ github.workspace }}
 jobs:
@@ -28,14 +30,6 @@ jobs:
       - name: Build the lib
         working-directory: ${{ env.ROOT_PATH }}
         run: yarn build:lib
-
-      - name: Test the lib
-        working-directory: ${{ env.ROOT_PATH }}
-        run: yarn test
-
-      - name: Lint the lib
-        working-directory: ${{ env.ROOT_PATH }}
-        run: yarn lint
 
       - uses: actions/setup-node@v3
         with:
